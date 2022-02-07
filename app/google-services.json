@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "511320888295",
+    "project_id": "lavada-7777",
+    "storage_bucket": "lavada-7777.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:511320888295:android:84d6e6cef8726fc2d5a342",
+        "android_client_info": {
+          "package_name": "com.uzlov.dating.lavada"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "511320888295-j7pmha0v2f9enrhl1g1jqghe1io902c5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.uzlov.dating.lavada",
+            "certificate_hash": "9eb790d7dfa64f3179220c4c4536f30687778063"
+          }
+        },
+        {
+          "client_id": "511320888295-uaa3k876kksutftnomkilqctnbflruvl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBILny6nPlfNIig5AhhGiqS2Zu-3xeW86M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "511320888295-uaa3k876kksutftnomkilqctnbflruvl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
