@@ -1,9 +1,10 @@
 package com.uzlov.dating.lavada.data.data_sources
 
+import com.uzlov.dating.lavada.domain.models.User
 import kotlinx.coroutines.flow.Flow
 
 interface ILocalUserDataSource {
-    fun getUsers() : Flow<String>
-    fun putUsers(user: String)
+    fun getUsers() : Flow<User>
+    fun putUsers(user: User)
     fun clear()
 }
