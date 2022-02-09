@@ -11,7 +11,7 @@ class FirebasePhoneAuthService @Inject constructor(private val auth: FirebaseAut
     IAuth<User, Activity> {
 
 
-    override fun startAuth(user: User, host: Activity) {
+  fun startAuth(user: User, host: Activity) {
         auth.createUserWithEmailAndPassword(user.name, user.password)
             .addOnCompleteListener(host) { task ->
                 if (task.isSuccessful) {
@@ -29,6 +29,14 @@ class FirebasePhoneAuthService @Inject constructor(private val auth: FirebaseAut
 
     override fun logout() {
         auth.signOut()
+    }
+
+     fun registered(login: String, password: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun login(login: String, password: String) {
+        TODO("Not yet implemented")
     }
 
 }
