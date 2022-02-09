@@ -1,6 +1,7 @@
 package com.uzlov.dating.lavada.ui.activities
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.uzlov.dating.lavada.R
@@ -13,6 +14,8 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.screen_splash_activity)
         animateStars()
+        startActivity(Intent(this, LoginActivity::class.java))
+        finish()
     }
 
     fun animateStars(){
