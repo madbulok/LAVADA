@@ -7,12 +7,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import com.google.firebase.FirebaseException
-import com.google.firebase.FirebaseTooManyRequestsException
-import com.google.firebase.auth.*
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.PhoneAuthProvider
 import com.uzlov.dating.lavada.app.App
-import java.lang.Exception
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 
@@ -55,7 +52,7 @@ class FirebaseGoogleSignInAuthService @Inject constructor(private val auth: Fire
         }
     }
 
-    override fun startAuth(user: GoogleSignInAccount, host: Activity) {
+    fun startAuth(user: GoogleSignInAccount, host: Activity) {
         if (account == null) {
             mGoogleSignInClient?.signInIntent?.let { signInIntent ->
 //                startLogin(signInIntent)
@@ -67,6 +64,10 @@ class FirebaseGoogleSignInAuthService @Inject constructor(private val auth: Fire
 
     override fun logout() {
         auth.signOut()
+    }
+
+    override fun login(login: String, password: String) {
+        TODO("Not yet implemented")
     }
 
 }

@@ -1,4 +1,4 @@
-package com.uzlov.dating.lavada.ui
+package com.uzlov.dating.lavada.ui.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater

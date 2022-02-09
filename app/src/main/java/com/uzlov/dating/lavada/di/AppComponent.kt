@@ -1,9 +1,7 @@
 package com.uzlov.dating.lavada.di
 
-import com.uzlov.dating.lavada.di.modules.AppModule
-import com.uzlov.dating.lavada.di.modules.AuthModule
-import com.uzlov.dating.lavada.di.modules.FirebaseModule
-import com.uzlov.dating.lavada.di.modules.ViewModelModule
+import com.uzlov.dating.lavada.di.modules.*
+import com.uzlov.dating.lavada.ui.fragments.registration.RegistrationFragment
 import dagger.Component
 
 @Component(
@@ -15,4 +13,5 @@ import dagger.Component
     ]
 )
 interface AppComponent {
+    fun inject(registrationFragment: RegistrationFragment)
 }
