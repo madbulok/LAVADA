@@ -66,6 +66,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
+        android:enabled="false"
         android:text="Sing Up" />
 
     <androidx.appcompat.widget.AppCompatButton
@@ -74,6 +75,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
         android:text="Sing Up With google" />
+
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnLoginWithFacebook"
