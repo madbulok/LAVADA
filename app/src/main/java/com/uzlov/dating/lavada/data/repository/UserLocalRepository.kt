@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.flowOf
 
 class UserLocalRepository : ILocalUserDataSource {
     override fun getUsers(): Flow<User> {
-        return flowOf(User("", MALE.MAN, 12, "", "", ""))
+        return flowOf(User("", "test", MALE.MAN, 12, "", "", "", 1.1, 1.1))
     }
 
     override fun putUsers(user: User) {
