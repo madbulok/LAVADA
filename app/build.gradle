@@ -103,4 +103,7 @@ dependencies {
     implementation "ru.tinkoff.decoro:decoro:1.5.0"
     implementation 'com.google.firebase:firebase-storage-ktx:20.0.0'
     implementation 'com.google.android.gms:play-services-auth:20.1.0'
+
+    //facebook
+    implementation 'com.facebook.android:facebook-android-sdk:[4,5)'
 }
