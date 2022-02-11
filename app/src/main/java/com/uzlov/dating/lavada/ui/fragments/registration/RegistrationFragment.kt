@@ -21,12 +21,11 @@ import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService.Companion.TAG
-import com.uzlov.dating.lavada.auth.User
 import com.uzlov.dating.lavada.databinding.FragmentRegistrationBinding
 import com.uzlov.dating.lavada.ui.fragments.BaseFragment
 import com.uzlov.dating.lavada.ui.fragments.profile.AboutMyselfFragment
 import org.json.JSONException
-import org.json.JSONObject
+import java.lang.NullPointerException
 import java.util.regex.Pattern
 import javax.inject.Inject
 
@@ -43,8 +42,6 @@ class RegistrationFragment :
 
     @Inject
     lateinit var firebaseEmailAuthService: FirebaseEmailAuthService
-
-    lateinit var user: User
 
     private val mainActivityResultLauncher =
         registerForActivityResult(StartActivityForResult()) { result ->
@@ -70,8 +67,6 @@ class RegistrationFragment :
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
-        // Pass the activity result back to the Facebook SDK
         callbackManager.onActivityResult(requestCode, resultCode, data)
         Log.d("letsSee", "zzzzzzzzz: $data")
     }
@@ -96,75 +91,57 @@ class RegistrationFragment :
 
         viewBinding.btnLoginWithFacebook.setReadPermissions("email")
         viewBinding.btnLoginWithFacebook.fragment = this
-        viewBinding.btnLoginWithFacebook.registerCallback(callbackManager, object :
-            FacebookCallback<LoginResult> {
-            override fun onSuccess(loginResult: LoginResult) {
-                Log.d(TAG, "facebook:onSuccess:$loginResult")
-                handleFacebookAccessToken(loginResult.accessToken)
-            }
+        viewBinding.btnLoginWithFacebook.setOnClickListener {
+            loginWithFacebook()
+        }
 
-            override fun onCancel() {
-                Log.d(TAG, "facebook:onCancel")
-            }
-
-            override fun onError(error: FacebookException) {
-                Log.d(TAG, "facebook:onError", error)
-            }
-        })
-        arghhhh()
     }
-fun arghhhh(){
-    LoginManager.getInstance().logInWithReadPermissions(this, listOf("email", "public_profile"))
 
-    LoginManager.getInstance()
-        .registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
-            override fun onSuccess(loginResult: LoginResult) {
+    private fun loginWithFacebook() {
+        LoginManager.getInstance().logInWithReadPermissions(this, listOf("email", "public_profile"))
+        LoginManager.getInstance()
+            .registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
+                override fun onSuccess(loginResult: LoginResult) {
 
-                val token = loginResult.accessToken
-
-                val request = GraphRequest.newMeRequest(
-                    token,
-                    object : GraphRequest.GraphJSONObjectCallback {
-                        override fun onCompleted(
-                            obj: JSONObject?,
-                            response: GraphResponse?
-                        ) {
-
-                            try {
-                                // Save user email to variable
-                                email = obj!!.getString("email")
-                                firstName = obj.getString("first_name")
-                                Log.d(TAG, "1) Facebook email received $email and name $firstName")
-                                handleFacebookAccessToken(token)
-                            }
-                            catch (e: JSONException) {
-                                Toast.makeText(
-                                    context,
-                                    "Facebook Authentication Failed.",
-                                    Toast.LENGTH_LONG
-                                ).show()
-                            }
+                    val token = loginResult.accessToken
+                    val request = GraphRequest.newMeRequest(
+                        token
+                    ) { obj, _ ->
+                        try {
+                            email = obj!!.getString("email")
+                            firstName = obj.getString("first_name")
+                            Log.d(
+                                TAG,
+                                " Facebook email received $email and name $firstName"
+                            )
+                            handleFacebookAccessToken(token)
+                        } catch (e: JSONException) {
+                            Toast.makeText(
+                                context,
+                                "Facebook Authentication Failed.",
+                                Toast.LENGTH_LONG
+                            ).show()
                         }
-                    })
+                    }
+                    val parameters = Bundle()
+                    parameters.putString("fields", "email,first_name,last_name")
+                    request.parameters = parameters
+                    request.executeAsync()
+                }
 
-                val parameters = Bundle()
-                parameters.putString("fields", "email,first_name,last_name")
-                request.parameters = parameters
-                request.executeAsync()
-            }
+                override fun onCancel() {
+                    Log.d(TAG, "facebook:onCancel")
+                }
 
-            override fun onCancel() {
-                Log.d(TAG, "facebook:onCancel")
-                Toast.makeText(context, "Facebook Login Cancelled", Toast.LENGTH_LONG).show()
-            }
+                override fun onError(error: FacebookException) {
+                    Log.d(TAG, "facebook:onError", error)
+                    Toast.makeText(context, "Facebook Authentication Failed. Try Again", Toast.LENGTH_LONG)
+                        .show()
+                    LoginManager.getInstance().logOut()
+                }
+            })
+    }
 
-            override fun onError(error: FacebookException) {
-                Log.d(TAG, "facebook:onError", error)
-                Toast.makeText(context, "Facebook Authentication Failed", Toast.LENGTH_LONG)
-                    .show()
-            }
-        })
-}
     private fun handleFacebookAccessToken(token: AccessToken) {
         Log.d(TAG, "handleFacebookAccessToken:$token")
 
@@ -199,10 +176,21 @@ fun arghhhh(){
     }
 
     private fun updateUI() {
-        parentFragmentManager.beginTransaction()
-            .replace(R.id.container, AboutMyselfFragment.newInstance())
-            .addToBackStack(null)
-            .commit()
+        try {
+           val uid = firebaseEmailAuthService.auth.currentUser?.email.toString().replace("@", "").replace(".", "")
+            val user = com.uzlov.dating.lavada.domain.models.User(
+                uid = uid,
+                email = firebaseEmailAuthService.auth.currentUser?.email,
+                "", "", null, 0, "", "", "", 0.0, 0.0
+            )
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.container, AboutMyselfFragment.newInstance(user))
+                .commit()
+        } catch (e: NullPointerException){
+            Toast.makeText(context, "tryAgain. Error", Toast.LENGTH_SHORT).show()
+        }
+
+
     }
 
     private fun isValidEmail(email: String): Boolean {
@@ -249,4 +237,5 @@ fun arghhhh(){
                     isValidPassword(viewBinding.textInputPassword.text.toString())
         }
     }
+
 }
