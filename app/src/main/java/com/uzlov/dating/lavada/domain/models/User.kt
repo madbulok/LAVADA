@@ -10,13 +10,15 @@ enum class MALE {
 }
 @Parcelize
 data class User(
-    val id: String,
-    var name: String,
-    val male: MALE,
-    var age: Int,
-    var about: String,
-    var url_avatar: String,
-    var url_video: String,
-    var lat: Double,
-    var lon: Double
+    val uid: String? = "",
+    var email: String?= "",
+    var password: String?= "",
+    var name: String?= "",
+    var male: MALE?= null,
+    var age: Int?= 0,
+    var about: String?= "",
+    var url_avatar: String?= "",
+    var url_video: String?= "",
+    var lat: Double?= 0.0,
+    var lon: Double? = 0.0
 ): Parcelable

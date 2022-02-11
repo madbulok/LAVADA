@@ -17,6 +17,6 @@ class UserRemoteRepositoryImpl @Inject constructor(var remoteDataSource: IRemote
 
     override fun removeUser(id: String) = remoteDataSource.removeUser(id)
 
-    override fun putUser(request: User) = remoteDataSource.putUser(request)
+    override fun putUser(user: User) = remoteDataSource.putUser(user)
 
 }
