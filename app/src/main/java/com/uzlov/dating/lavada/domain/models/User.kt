@@ -2,6 +2,7 @@ package com.uzlov.dating.lavada.domain.models
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import java.util.*
 
 enum class MALE {
     MAN,
@@ -10,7 +11,7 @@ enum class MALE {
 }
 @Parcelize
 data class User(
-    val uid: String? = "",
+    var uid: String? = UUID.randomUUID().toString(),
     var email: String?= "",
     var password: String?= "",
     var name: String?= "",
