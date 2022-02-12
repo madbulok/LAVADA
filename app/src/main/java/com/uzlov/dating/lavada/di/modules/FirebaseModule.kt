@@ -8,6 +8,12 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.ktx.initialize
 import com.uzlov.dating.lavada.app.App
+import com.uzlov.dating.lavada.data.data_sources.IRemoteDataSource
+import com.uzlov.dating.lavada.data.repository.UserLocalRepository
+import com.uzlov.dating.lavada.data.use_cases.UserUseCases
+import com.uzlov.dating.lavada.data.repository.UsersRemoteDataSourceImpl
+import com.uzlov.dating.lavada.data.data_sources.IUsersRepository
+import com.uzlov.dating.lavada.data.repository.UserRemoteRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -25,4 +31,14 @@ class FirebaseModule {
     @Singleton
     @Provides
     fun provideRealtimeDatabase() : FirebaseDatabase = Firebase.database
+
+    @Provides
+    fun provideUserRemoteDataSource() : IRemoteDataSource = UsersRemoteDataSourceImpl()
+
+    @Provides
+    fun provideUserRepository(remoteDataSource: IRemoteDataSource) : IUsersRepository = UserRemoteRepositoryImpl(remoteDataSource)
+
+    @Provides
+    fun provideUserUseCase(localRepository: UserLocalRepository, remoteDataSource: IRemoteDataSource) : UserUseCases = UserUseCases(localRepository, remoteDataSource)
+
 }

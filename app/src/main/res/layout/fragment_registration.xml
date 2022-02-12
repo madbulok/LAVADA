@@ -26,7 +26,7 @@
         android:layout_margin="20dp">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/text_input_email"
+            android:id="@+id/ti_et_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="e-mail"
@@ -69,18 +69,16 @@
         android:enabled="false"
         android:text="Sing Up" />
 
-    <androidx.appcompat.widget.AppCompatButton
+    <com.google.android.gms.common.SignInButton
         android:id="@+id/btnLoginWithGoogle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:text="Sing Up With google" />
+        android:layout_margin="20dp" />
 
 
-    <androidx.appcompat.widget.AppCompatButton
+    <com.facebook.login.widget.LoginButton
         android:id="@+id/btnLoginWithFacebook"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:text="Sing Up With facebook" />
+        android:layout_margin="20dp" />
 </LinearLayout>

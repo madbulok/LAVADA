@@ -14,14 +14,18 @@ class UserUseCases @Inject constructor(
     private val localRepository: ILocalUserDataSource,
     private val remoteRepository: IRemoteDataSource,
 ) {
+    fun getUsers() = remoteRepository.getUsers()
+    fun getUsers(id: String) = remoteRepository.getUser(id)
+    fun removeUsers(id: String) = remoteRepository.removeUser(id)
+    fun putUser(user: User) = remoteRepository.putUser(user)
 
-    suspend fun getUsers(): Flow<User> {
-        return flow {
-            localRepository.clear()
-            remoteRepository.getUsers().collect {
-                localRepository.putUsers(it)
-                emit(it)
-            }
-        }.flowOn(Dispatchers.IO)
-    }
+//    suspend fun getUsers(): Flow<User> {
+//        return flow {
+//            localRepository.clear()
+//            remoteRepository.getUsers().collect {
+//                localRepository.putUsers(it)
+//                emit(it)
+//            }
+//        }.flowOn(Dispatchers.IO)
+//    }
 }

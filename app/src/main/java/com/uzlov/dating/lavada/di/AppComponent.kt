@@ -1,6 +1,7 @@
 package com.uzlov.dating.lavada.di
 
 import com.uzlov.dating.lavada.di.modules.*
+import com.uzlov.dating.lavada.ui.fragments.profile.AboutMyselfFragment
 import com.uzlov.dating.lavada.ui.fragments.registration.RegistrationFragment
 import dagger.Component
 
@@ -14,4 +15,5 @@ import dagger.Component
 )
 interface AppComponent {
     fun inject(registrationFragment: RegistrationFragment)
+    fun inject(aboutMyselfFragment: AboutMyselfFragment)
 }
