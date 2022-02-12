@@ -10,7 +10,8 @@ import dagger.Component
         AppModule::class,
         AuthModule::class,
         FirebaseModule::class,
-        ViewModelModule::class
+        ViewModelModule::class,
+        BillingModule::class
     ]
 )
 interface AppComponent {
