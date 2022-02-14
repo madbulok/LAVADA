@@ -35,7 +35,8 @@ class FirebasePhoneAuthService @Inject constructor(private val auth: FirebaseAut
         TODO("Not yet implemented")
     }
 
-    override fun login(login: String, password: String) {
+
+    override fun login(t: User, a: Activity) {
         TODO("Not yet implemented")
     }
 
