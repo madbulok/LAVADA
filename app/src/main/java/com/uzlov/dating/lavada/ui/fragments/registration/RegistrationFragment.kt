@@ -52,7 +52,7 @@ class RegistrationFragment :
                 try {
                     val account = task.getResult(ApiException::class.java)!!
                     Log.d(TAG, "firebaseAuthWithGoogle:" + account.id)
-                    firebaseEmailAuthService.firebaseAuthWithGoogle(account.idToken!!)
+                    firebaseEmailAuthService.setToken(account.idToken!!)
                     updateUI()
                 } catch (e: ApiException) {
                     Log.w(TAG, "Google sign in failed", e)
