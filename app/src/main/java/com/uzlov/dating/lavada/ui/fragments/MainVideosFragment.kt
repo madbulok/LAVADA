@@ -3,6 +3,7 @@ package com.uzlov.dating.lavada.ui.fragments
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import com.uzlov.dating.lavada.ui.adapters.RecyclerViewScrollListener
 import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.databinding.MainVideosFragmentBinding
@@ -10,6 +11,7 @@ import com.uzlov.dating.lavada.domain.models.User
 import com.uzlov.dating.lavada.ui.SingleSnap
 import com.uzlov.dating.lavada.ui.adapters.PlayerViewAdapter
 import com.uzlov.dating.lavada.ui.adapters.ProfileRecyclerAdapter
+import kotlinx.coroutines.delay
 
 val url =
     "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
@@ -70,6 +72,13 @@ class MainVideosFragment :
             mAdapter.setOnItemClickListener(object : ProfileRecyclerAdapter.OnItemClickListener {
                 override fun onItemClick(position: Int, model: User?) {
                     Toast.makeText(requireContext(), "Вы отправили симпатию", Toast.LENGTH_SHORT).show()
+                    lifecycleScope.launchWhenResumed {
+                        with(viewBinding){
+                            likeIV.visibility = View.VISIBLE
+                            delay(500)
+                            likeIV.visibility = View.GONE
+                        }
+                    }
                 }
             })
         }

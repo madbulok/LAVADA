@@ -13,8 +13,7 @@ import javax.inject.Singleton
         AuthModule::class,
         FirebaseModule::class,
         ViewModelModule::class,
-        BillingModule::class,
-        MediaModule::class
+        BillingModule::class
     ]
 )
 @Singleton
