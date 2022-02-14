@@ -1,5 +1,6 @@
 package com.uzlov.dating.lavada.di.modules
 
+import android.content.Context
 import com.android.billingclient.api.BillingClient
 import com.uzlov.dating.lavada.app.App
 import dagger.Module
@@ -11,7 +12,7 @@ class BillingModule {
 
     @Singleton
     @Provides
-    private fun billingClient(context: App) : BillingClient =
+    fun billingClient(context: Context) : BillingClient =
         BillingClient.newBuilder(context)
             .enablePendingPurchases()
             .build()

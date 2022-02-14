@@ -66,8 +66,8 @@ class FirebaseGoogleSignInAuthService @Inject constructor(private val auth: Fire
         auth.signOut()
     }
 
-    override fun login(login: String, password: String) {
-        TODO("Not yet implemented")
+    override fun login(t: GoogleSignInAccount, a: Activity) {
+
     }
 
 }

@@ -27,16 +27,15 @@
         android:layout_margin="@dimen/default_margin_16"
         app:cardCornerRadius="@dimen/default_corner_radius_16"
         app:cardElevation="@dimen/default_elevation"
-        app:cardBackgroundColor="@color/black"
         app:layout_constraintBottom_toTopOf="@+id/bottomLine"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/topLine">
 
-<!--        <VideoView-->
-<!--            android:id="@+id/profileVideo"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent"/>-->
+        <SurfaceView
+            android:id="@+id/view_vlc_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
     </com.google.android.material.card.MaterialCardView>
 

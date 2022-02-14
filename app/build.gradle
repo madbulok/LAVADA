@@ -33,6 +33,7 @@ android {
     kotlinOptions { jvmTarget = '11' }
 
     buildFeatures {
+        dataBinding = true
         viewBinding = true
     }
 }
@@ -72,6 +73,9 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:18.0.2'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'com.google.android.gms:play-services-auth:20.0.1'
+    implementation 'androidx.media2:media2-widget:1.1.2'
+    implementation 'androidx.databinding:databinding-common:7.1.1'
+    implementation 'androidx.databinding:databinding-runtime:7.1.1'
     annotationProcessor "com.google.dagger:dagger-android-processor:2.11"
 
     implementation 'com.google.firebase:firebase-database:20.0.3'
@@ -109,4 +113,6 @@ dependencies {
 
     def billing_version = "3.0.3"
     implementation "com.android.billingclient:billing:$billing_version"
+
+    implementation 'com.google.android.exoplayer:exoplayer:2.11.5'
 }
