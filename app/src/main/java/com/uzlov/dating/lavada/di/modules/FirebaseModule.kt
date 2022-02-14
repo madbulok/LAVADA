@@ -7,6 +7,8 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.ktx.initialize
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.ktx.storage
 import com.uzlov.dating.lavada.app.App
 import com.uzlov.dating.lavada.data.data_sources.IRemoteDataSource
 import com.uzlov.dating.lavada.data.repository.UserLocalRepository
@@ -40,5 +42,8 @@ class FirebaseModule {
 
     @Provides
     fun provideUserUseCase(localRepository: UserLocalRepository, remoteDataSource: IRemoteDataSource) : UserUseCases = UserUseCases(localRepository, remoteDataSource)
+
+    @Provides
+    fun provideStorage(): FirebaseStorage = Firebase.storage
 
 }
