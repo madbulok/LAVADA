@@ -61,7 +61,6 @@ class MainVideosFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         with(viewBinding) {
             rvVideosUsers.adapter = mAdapter
             rvVideosUsers.setHasFixedSize(true)
@@ -89,6 +88,22 @@ class MainVideosFragment :
     override fun onDestroyView() {
         super.onDestroyView()
         PlayerViewAdapter.releaseAllPlayers()
+    }
+
+    companion object {
+
+        private const val CURRENT_USER = "user"
+        fun newInstance() =
+            MainVideosFragment().apply {
+                arguments = Bundle().apply {
+                }
+            }
+        fun newInstance(userId: String) =
+            MainVideosFragment().apply {
+                arguments = Bundle().apply {
+                    putString(CURRENT_USER, userId)
+                }
+            }
     }
 }
 
