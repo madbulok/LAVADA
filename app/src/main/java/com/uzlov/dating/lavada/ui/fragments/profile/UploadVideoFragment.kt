@@ -7,6 +7,8 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
 import androidx.core.app.ActivityCompat
+import androidx.fragment.app.Fragment
+import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.databinding.FragmentUploadVideoBinding
 import com.uzlov.dating.lavada.storage.FirebaseStorageService
@@ -29,6 +31,10 @@ class UploadVideoFragment :
 
             }
         }
+        viewBinding.btnNext.setOnClickListener {
+            updateUI(ProfileFragment.newInstance())
+        }
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -67,7 +73,12 @@ class UploadVideoFragment :
         startActivityForResult(Intent.createChooser(intent, "Select Video"), REQUEST_CODE)
     }
 
+    private fun updateUI(fragment: Fragment) {
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.container, fragment)
+            .commit()
 
+    }
     companion object {
         const val REQUEST_EXTERNAL_STORAGE = 1
         private val PERMISSIONS_STORAGE = arrayOf(

@@ -5,6 +5,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.Toast
+import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.data.data_sources.IUsersRepository
 import com.uzlov.dating.lavada.databinding.FragmentAboutMyselfBinding
@@ -60,6 +61,7 @@ class AboutMyselfFragment :
                 user.name = tiEtName.text.toString()
                 user.about = tiEtLocation.text.toString()
                 usersRepository.putUser(user)
+                updateUI()
                 Toast.makeText(context, "Ваш аккаунт создан. Переход на другой экран будет доступен с ближайшее время", Toast.LENGTH_SHORT).show()
             }
         }
@@ -89,6 +91,13 @@ class AboutMyselfFragment :
 
             btnNext.isEnabled = !tiEtName.text.isNullOrBlank() && !tiEtLocation.text.isNullOrBlank()
         }
+
+    }
+
+    private fun updateUI() {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.container, UploadVideoFragment.newInstance())
+                .commit()
 
     }
 

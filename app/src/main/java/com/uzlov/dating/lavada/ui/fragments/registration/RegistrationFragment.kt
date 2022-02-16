@@ -22,10 +22,11 @@ import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService.Companion.TAG
 import com.uzlov.dating.lavada.databinding.FragmentRegistrationBinding
+import com.uzlov.dating.lavada.domain.models.User
 import com.uzlov.dating.lavada.ui.fragments.BaseFragment
+import com.uzlov.dating.lavada.ui.fragments.MainVideosFragment
 import com.uzlov.dating.lavada.ui.fragments.profile.AboutMyselfFragment
 import org.json.JSONException
-import java.lang.NullPointerException
 import java.util.regex.Pattern
 import javax.inject.Inject
 
@@ -43,6 +44,8 @@ class RegistrationFragment :
     @Inject
     lateinit var firebaseEmailAuthService: FirebaseEmailAuthService
 
+
+    //колбэк для входа через гугл
     private val mainActivityResultLauncher =
         registerForActivityResult(StartActivityForResult()) { result ->
 
@@ -53,7 +56,10 @@ class RegistrationFragment :
                     val account = task.getResult(ApiException::class.java)!!
                     Log.d(TAG, "firebaseAuthWithGoogle:" + account.id)
                     firebaseEmailAuthService.setToken(account.idToken!!)
-                    updateUI()
+                    firebaseEmailAuthService.loginWithGoogleAccount(
+                        parentFragmentManager,
+                        AboutMyselfFragment.newInstance()
+                    )
                 } catch (e: ApiException) {
                     Log.w(TAG, "Google sign in failed", e)
                 }
@@ -68,35 +74,50 @@ class RegistrationFragment :
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         callbackManager.onActivityResult(requestCode, resultCode, data)
-        Log.d("letsSee", "zzzzzzzzz: $data")
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         requireContext().appComponent.inject(this)
         checkUser()
+
         addTextChangedListener()
         googleSignInClient =
             GoogleSignIn.getClient(requireContext(), firebaseEmailAuthService.getGSO(context!!))
-
-        viewBinding.btnLogin.setOnClickListener {
-            val email = viewBinding.tiEtEmail.text.toString()
-            val password = viewBinding.textInputPassword.text.toString()
-            firebaseEmailAuthService.registered(email, password)
-            updateUI()
-        }
-        viewBinding.btnLoginWithGoogle.setOnClickListener {
-            onAct()
-        }
-
         viewBinding.btnLoginWithFacebook.setReadPermissions("email")
         viewBinding.btnLoginWithFacebook.fragment = this
-        viewBinding.btnLoginWithFacebook.setOnClickListener {
-            loginWithFacebook()
-        }
-
+        initListeners()
     }
 
+    private fun initListeners() {
+        with(viewBinding) {
+            btnLogin.setOnClickListener {
+                val email = tiEtEmail.text.toString()
+                val password = textInputPassword.text.toString()
+                firebaseEmailAuthService.registered(
+                    email,
+                    password,
+                    parentFragmentManager,
+                    AboutMyselfFragment.newInstance()
+                )
+            }
+            btnLoginWithGoogle.setOnClickListener {
+                onAct()
+            }
+
+            btnLoginWithFacebook.setOnClickListener {
+                loginWithFacebook()
+            }
+            tvLogIn.setOnClickListener {
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.container, LogInFragment.newInstance())
+                    .commit()
+            }
+        }
+    }
+
+
+    //вход через facebook
     private fun loginWithFacebook() {
         LoginManager.getInstance().logInWithReadPermissions(this, listOf("email", "public_profile"))
         LoginManager.getInstance()
@@ -135,13 +156,19 @@ class RegistrationFragment :
 
                 override fun onError(error: FacebookException) {
                     Log.d(TAG, "facebook:onError", error)
-                    Toast.makeText(context, "Facebook Authentication Failed. Try Again", Toast.LENGTH_LONG)
+                    Toast.makeText(
+                        context,
+                        "Facebook Authentication Failed. Try Again",
+                        Toast.LENGTH_LONG
+                    )
                         .show()
                     LoginManager.getInstance().logOut()
                 }
             })
     }
 
+
+    //подтягивает аккаунт facebook к firebase auth
     private fun handleFacebookAccessToken(token: AccessToken) {
         Log.d(TAG, "handleFacebookAccessToken:$token")
 
@@ -151,7 +178,7 @@ class RegistrationFragment :
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "signInWithCredential:success")
-                    updateUI()
+                    updateUIWithBundle()
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "signInWithCredential:failure", task.exception)
@@ -163,33 +190,40 @@ class RegistrationFragment :
             }
     }
 
+    //начальная проверка, если узер уже входил в систему, его сразу на главную страницу
     private fun checkUser() {
         val currentUser = firebaseEmailAuthService.auth.currentUser
         if (currentUser != null) {
-            updateUI()
+            goToMainVideoFragment(currentUser.uid)
         }
     }
 
+
+    //вызов колбэка для входа через гугл
     private fun onAct() {
         val intent = googleSignInClient.signInIntent
         mainActivityResultLauncher.launch(intent)
     }
 
-    private fun updateUI() {
-        try {
-           val uid = firebaseEmailAuthService.auth.currentUser?.email.toString().replace("@", "").replace(".", "")
-            val user = com.uzlov.dating.lavada.domain.models.User(
-                uid = uid,
-                email = firebaseEmailAuthService.auth.currentUser?.email,
-                "", "", null, 0, "", "", "", 0.0, 0.0
-            )
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.container, AboutMyselfFragment.newInstance(user))
-                .commit()
-        } catch (e: NullPointerException){
-            Toast.makeText(context, "tryAgain. Error", Toast.LENGTH_SHORT).show()
-        }
 
+    private fun goToMainVideoFragment(id: String) {
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.container, MainVideosFragment.newInstance(id))
+            //    .replace(R.id.container, ProfileFragment.newInstance())
+            .commit()
+    }
+
+
+    //при регистрации перебрасывает на начальную форму заполнения анкеты+ добавляет данные в бд
+    private fun updateUIWithBundle() {
+        val user = User(
+            uid = firebaseEmailAuthService.auth.currentUser?.uid,
+            email = firebaseEmailAuthService.auth.currentUser?.email,
+            "", "", null, 0, "", "", "", 0.0, 0.0
+        )
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.container, AboutMyselfFragment.newInstance(user))
+            .commit()
 
     }
 
@@ -237,5 +271,4 @@ class RegistrationFragment :
                     isValidPassword(viewBinding.textInputPassword.text.toString())
         }
     }
-
 }
