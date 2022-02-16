@@ -61,6 +61,25 @@
         android:layout_marginEnd="20dp"
         android:text="By continuing, you agree to our Terms of Service and Privacy Policy." />
 
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_have_account"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:text="Have an account?" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_log_in"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:textColor="@color/purple_700"
+        android:text="Log In" />
+
+
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnLogin"
         android:layout_width="match_parent"

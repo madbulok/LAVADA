@@ -3,6 +3,8 @@ package com.uzlov.dating.lavada.auth
 import android.app.Activity
 import android.content.Context
 import android.util.Log
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
@@ -15,48 +17,46 @@ class FirebaseEmailAuthService @Inject constructor(val auth: FirebaseAuth) : IAu
 
     private var mToken: String? = null
 
-//    override fun login(T: String, A: String) {
-//        auth.signInWithEmailAndPassword(T, A)
-//            .addOnCompleteListener(Activity()) { task ->
-//                if (task.isSuccessful) {
-//                    Log.d(TAG, "signInWithEmail:success")
-//                } else {
-//                    Log.w(TAG, "signInWithEmail:failure", task.exception)
-//                }
-//            }
-//    }
-
-    override fun logout() {
-        auth.signOut()
-    }
-
-    fun registered(login: String, password: String) {
+    //регистрация нового пользователя. Умеет обрабатывать ошибки регистрации (например, если такой email уже есть в системе
+    fun registered(
+        login: String,
+        password: String,
+        parentFragmentManager: FragmentManager,
+        fragment: Fragment
+    ) {
         auth.createUserWithEmailAndPassword(login, password)
             .addOnCompleteListener(Activity()) { task ->
                 if (task.isSuccessful) {
                     Log.d(TAG, "createUserWithEmail:success")
+                    //здесь вместо обновления ui прям отсюда нужен статус для передачи в ui слой
+                    updateUI(parentFragmentManager, fragment)
                 } else {
                     Log.w(TAG, "createUserWithEmail:failure", task.exception)
+                    //Это тоже нужно передавать пользователю, но пока нет понимания, куда. Вызывается вот так:
+                    //   task.exception?.let { Log.d(TAG, it.localizedMessage) }
+
                 }
             }
     }
 
+    // вспомогательный метод для входа через google, .requestIdToken - это из Web client (Auto-created for Google Sign-in)
+    //без этой стринги вход через гугл не работает(
+    // https://console.developers.google.com/apis/credentials?project=lavada-7777 - лежит тут
+    //у меня автоматом собирается из
     fun getGSO(context: Context): GoogleSignInOptions {
-        return  GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken("context.getString(R.string.default_web_client_id")
+        return GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(context.getString(R.string.default_web_client_id))
             .requestEmail()
             .build()
     }
 
+
     fun setToken(idToken: String) {
         mToken = idToken
     }
-    companion object {
-        const val TAG = "EmailPassword"
-    }
 
     override fun login(t: User, a: Activity) {
-        if (mToken == null)  throw IllegalStateException("Авторизация не увенчалась успехом =(")
+        if (mToken == null) throw IllegalStateException("Авторизация не увенчалась успехом =(")
         val credential = GoogleAuthProvider.getCredential(mToken, null)
         auth.signInWithCredential(credential)
             .addOnCompleteListener(a) { task ->
@@ -66,6 +66,73 @@ class FirebaseEmailAuthService @Inject constructor(val auth: FirebaseAuth) : IAu
                     Log.w(TAG, "createUserWithGoogle:failure", task.exception)
                 }
             }
+    }
+
+    // непосредственный вход через google, создает аккаунт
+    fun loginWithGoogleAccount(parentFragmentManager: FragmentManager, fragment: Fragment) {
+        if (mToken == null) throw IllegalStateException("Авторизация не увенчалась успехом =(")
+        val credential = GoogleAuthProvider.getCredential(mToken, null)
+        auth.signInWithCredential(credential)
+            .addOnCompleteListener(Activity()) { task ->
+                if (task.isSuccessful) {
+                    Log.d(TAG, "createUserWithGoogle:success")
+                    updateUI(parentFragmentManager, fragment)
+                } else {
+                    Log.w(TAG, "createUserWithGoogle:failure", task.exception)
+                }
+            }
+    }
+
+    //вход с помощью email и password, не создает аккаунт, проверяет наличие, возвращает task.exception.localizedMessage
+    fun loginWithEmailAndPassword(
+        email: String,
+        password: String,
+        parentFragmentManager: FragmentManager,
+        fragment: Fragment
+    ) {
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener(Activity()) { task ->
+                if (task.isSuccessful) {
+                    Log.d(TAG, "signInWithEmail:success")
+                    updateUI(parentFragmentManager, fragment)
+                } else {
+                    Log.w(TAG, "signInWithEmail:failure", task.exception)
+                }
+            }
+    }
+
+    override fun logout() {
+        TODO("Not yet implemented")
+    }
+
+//выходим из аккаунта
+    fun logoutAndUpdateUI(parentFragmentManager: FragmentManager, fragment: Fragment) {
+        auth.signOut()
+        updateUI(parentFragmentManager, fragment)
+    }
+
+//удаляем пользователя совсем (пока не связан с database, данные у бд не удаляет)
+    fun delUser(parentFragmentManager: FragmentManager, fragment: Fragment) {
+        val user = auth.currentUser!!
+        user.delete()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.d(TAG, "User account deleted.")
+                    updateUI(parentFragmentManager, fragment)
+                }
+            }
+    }
+
+//временное решение
+    private fun updateUI(parentFragmentManager: FragmentManager, fragment: Fragment) {
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.container, fragment)
+            .commit()
+
+    }
+
+    companion object {
+        const val TAG = "EmailPassword"
     }
 }
 
