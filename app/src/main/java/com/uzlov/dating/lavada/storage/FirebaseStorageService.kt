@@ -1,8 +1,10 @@
 package com.uzlov.dating.lavada.storage
 
 
+import android.content.Context
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.UploadTask
 import com.uzlov.dating.lavada.domain.models.User
@@ -17,7 +19,7 @@ class FirebaseStorageService @Inject constructor(val storage: FirebaseStorage) :
     lateinit var user: User
 
 
-    override fun uploadVideo(videoPath: String): String {
+    override fun uploadVideo(videoPath: String, context:Context): String {
 
         val file = Uri.fromFile(File(videoPath))
         val videoRef = storageRef.child("video/${file.lastPathSegment}")
@@ -26,6 +28,7 @@ class FirebaseStorageService @Inject constructor(val storage: FirebaseStorage) :
             Log.d("UPLOAD", "Error")
         }.addOnSuccessListener {
             Log.d("UPLOAD", "Success")
+            Toast.makeText(context, "Загрузка вашего видео прошла успешно", Toast.LENGTH_SHORT).show()
         }
         return videoRef.toString()
     }

@@ -5,6 +5,7 @@ buildscript {
         google()
         mavenCentral()
         maven { url "https://dl.bintray.com/videolan/Android" }
+        maven { url 'https://jitpack.io' }
     }
     dependencies {
         classpath "com.android.tools.build:gradle:7.0.3"
