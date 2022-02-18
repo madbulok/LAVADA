@@ -5,12 +5,12 @@ import android.content.ContentValues
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageCapture
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.video.*
@@ -28,10 +28,20 @@ class VideoCaptureFragment : BaseFragment<FragmentVideoCaptureBinding>(FragmentV
 
     private lateinit var cameraExecutor: ExecutorService
 
-    private var imageCapture: ImageCapture? = null
 
     private var videoCapture: VideoCapture<Recorder>? = null
     private var recording: Recording? = null
+
+    private val timer = object : CountDownTimer(5000, 1) {
+        override fun onTick(p0: Long) {
+            viewBinding.progressVideoState.setProgressCompat(5000-p0.toInt(), true)
+        }
+
+        override fun onFinish() {
+            viewBinding.progressVideoState.visibility = View.GONE
+            recording?.stop()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,13 +63,13 @@ class VideoCaptureFragment : BaseFragment<FragmentVideoCaptureBinding>(FragmentV
         viewBinding.videoCaptureButton.setOnClickListener { captureVideo() }
     }
 
-    private fun takePhoto() {
-    }
 
     private fun captureVideo() {
+        timer.start()
         val videoCapture = this.videoCapture ?: return
 
         viewBinding.videoCaptureButton.isEnabled = false
+        viewBinding.progressVideoState.visibility = View.VISIBLE
 
         val curRecording = recording
         if (curRecording != null) {
