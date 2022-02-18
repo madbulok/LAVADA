@@ -102,23 +102,16 @@ class FirebaseEmailAuthService @Inject constructor(val auth: FirebaseAuth) : IAu
     }
 
     override fun logout() {
-        TODO("Not yet implemented")
-    }
-
-//выходим из аккаунта
-    fun logoutAndUpdateUI(parentFragmentManager: FragmentManager, fragment: Fragment) {
         auth.signOut()
-        updateUI(parentFragmentManager, fragment)
     }
 
 //удаляем пользователя совсем (пока не связан с database, данные у бд не удаляет)
-    fun delUser(parentFragmentManager: FragmentManager, fragment: Fragment) {
+    fun delUser() {
         val user = auth.currentUser!!
         user.delete()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     Log.d(TAG, "User account deleted.")
-                    updateUI(parentFragmentManager, fragment)
                 }
             }
     }

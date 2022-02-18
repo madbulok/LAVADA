@@ -23,8 +23,8 @@ import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService.Companion.TAG
 import com.uzlov.dating.lavada.databinding.FragmentRegistrationBinding
 import com.uzlov.dating.lavada.domain.models.User
+import com.uzlov.dating.lavada.ui.activities.HostActivity
 import com.uzlov.dating.lavada.ui.fragments.BaseFragment
-import com.uzlov.dating.lavada.ui.fragments.MainVideosFragment
 import com.uzlov.dating.lavada.ui.fragments.profile.AboutMyselfFragment
 import org.json.JSONException
 import java.util.regex.Pattern
@@ -190,7 +190,7 @@ class RegistrationFragment :
             }
     }
 
-    //начальная проверка, если узер уже входил в систему, его сразу на главную страницу
+    //начальная проверка, если юзер уже входил в систему, его сразу на главную страницу
     private fun checkUser() {
         val currentUser = firebaseEmailAuthService.auth.currentUser
         if (currentUser != null) {
@@ -205,12 +205,14 @@ class RegistrationFragment :
         mainActivityResultLauncher.launch(intent)
     }
 
-
     private fun goToMainVideoFragment(id: String) {
-        parentFragmentManager.beginTransaction()
-            .replace(R.id.container, MainVideosFragment.newInstance(id))
-            //    .replace(R.id.container, ProfileFragment.newInstance())
-            .commit()
+//        parentFragmentManager.beginTransaction()
+//            .replace(R.id.container, MainVideosFragment.newInstance(id))
+//            //    .replace(R.id.container, ProfileFragment.newInstance())
+//            .commit()
+
+        startActivity(Intent(requireContext(), HostActivity::class.java))
+        activity?.finish()
     }
 
 
