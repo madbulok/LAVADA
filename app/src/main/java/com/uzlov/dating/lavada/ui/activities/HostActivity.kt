@@ -6,12 +6,16 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.ui.fragments.MainVideosFragment
-import com.uzlov.dating.lavada.ui.fragments.profile.ProfileFragment
+import com.uzlov.dating.lavada.ui.fragments.VideoCaptureFragment
 import com.uzlov.dating.lavada.ui.fragments.profile.UploadVideoFragment
 
 class HostActivity : AppCompatActivity() {
 
     private var bottomNavigation: BottomNavigationView? = null
+
+    private val videoCaptureFragment by lazy {
+        VideoCaptureFragment()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,17 +29,17 @@ class HostActivity : AppCompatActivity() {
         bottomNavigation?.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.upload_video -> {
-                        setFragment(UploadVideoFragment.newInstance())
-                        return@setOnItemSelectedListener true
+                    setFragment(UploadVideoFragment.newInstance())
+                    return@setOnItemSelectedListener true
                 }
                 R.id.create_video -> {
                     //поменять на нужное
-                    setFragment(ProfileFragment.newInstance())
+                    setFragment(videoCaptureFragment)
                     return@setOnItemSelectedListener true
                 }
                 R.id.main_action -> {
-                        setFragment(MainVideosFragment.newInstance())
-                        return@setOnItemSelectedListener true
+                    setFragment(MainVideosFragment.newInstance())
+                    return@setOnItemSelectedListener true
                 }
                 else -> false
             }
@@ -46,5 +50,14 @@ class HostActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.container, fragment)
             .commit()
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        videoCaptureFragment.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 }
