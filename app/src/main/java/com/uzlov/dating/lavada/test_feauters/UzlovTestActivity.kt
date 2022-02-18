@@ -12,9 +12,11 @@ class UzlovTestActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.uzlov_test_layout)
+        setContentView(R.layout.test_layout)
 
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, fragment).commit()
-        Log.e(javaClass.simpleName, "onCreate: ${applicationContext.cacheDir}")
+//        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, fragment).commit()
+//        Log.e(javaClass.simpleName, "onCreate: ${applicationContext.cacheDir}")
+
+
     }
 }
