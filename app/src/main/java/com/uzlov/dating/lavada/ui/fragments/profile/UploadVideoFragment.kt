@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.abedelazizshe.lightcompressorlibrary.CompressionListener
@@ -110,6 +111,7 @@ class UploadVideoFragment :
                             // On Compression success
                             Log.d("SUCCESS", "video compressed")
                             firebaseStorageService.uploadVideo(path.toString(), context!!)
+                            Toast.makeText(context, "Ваше видео успешно загружено на сервер", Toast.LENGTH_SHORT).show()
                         }
 
                         override fun onFailure(index: Int, failureMessage: String) {

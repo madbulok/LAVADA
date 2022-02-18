@@ -9,7 +9,7 @@ import com.uzlov.dating.lavada.ui.fragments.BaseFragment
 import com.uzlov.dating.lavada.ui.fragments.MainVideosFragment
 import javax.inject.Inject
 
-class LogInFragment: BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::inflate) {
+class LogInFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::inflate) {
 
     @Inject
     lateinit var firebaseEmailAuthService: FirebaseEmailAuthService
@@ -20,10 +20,16 @@ class LogInFragment: BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::in
         viewBinding.btnLogin.setOnClickListener {
             val email = viewBinding.tiEtEmail.text.toString()
             val password = viewBinding.textInputPassword.text.toString()
-            firebaseEmailAuthService.loginWithEmailAndPassword(email, password, parentFragmentManager, MainVideosFragment.newInstance())
+            if (!email.isNullOrEmpty() && !password.isNullOrEmpty()) {
+                firebaseEmailAuthService.loginWithEmailAndPassword(
+                    email,
+                    password,
+                    parentFragmentManager,
+                    MainVideosFragment.newInstance()
+                )
+            }
         }
     }
-
 
     companion object {
         fun newInstance() =

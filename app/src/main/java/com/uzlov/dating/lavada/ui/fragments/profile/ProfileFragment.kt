@@ -2,6 +2,7 @@ package com.uzlov.dating.lavada.ui.fragments.profile
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
 import com.uzlov.dating.lavada.databinding.FragmentProfileBinding
@@ -25,10 +26,12 @@ class ProfileFragment: BaseFragment<FragmentProfileBinding>(FragmentProfileBindi
         with(viewBinding){
             tvName.text = firebaseEmailAuthService.auth.currentUser?.email
             btnLogOut.setOnClickListener {
-                firebaseEmailAuthService.logoutAndUpdateUI(parentFragmentManager, LogInFragment.newInstance())
+                firebaseEmailAuthService.logout()
+                Toast.makeText(context, "Вы успешно вышли из аккаунта", Toast.LENGTH_SHORT).show()
             }
             btnDel.setOnClickListener {
-                firebaseEmailAuthService.delUser(parentFragmentManager, RegistrationFragment())
+                firebaseEmailAuthService.delUser()
+                Toast.makeText(context, "Ваш аккаунт успешно удален!", Toast.LENGTH_SHORT).show()
             }
         }
 

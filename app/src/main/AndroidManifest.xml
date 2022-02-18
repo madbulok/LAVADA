@@ -29,6 +29,11 @@
             android:label="Регистрация"
             android:screenOrientation="portrait" />
 
+        <activity
+            android:name=".ui.activities.HostActivity"
+            android:exported="true"
+            android:screenOrientation="portrait" />
+
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
