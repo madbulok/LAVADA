@@ -100,4 +100,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp" />
+
+    <TextView
+        android:id="@+id/tvPolicy"
+        android:text="Политика конфиденциальности"
+        android:textColor="@color/com_facebook_blue"
+        android:layout_marginStart="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/tvTermOfUse"
+        android:text="Правила использования"
+        android:textColor="@color/com_facebook_blue"
+        android:layout_marginStart="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 </LinearLayout>
