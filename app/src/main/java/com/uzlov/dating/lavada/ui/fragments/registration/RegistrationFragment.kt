@@ -25,6 +25,8 @@ import com.uzlov.dating.lavada.databinding.FragmentRegistrationBinding
 import com.uzlov.dating.lavada.domain.models.User
 import com.uzlov.dating.lavada.ui.activities.HostActivity
 import com.uzlov.dating.lavada.ui.fragments.BaseFragment
+import com.uzlov.dating.lavada.ui.fragments.PrivatePolicyFragment
+import com.uzlov.dating.lavada.ui.fragments.TermOfUseFragment
 import com.uzlov.dating.lavada.ui.fragments.profile.AboutMyselfFragment
 import org.json.JSONException
 import java.util.regex.Pattern
@@ -111,6 +113,19 @@ class RegistrationFragment :
             tvLogIn.setOnClickListener {
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.container, LogInFragment.newInstance())
+                    .commit()
+            }
+
+            tvPolicy.setOnClickListener {
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.container, TermOfUseFragment())
+                    .addToBackStack(null)
+                    .commit()
+            }
+            tvTermOfUse.setOnClickListener {
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.container, PrivatePolicyFragment())
+                    .addToBackStack(null)
                     .commit()
             }
         }
