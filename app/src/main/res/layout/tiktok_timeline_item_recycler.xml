@@ -72,6 +72,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/message_circle"
+            app:tint="@color/Surface"
             android:layout_marginEnd="@dimen/default_margin_16"
             android:layout_marginBottom="16dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -84,6 +85,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/heart"
+            app:tint="@color/Surface"
             android:layout_marginEnd="@dimen/default_margin_16"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/center_vertical"
@@ -97,13 +99,15 @@
             android:layout_marginTop="@dimen/default_margin_16"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/ivHeartTo"
-            app:srcCompat="@drawable/gift" />
+            app:srcCompat="@drawable/gift"
+            app:tint="@color/Surface"/>
 
         <!--    bottom random profile bar-->
 
         <ImageView
             android:id="@+id/ivInstagramProfile"
             app:srcCompat="@drawable/instagram"
+            app:tint="@color/Surface"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/default_margin_16"
@@ -114,6 +118,7 @@
         <ImageView
             android:id="@+id/ivTikTokProfile"
             app:srcCompat="@drawable/tiktok"
+            app:tint="@color/Surface"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toEndOf="@id/ivInstagramProfile"
@@ -123,6 +128,7 @@
         <ImageView
             android:id="@+id/ivFacebookProfile"
             app:srcCompat="@drawable/fb"
+            app:tint="@color/Surface"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/default_margin_16"
