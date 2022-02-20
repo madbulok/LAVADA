@@ -6,16 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".ui.activities.HostActivity">
 
-
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/ivProfile"
-        android:layout_width="@dimen/size_image_profile"
-        android:layout_height="@dimen/size_image_profile"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="@dimen/default_margin_16"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvVideosUsers"
         android:layout_width="0dp"
@@ -28,6 +18,18 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:listitem="@layout/tiktok_timeline_item_recycler" />
 
+<!--    top profile bar-->
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/ivProfile"
+        android:layout_width="@dimen/size_image_profile"
+        android:layout_height="@dimen/size_image_profile"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="@dimen/default_margin_16"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent"
+        tools:background="@tools:sample/avatars"/>
+
     <ImageView
         android:id="@+id/ivFilter"
         android:layout_width="wrap_content"
@@ -39,6 +41,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/ivProfile"/>
 
     <ImageView
+        android:id="@+id/ivMyMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/message_circle"
@@ -46,5 +49,7 @@
         app:layout_constraintEnd_toStartOf="@+id/ivFilter"
         app:layout_constraintTop_toTopOf="@+id/ivProfile"
         app:layout_constraintBottom_toBottomOf="@+id/ivProfile"/>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

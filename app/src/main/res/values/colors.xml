@@ -14,5 +14,6 @@
     <color name="Brand_hover">#DEBDF8</color>
     <color name="Premium_fill">#FFC700</color>
     <color name="Error">#FF5247</color>
+    <color name="transparent">#00FFFFFF</color>
 
 </resources>

@@ -78,6 +78,21 @@ class MainVideosFragment :
                     }
                 }
             })
+
+            mAdapter.setOnActionClickListener(object : ProfileRecyclerAdapter.OnActionListener {
+                override fun sendGift() {
+
+                }
+
+                override fun sendHeart() {
+
+                }
+
+                override fun sendMessage() {
+                    val heartFragment = FragmentMatch()
+                    heartFragment.show(childFragmentManager, heartFragment.javaClass.simpleName)
+                }
+            })
         }
 
         mAdapter.updateList(testData)

@@ -1,12 +1,30 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.LAVADA" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/Brand_fill</item>
         <item name="colorPrimaryVariant">@color/Brand_hover</item>
         <item name="colorOnPrimary">@color/Brand_hover</item>
+
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/Brand_fill</item>
+        <item name="colorSecondaryVariant">@color/Brand_hover</item>
+        <item name="colorOnSecondary">@color/Brand_hover</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+        <item name="android:buttonStyle">@style/DefaultButtons</item>
+    </style>
+
+    <style name="ShapeAppearanceOverlay.App.CornerSize50Percent" parent="">
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <style name="DefaultButtons" parent="Widget.MaterialComponents.Button">
+        <item name="cornerRadius">@dimen/default_corner_radius_16</item>
+        <item name="android:backgroundTint">@color/Brand_fill</item>
+        <item name="rippleColor">@color/Brand_hover</item>
+        <item name="android:textColor">@color/Primary_text</item>
+        <item name="android:textAllCaps">false</item>
     </style>
 </resources>
