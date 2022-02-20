@@ -5,40 +5,106 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/toolbarLayout"
-        android:layout_width="match_parent"
+    <ImageView
+        android:id="@+id/tbBackAction"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:srcCompat="@drawable/chevron_left"
+        android:layout_marginTop="18dp"
+        android:layout_marginStart="22dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/rootToolbar"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/chatLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/chats_label"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:textColor="@color/Primary_text"
+        app:layout_constraintEnd_toStartOf="@id/tbSearchAction"
+        app:layout_constraintStart_toEndOf="@+id/tbBackAction"
+        app:layout_constraintTop_toTopOf="@+id/tbBackAction"
+        app:layout_constraintBottom_toBottomOf="@+id/tbBackAction"/>
+
+    <ImageView
+        android:id="@+id/tbSearchAction"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/search"
+        app:tint="@color/Secondary_text"
+        android:layout_marginTop="18dp"
+        android:layout_marginEnd="22dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/text_layout_search"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:backgroundTint="@color/Surface_1"
+        app:startIconDrawable="@drawable/search"
+        app:endIconMode="clear_text"
+        android:visibility="gone"
+        android:background="@color/Surface_1"
+        android:layout_marginEnd="@dimen/default_margin_16"
+        android:layout_marginStart="@dimen/default_margin_16"
+        app:boxCornerRadiusBottomEnd="@dimen/default_corner_radius_16"
+        app:boxCornerRadiusBottomStart="@dimen/default_corner_radius_16"
+        app:boxCornerRadiusTopStart="@dimen/default_corner_radius_16"
+        app:boxCornerRadiusTopEnd="@dimen/default_corner_radius_16"
+        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+        app:layout_constraintTop_toTopOf="@+id/tbBackAction"
+        app:layout_constraintBottom_toBottomOf="@+id/tbBackAction"
+        app:layout_constraintStart_toEndOf="@+id/tbBackAction"
+        app:layout_constraintEnd_toStartOf="@+id/cancelSearch"
+        tools:visibility="visible">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etSearchQuery"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:titleCentered="true"
-            tools:title="Заголовок"/>
-    </com.google.android.material.appbar.AppBarLayout>
+            android:layout_height="wrap_content" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:id="@+id/cancelSearch"
+        android:text="@string/cancel_label"
+        android:textColor="@color/Secondary_text"
+        android:textSize="16sp"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/default_margin_16"
+        app:layout_constraintTop_toTopOf="@+id/tbBackAction"
+        app:layout_constraintBottom_toBottomOf="@+id/tbBackAction"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:visibility="visible"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/historyRecyclerView"
-        android:layout_height="0dp"
         android:layout_width="0dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@id/toolbarLayout"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="27dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chatLabel"
+        tools:itemCount="10"
+        tools:listitem="@layout/item_profile_stories_layout" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/chatRecyclerView"
-        android:layout_height="0dp"
         android:layout_width="0dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:layout_height="0dp"
         android:orientation="vertical"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/historyRecyclerView"
+        tools:itemCount="15"
+        tools:listitem="@layout/item_message_layout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

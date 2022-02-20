@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/imageProfile"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        app:strokeColor="@color/Premium_fill"
+        app:strokeWidth="4dp"
+
+        android:layout_marginStart="22dp"
+        style="@style/ShapeAppearanceOverlay.App.CornerSize50Percent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:background="@drawable/tools_test_image_rounded" />
+
+    <TextView
+        android:id="@+id/tvProfileName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="4dp"
+        android:textColor="@color/Primary_text"
+        app:layout_constraintEnd_toStartOf="@+id/tvDateTimeLastMessage"
+        app:layout_constraintStart_toEndOf="@+id/imageProfile"
+        app:layout_constraintTop_toTopOf="@+id/imageProfile"
+        tools:text="@tools:sample/first_names" />
+
+    <TextView
+        android:id="@+id/tvMessage"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textColor="@color/Primary_text"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/chip"
+        app:layout_constraintStart_toStartOf="@+id/tvProfileName"
+        app:layout_constraintTop_toBottomOf="@+id/tvProfileName"
+        tools:text="Photos from holiday" />
+
+    <TextView
+        android:id="@+id/tvSubMessageName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textColor="@color/Secondary_text"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/chip"
+        app:layout_constraintStart_toStartOf="@+id/tvProfileName"
+        app:layout_constraintTop_toBottomOf="@+id/tvMessage"
+        tools:text="Good morning! Hope you are good.." />
+
+    <TextView
+        android:id="@+id/tvDateTimeLastMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginEnd="24dp"
+        android:textColor="@color/Secondary_text"
+        app:layout_constraintTop_toTopOf="@+id/imageProfile"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="9.56 AM"/>
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/chip"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:backgroundTint="@color/Brand_fill"
+        app:layout_constraintBottom_toBottomOf="@+id/tvSubMessageName"
+        app:layout_constraintEnd_toEndOf="@+id/tvDateTimeLastMessage"
+        app:layout_constraintTop_toBottomOf="@+id/tvProfileName"
+        tools:text="123"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

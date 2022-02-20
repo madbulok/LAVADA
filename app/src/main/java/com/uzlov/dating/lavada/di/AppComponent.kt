@@ -1,6 +1,7 @@
 package com.uzlov.dating.lavada.di
 
 import com.uzlov.dating.lavada.di.modules.*
+import com.uzlov.dating.lavada.ui.fragments.ChatsTelegram
 import com.uzlov.dating.lavada.ui.fragments.MainVideosFragment
 import com.uzlov.dating.lavada.ui.fragments.profile.AboutMyselfFragment
 import com.uzlov.dating.lavada.ui.fragments.profile.ProfileFragment
@@ -28,4 +29,5 @@ interface AppComponent {
     fun inject(uploadVideoFragment: UploadVideoFragment)
     fun inject(logInFragment: LogInFragment)
     fun inject(profileFragment: ProfileFragment)
+    fun inject(chatsTelegram: ChatsTelegram)
 }

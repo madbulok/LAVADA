@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginEnd="8dp"
+    tools:context=".ui.activities.HostActivity">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        app:strokeWidth="4dp"
+        app:strokeColor="@color/Premium_fill"
+        style="@style/ShapeAppearanceOverlay.App.CornerSize50Percent"
+        tools:background="@drawable/tools_test_image_rounded"/>
+
+</FrameLayout>
