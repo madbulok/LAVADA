@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/transparent"
+    tools:context=".ui.activities.HostActivity">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/dialog_bg">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/is_match"
+            android:layout_marginTop="@dimen/default_margin_32"
+            android:textSize="24sp"
+            android:textColor="@color/Primary_text"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/ivClose"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/default_margin_32"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/textView"
+            app:srcCompat="@drawable/close" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivRandomProfile"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_marginTop="21dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView"
+            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent"
+            tools:background="@tools:sample/avatars" />
+
+        <ImageView
+            android:id="@+id/ivHeartSubIcon"
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            app:layout_constraintTop_toBottomOf="@id/ivRandomProfile"
+            app:layout_constraintBottom_toBottomOf="@id/ivRandomProfile"
+            app:layout_constraintStart_toStartOf="@id/ivRandomProfile"
+            app:layout_constraintEnd_toEndOf="@id/ivRandomProfile"
+            app:srcCompat="@drawable/heart"
+            app:tint="@color/Error"/>
+
+        <TextView
+            android:id="@+id/tvLocationProfile"
+            android:textColor="@color/Secondary_text"
+            android:gravity="center"
+            android:layout_marginBottom="@dimen/default_margin_32"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvNameProfile"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:text="California, 350 km from you" />
+
+        <TextView
+            android:id="@+id/tvNameProfile"
+            android:gravity="center"
+            android:textColor="@color/Primary_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ivHeartSubIcon"
+            tools:text="Josiah Zayner, 35" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSendMessageTo"
+        android:text="@string/send_message"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="@dimen/default_margin_32"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        style="@style/DefaultButtons"/>
+
+
+</androidx.appcompat.widget.LinearLayoutCompat>
