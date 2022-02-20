@@ -73,9 +73,7 @@ class MainVideosFragment :
                     Toast.makeText(requireContext(), "Вы отправили симпатию", Toast.LENGTH_SHORT).show()
                     lifecycleScope.launchWhenResumed {
                         with(viewBinding){
-                            likeIV.visibility = View.VISIBLE
                             delay(500)
-                            likeIV.visibility = View.GONE
                         }
                     }
                 }

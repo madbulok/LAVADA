@@ -1,4 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="love">#D51A0C</color>
+
+    <color name="Primary_text">#FFFFFF</color>
+    <color name="Secondary_text">#7AFFFFFF</color>
+    <color name="Inverse_text">#000D1A</color>
+    <color name="Placeholder_text">#3DFFFFFF</color>
+    <color name="Link_text">#6EC2FB</color>
+    <color name="Disable_text">#1AFFFFFF</color>
+    <color name="Surface_1">#26FFFFFF</color>
+    <color name="Surface">#000D1A</color>
+    <color name="Surface_inverse">#FFFFFF</color>
+    <color name="Brand_fill">#EFDAFF</color>
+    <color name="Brand_hover">#DEBDF8</color>
+    <color name="Premium_fill">#FFC700</color>
+    <color name="Error">#FF6D6D</color>
+
 </resources>
