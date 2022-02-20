@@ -5,15 +5,21 @@
       <map>
         <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/drawable/arrow_down.xml" value="0.22135416666666666" />
         <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/drawable/donut.xml" value="0.15520833333333334" />
+        <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/drawable/facebook.xml" value="0.3828125" />
+        <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/drawable/fb.xml" value="0.3828125" />
         <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/drawable/female.xml" value="0.15520833333333334" />
         <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/drawable/filter.xml" value="0.22135416666666666" />
+        <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/drawable/gift.xml" value="0.3828125" />
+        <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/drawable/heart.xml" value="0.3828125" />
         <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/drawable/ic_launch_screen.xml" value="0.22135416666666666" />
         <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/drawable/ic_star_1.xml" value="0.22135416666666666" />
         <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/drawable/ic_star_2.xml" value="0.22135416666666666" />
         <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/drawable/ic_star_3.xml" value="0.22135416666666666" />
         <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/drawable/ic_vector_background.xml" value="0.22135416666666666" />
+        <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/drawable/instagram.xml" value="0.3828125" />
         <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/drawable/male.xml" value="0.15520833333333334" />
         <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/drawable/message_circle.xml" value="0.22135416666666666" />
+        <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/drawable/tiktok.xml" value="0.3828125" />
         <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/layout/fragment_about_myself.xml" value="0.1390625" />
         <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/layout/fragment_private_police.xml" value="0.2876992235390274" />
         <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/layout/fragment_registration.xml" value="0.36666666666666664" />
@@ -24,7 +30,7 @@
         <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/layout/questionnaire_item_view.xml" value="0.22" />
         <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/layout/screen_splash_activity.xml" value="0.16" />
         <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/layout/test_layout.xml" value="0.36666666666666664" />
-        <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/layout/tiktok_timeline_item_recycler.xml" value="0.22814128546612622" />
+        <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/layout/tiktok_timeline_item_recycler.xml" value="0.33" />
         <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/layout/uzlov_test_layout.xml" value="0.1390625" />
       </map>
     </option>

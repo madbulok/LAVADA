@@ -4,4 +4,6 @@
     <dimen name="default_corner_radius_16">16dp</dimen>
     <dimen name="default_elevation">6dp</dimen>
     <dimen name="size_image_profile">44dp</dimen>
+    <dimen name="default_margin_32">32dp</dimen>
+    <dimen name="default_margin_8">8dp</dimen>
 </resources>

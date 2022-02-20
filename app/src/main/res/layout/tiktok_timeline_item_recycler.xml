@@ -29,23 +29,24 @@
         android:background="#fff">
 
 
-
         <com.google.android.exoplayer2.ui.PlayerView
-            app:surface_type="texture_view"
             android:id="@+id/item_video_exoplayer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:resize_mode="fixed_width"
-            app:video_url="@{dataModel.url_video}"
+            android:visibility="visible"
+            app:item_index="@{index}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
             app:on_state_change="@{callback}"
             app:progressbar="@{progressBar}"
-            app:item_index="@{index}"
-            android:visibility="visible"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
-
+            app:resize_mode="fixed_width"
+            app:surface_type="texture_view"
+            app:video_url="@{dataModel.url_video}"
+            tools:background="@color/Primary_text" />
 
         <ProgressBar
             android:id="@+id/progressBar"
@@ -57,6 +58,119 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             tools:visibile="visible"/>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/center_vertical"
+            app:layout_constraintGuide_percent="0.5"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <!--    action left -->
+        <ImageView
+            android:id="@+id/ivMessageTo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/message_circle"
+            android:layout_marginEnd="@dimen/default_margin_16"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/ivHeartTo"
+            app:layout_constraintBottom_toBottomOf="@+id/center_vertical"/>
+
+
+        <ImageView
+            android:id="@+id/ivHeartTo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/heart"
+            android:layout_marginEnd="@dimen/default_margin_16"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/center_vertical"
+            app:layout_constraintBottom_toBottomOf="@+id/center_vertical"/>
+
+        <ImageView
+            android:id="@+id/ivGiftTo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/default_margin_16"
+            android:layout_marginTop="@dimen/default_margin_16"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ivHeartTo"
+            app:srcCompat="@drawable/gift" />
+
+        <!--    bottom random profile bar-->
+
+        <ImageView
+            android:id="@+id/ivInstagramProfile"
+            app:srcCompat="@drawable/instagram"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/default_margin_16"
+            android:layout_marginBottom="@dimen/default_margin_32"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <ImageView
+            android:id="@+id/ivTikTokProfile"
+            app:srcCompat="@drawable/tiktok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/ivInstagramProfile"
+            android:layout_marginStart="@dimen/default_margin_16"
+            app:layout_constraintBottom_toBottomOf="@id/ivInstagramProfile"/>
+
+        <ImageView
+            android:id="@+id/ivFacebookProfile"
+            app:srcCompat="@drawable/fb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/default_margin_16"
+            app:layout_constraintStart_toEndOf="@id/ivTikTokProfile"
+            app:layout_constraintBottom_toBottomOf="@id/ivInstagramProfile"/>
+
+        <TextView
+            android:id="@+id/tvDescriptionProfile"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:lineSpacingExtra="5sp"
+            android:layout_marginBottom="@dimen/default_margin_16"
+            app:layout_constraintBottom_toTopOf="@+id/ivInstagramProfile"
+            app:layout_constraintEnd_toEndOf="@+id/ivGiftTo"
+            app:layout_constraintStart_toStartOf="@+id/ivInstagramProfile"
+            tools:text="Art-director of Lavada. I love cinema, design, parties, travel. Looking for interesting creative people." />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivRandomProfile"
+            android:layout_width="@dimen/size_image_profile"
+            android:layout_height="@dimen/size_image_profile"
+            android:layout_marginBottom="@dimen/default_margin_8"
+            app:layout_constraintBottom_toTopOf="@+id/tvDescriptionProfile"
+            app:layout_constraintStart_toStartOf="@+id/tvDescriptionProfile"
+            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent"
+            tools:background="@tools:sample/avatars" />
+
+        <TextView
+            android:id="@+id/tvLocationProfile"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/default_margin_16"
+            app:layout_constraintStart_toEndOf="@+id/ivRandomProfile"
+            app:layout_constraintBottom_toBottomOf="@id/ivRandomProfile"
+            app:layout_constraintEnd_toEndOf="@id/ivGiftTo"
+            tools:text="California, 350 km from you"/>
+
+        <TextView
+            android:id="@+id/tvNameProfile"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_marginStart="@dimen/default_margin_16"
+            app:layout_constraintStart_toEndOf="@+id/ivRandomProfile"
+            app:layout_constraintTop_toTopOf="@id/ivRandomProfile"
+            app:layout_constraintEnd_toEndOf="@id/ivGiftTo"
+            tools:text="Josiah Zayner, 35" />
+
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
