@@ -84,4 +84,11 @@
     <string name="send_message">Send message</string>
     <string name="chats_label">Chats</string>
     <string name="cancel_label">Cancel</string>
+    <string name="welcome">Welcome</string>
+    <string name="log_in_to_your_account">Log in to your account</string>
+    <string name="log_in_btn_label">Log in</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="hint_password">password</string>
+    <string name="hint_e_mail">e-mail</string>
+    <string name="error">Input error, password must contain at least 8 characters, uppercase and numbers</string>
 </resources>
