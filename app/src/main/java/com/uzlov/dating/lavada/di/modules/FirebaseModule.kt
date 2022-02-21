@@ -10,11 +10,13 @@ import com.google.firebase.ktx.initialize
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
 import com.uzlov.dating.lavada.app.App
+import com.uzlov.dating.lavada.data.data_sources.IMessageDataSource
 import com.uzlov.dating.lavada.data.data_sources.IRemoteDataSource
 import com.uzlov.dating.lavada.data.repository.UserLocalRepository
 import com.uzlov.dating.lavada.data.use_cases.UserUseCases
 import com.uzlov.dating.lavada.data.repository.UsersRemoteDataSourceImpl
 import com.uzlov.dating.lavada.data.data_sources.IUsersRepository
+import com.uzlov.dating.lavada.data.repository.MessagesRepository
 import com.uzlov.dating.lavada.data.repository.UserRemoteRepositoryImpl
 import dagger.Module
 import dagger.Provides
@@ -42,6 +44,9 @@ class FirebaseModule {
 
     @Provides
     fun provideUserUseCase(localRepository: UserLocalRepository, remoteDataSource: IRemoteDataSource) : UserUseCases = UserUseCases(localRepository, remoteDataSource)
+
+    @Provides
+    fun provideMessageRepository(firebaseDatabase: FirebaseDatabase) : IMessageDataSource = MessagesRepository(firebaseDatabase)
 
     @Provides
     fun provideStorage(): FirebaseStorage = Firebase.storage
