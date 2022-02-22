@@ -8,6 +8,8 @@ import com.uzlov.dating.lavada.ui.fragments.profile.ProfileFragment
 import com.uzlov.dating.lavada.ui.fragments.profile.UploadVideoFragment
 import com.uzlov.dating.lavada.ui.fragments.registration.LogInFragment
 import com.uzlov.dating.lavada.ui.fragments.registration.RegistrationFragment
+import com.uzlov.dating.lavada.ui.fragments.settings.SettingsFragment
+import com.uzlov.dating.lavada.ui.fragments.settings.UpdatePasswordFragment
 import dagger.Component
 import javax.inject.Singleton
 
@@ -30,4 +32,6 @@ interface AppComponent {
     fun inject(logInFragment: LogInFragment)
     fun inject(profileFragment: ProfileFragment)
     fun inject(chatsTelegram: ChatsTelegram)
+    fun inject(settingsFragment: SettingsFragment)
+    fun inject(updatePasswordFragment: UpdatePasswordFragment)
 }

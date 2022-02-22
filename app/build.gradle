@@ -109,7 +109,8 @@ dependencies {
     implementation 'com.google.android.gms:play-services-auth:20.1.0'
 
     //facebook
-    implementation 'com.facebook.android:facebook-android-sdk:[4,5)'
+    implementation 'com.facebook.android:facebook-android-sdk:[8,9)'
+    implementation 'com.facebook.android:facebook-login:[8.1)'
 
     def billing_version = "3.0.3"
     implementation "com.android.billingclient:billing:$billing_version"

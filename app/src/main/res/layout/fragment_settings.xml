@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/tbBackAction"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="22dp"
+        android:layout_marginTop="18dp"
+        android:src="@drawable/chevron_left"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_settings_label"
+        style="@style/Regular"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/settings"
+        app:layout_constraintBottom_toBottomOf="@id/tbBackAction"
+        app:layout_constraintTop_toTopOf="@id/tbBackAction" />
+
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/sw_premium"
+        style="@style/Regular"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="43dp"
+        android:layout_marginEnd="20dp"
+        android:drawableStart="@drawable/eye"
+        android:drawablePadding="9dp"
+        android:text="@string/only_premium"
+        app:layout_constraintTop_toBottomOf="@+id/tv_settings_label"
+        app:thumbTint="@color/Surface" />
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/sw_theme"
+        style="@style/Regular"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:drawableStart="@drawable/moon"
+        android:drawablePadding="9dp"
+        android:text="@string/dark_theme"
+        app:layout_constraintTop_toBottomOf="@+id/sw_premium"
+        app:thumbTint="@color/Surface" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/btn_password"
+        style="@style/Regular"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:drawableEnd="@drawable/chevron_right"
+        android:drawablePadding="9dp"
+        android:gravity="start|center"
+        android:text="@string/change_password"
+        app:drawableStartCompat="@drawable/lock"
+        app:layout_constraintTop_toBottomOf="@id/sw_theme" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/btn_notifications"
+        style="@style/Regular"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="20dp"
+        android:drawableEnd="@drawable/chevron_right"
+        android:drawablePadding="9dp"
+        android:gravity="start|center"
+        android:text="@string/notifications"
+        app:drawableStartCompat="@drawable/bell"
+        app:layout_constraintTop_toBottomOf="@id/btn_password" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/btn_black_list"
+        style="@style/Regular"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="20dp"
+        android:drawableEnd="@drawable/chevron_right"
+        android:drawablePadding="9dp"
+        android:gravity="start|center"
+        android:text="@string/black_list"
+        app:drawableStartCompat="@drawable/black_list"
+        app:layout_constraintTop_toBottomOf="@id/btn_notifications" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/btn_help"
+        style="@style/Regular"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="20dp"
+        android:drawableEnd="@drawable/chevron_right"
+        android:drawablePadding="9dp"
+        android:gravity="start|center"
+        android:text="@string/help"
+        app:drawableStartCompat="@drawable/help_circle"
+        app:layout_constraintTop_toBottomOf="@id/btn_black_list" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/btn_about"
+        style="@style/Regular"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="20dp"
+        android:drawableEnd="@drawable/chevron_right"
+        android:drawablePadding="9dp"
+        android:gravity="start|center"
+        android:text="@string/about_lavada"
+        app:drawableStartCompat="@drawable/heart"
+        app:layout_constraintTop_toBottomOf="@id/btn_help" />
+
+    <TextView
+        android:id="@+id/btn_del"
+        style="@style/Regular"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:gravity="center"
+        android:text="@string/delete_account"
+        android:textColor="@color/Secondary_text"
+        app:layout_constraintBottom_toTopOf="@id/btn_log_out" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_log_out"
+        style="@style/DefaultButtons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="34dp"
+        android:background="@color/Surface_1"
+        android:text="@string/log_out"
+        app:layout_constraintBottom_toBottomOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
