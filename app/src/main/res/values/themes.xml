@@ -26,6 +26,8 @@
         <item name="rippleColor">@color/Brand_hover</item>
         <item name="android:textColor">@color/Primary_text</item>
         <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">@dimen/text_regular</item>
+        <item name="font">@font/inter</item>
     </style>
 
     <style name="Title1" parent="Widget.MaterialComponents.TextView">
