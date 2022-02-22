@@ -117,5 +117,6 @@
     <string name="watching_video">Watching video</string>
     <string name="gifts">Gifts</string>
     <string name="news">News</string>
+    <string name="another_email">Or sign in with another email</string>
 
 </resources>
