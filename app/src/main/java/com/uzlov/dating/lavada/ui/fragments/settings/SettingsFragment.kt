@@ -11,7 +11,6 @@ import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
 import com.uzlov.dating.lavada.databinding.FragmentSettingsBinding
 import com.uzlov.dating.lavada.ui.fragments.BaseFragment
-import com.uzlov.dating.lavada.ui.fragments.profile.ProfileFragment
 import javax.inject.Inject
 
 class SettingsFragment : BaseFragment<FragmentSettingsBinding>(FragmentSettingsBinding::inflate) {
@@ -26,6 +25,9 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(FragmentSettingsB
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(viewBinding) {
+            tbBackAction.setOnClickListener {
+                parentFragmentManager.popBackStack()
+            }
             btnLogOut.setOnClickListener {
                 firebaseEmailAuthService.logout()
                 Toast.makeText(context, "Вы успешно вышли из аккаунта", Toast.LENGTH_SHORT).show()
@@ -39,6 +41,18 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(FragmentSettingsB
                     showCustomAlertToByPremium()
                     swPremium.isChecked = false
                 }
+            }
+            btnPassword.setOnClickListener {
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.container, UpdatePasswordFragment.newInstance())
+                    .addToBackStack(null)
+                    .commit()
+            }
+            btnNotifications.setOnClickListener {
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.container,NotificationsFragment.newInstance())
+                    .addToBackStack(null)
+                    .commit()
             }
         }
     }
@@ -90,7 +104,7 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(FragmentSettingsB
 
     companion object {
         fun newInstance() =
-            ProfileFragment().apply {
+            SettingsFragment().apply {
                 arguments = Bundle().apply {
 
                 }

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/tbBackAction"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="22dp"
+        android:layout_marginTop="18dp"
+        android:src="@drawable/chevron_left"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_notifications_label"
+        style="@style/Regular"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/notifications"
+        app:layout_constraintBottom_toBottomOf="@id/tbBackAction"
+        app:layout_constraintTop_toTopOf="@id/tbBackAction" />
+
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/sw_messages"
+        style="@style/Regular"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="43dp"
+        android:layout_marginEnd="20dp"
+        android:text="@string/messages"
+        android:checked="true"
+        app:layout_constraintTop_toBottomOf="@+id/tv_notifications_label"
+        app:thumbTint="@color/Surface" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/sw_matches"
+        style="@style/Regular"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:text="@string/matches"
+        android:checked="true"
+        app:layout_constraintTop_toBottomOf="@+id/sw_messages"
+        app:thumbTint="@color/Surface" />
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/sw_likes"
+        style="@style/Regular"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:text="@string/likes"
+        android:checked="true"
+        app:layout_constraintTop_toBottomOf="@+id/sw_matches"
+        app:thumbTint="@color/Surface" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/sw_watching_video"
+        style="@style/Regular"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:text="@string/watching_video"
+        android:checked="true"
+        app:layout_constraintTop_toBottomOf="@+id/sw_likes"
+        app:thumbTint="@color/Surface" />
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/sw_gifts"
+        style="@style/Regular"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:text="@string/gifts"
+        android:checked="true"
+        app:layout_constraintTop_toBottomOf="@+id/sw_watching_video"
+        app:thumbTint="@color/Surface" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/sw_news"
+        style="@style/Regular"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:text="@string/news"
+        android:checked="true"
+        app:layout_constraintTop_toBottomOf="@+id/sw_gifts"
+        app:thumbTint="@color/Surface" />
+</androidx.constraintlayout.widget.ConstraintLayout>

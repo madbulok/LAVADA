@@ -17,6 +17,7 @@ import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService.Companion.TAG
 import com.uzlov.dating.lavada.databinding.FragmentLoginBinding
 import com.uzlov.dating.lavada.ui.fragments.BaseFragment
 import com.uzlov.dating.lavada.ui.fragments.MainVideosFragment
+import com.uzlov.dating.lavada.ui.fragments.settings.SettingsFragment
 import java.util.regex.Pattern
 import javax.inject.Inject
 
@@ -81,6 +82,7 @@ class LogInFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         Log.d(TAG, "Email sent.")
+                        customDialog?.dismiss()
                     }
                 }
 
@@ -103,12 +105,15 @@ class LogInFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
                 viewBinding.tilPassword.isEndIconVisible =
                     !viewBinding.textInputPassword.text.isNullOrEmpty()
                 if (!isValidPassword(viewBinding.textInputPassword.text.toString())) {
-                    viewBinding.textInputPassword.error = getString(R.string.error)
-                }
+                    viewBinding.tilPassword.error = getString(R.string.error)
+                } else viewBinding.tilPassword.isErrorEnabled = false
+
             }
 
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+
+            }
         })
     }
 
@@ -116,6 +121,7 @@ class LogInFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
         with(viewBinding) {
             btnLogin.isEnabled = isValidEmail(viewBinding.tiEtEmail.text.toString()) &&
                     isValidPassword(viewBinding.textInputPassword.text.toString())
+
         }
     }
 
