@@ -21,5 +21,6 @@ data class User(
     var url_avatar: String?= "",
     var url_video: String?= "",
     var lat: Double?= 0.0,
-    var lon: Double? = 0.0
+    var lon: Double? = 0.0,
+    var matches: MutableSet<String> = mutableSetOf() // хранит лайки пользователей
 ): Parcelable
