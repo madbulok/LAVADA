@@ -5,6 +5,8 @@ import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.fragment.app.Fragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.app.appComponent
@@ -24,6 +26,10 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(FragmentSettingsB
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initListeners()
+    }
+
+    private fun initListeners(){
         with(viewBinding) {
             tbBackAction.setOnClickListener {
                 parentFragmentManager.popBackStack()
@@ -32,27 +38,34 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(FragmentSettingsB
                 firebaseEmailAuthService.logout()
                 Toast.makeText(context, "Вы успешно вышли из аккаунта", Toast.LENGTH_SHORT).show()
 
+
             }
             btnDel.setOnClickListener {
                 showCustomAlertToDelAcc()
             }
-            swPremium.setOnCheckedChangeListener{ _, isChecked ->
-                if (isChecked){
+            swTheme.setOnCheckedChangeListener { _, isChecked ->
+                if (isChecked) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                } else {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                }
+                //не забыть запихать в sharedPreference
+
+            }
+            swPremium.setOnCheckedChangeListener { _, isChecked ->
+                if (isChecked) {
                     showCustomAlertToByPremium()
                     swPremium.isChecked = false
                 }
             }
             btnPassword.setOnClickListener {
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.container, UpdatePasswordFragment.newInstance())
-                    .addToBackStack(null)
-                    .commit()
+                updateUI(UpdatePasswordFragment.newInstance())
+            }
+            btnBlackList.setOnClickListener {
+                updateUI(BlackListFragment.newInstance())
             }
             btnNotifications.setOnClickListener {
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.container,NotificationsFragment.newInstance())
-                    .addToBackStack(null)
-                    .commit()
+                updateUI(NotificationsFragment.newInstance())
             }
         }
     }
@@ -70,7 +83,8 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(FragmentSettingsB
         }
         dialogView.findViewById<TextView>(R.id.header).text =
             getString(R.string.del_account_header)
-        dialogView.findViewById<TextView>(R.id.description).text = getString(R.string.del_account_desc)
+        dialogView.findViewById<TextView>(R.id.description).text =
+            getString(R.string.del_account_desc)
         val btSendPass = dialogView.findViewById<Button>(R.id.btnSendPasswordCustomDialog)
         btSendPass.text = getString(R.string.delete)
         btSendPass.setOnClickListener {
@@ -100,6 +114,13 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(FragmentSettingsB
             Toast.makeText(context, "Покупаем премиум", Toast.LENGTH_SHORT).show()
             customDialog?.dismiss()
         }
+    }
+
+    private fun updateUI(fragment: Fragment) {
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.container, fragment)
+            .addToBackStack(null)
+            .commit()
     }
 
     companion object {

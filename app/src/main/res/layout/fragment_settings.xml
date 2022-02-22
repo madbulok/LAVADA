@@ -39,7 +39,7 @@
         app:layout_constraintTop_toBottomOf="@+id/tv_settings_label"
         app:thumbTint="@color/Surface" />
 
-    <androidx.appcompat.widget.SwitchCompat
+    <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/sw_theme"
         style="@style/Regular"
         android:layout_width="match_parent"
