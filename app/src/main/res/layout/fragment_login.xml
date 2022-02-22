@@ -60,12 +60,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
-        app:endIconMode="password_toggle"
-        app:helperTextEnabled="true"
-        app:helperText=" "
         app:endIconDrawable="@drawable/show_password_selector"
-        app:layout_constraintTop_toBottomOf="@id/til_email"
-        app:errorEnabled="true">
+        app:endIconMode="password_toggle"
+        app:errorEnabled="true"
+        app:helperText=" "
+        app:helperTextEnabled="true"
+        app:layout_constraintTop_toBottomOf="@id/til_email">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/text_input_password"
@@ -77,23 +77,57 @@
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_label_forgot_pass"
+        style="@style/Regular"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
         android:text="@string/forgot_password"
-        style="@style/Regular"
         android:textColor="@color/Link_text"
         app:layout_constraintTop_toBottomOf="@id/til_password" />
 
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_sing_in_another"
+        style="@style/Regular"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="20dp"
+        android:gravity="center"
+        android:text="@string/another_email"
+        app:layout_constraintTop_toBottomOf="@id/tv_label_forgot_pass" />
+
+    <ImageButton
+        android:id="@+id/btn_google"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="@dimen/default_margin_8"
+        android:background="@drawable/google_button"
+        app:layout_constraintEnd_toStartOf="@+id/btn_facebook"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_sing_in_another" />
+
+    <ImageButton
+        android:id="@+id/btn_facebook"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/default_margin_8"
+        android:layout_marginEnd="50dp"
+        android:background="@drawable/ic_fb_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/btn_google"
+        app:layout_constraintTop_toBottomOf="@id/tv_sing_in_another" />
+
     <com.google.android.material.button.MaterialButton
-        style="@style/DefaultButtons"
         android:id="@+id/btnLogin"
+        style="@style/DefaultButtons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
         android:layout_marginBottom="46dp"
-        android:text="@string/log_in_btn_label"
         android:enabled="false"
+        android:text="@string/log_in_btn_label"
         app:layout_constraintBottom_toBottomOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
