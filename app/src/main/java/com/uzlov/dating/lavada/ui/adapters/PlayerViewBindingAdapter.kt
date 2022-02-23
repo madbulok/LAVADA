@@ -29,6 +29,12 @@ class PlayerViewAdapter {
             }
         }
 
+        fun pauseAllPlayers(){
+            playersMap.map {
+                it.value.stop(false)
+            }
+        }
+
         // call when item recycled to improve performance
         fun releaseRecycledPlayers(index: Int){
             playersMap[index]?.release()
@@ -38,6 +44,13 @@ class PlayerViewAdapter {
         fun pauseCurrentPlayingVideo(){
             if (currentPlayingVideo != null){
                 currentPlayingVideo?.second?.playWhenReady = false
+            }
+        }
+
+        // call when scroll to pause any playing player
+        fun playCurrentPlayingVideo(){
+            if (currentPlayingVideo != null){
+                currentPlayingVideo?.second?.playWhenReady = true
             }
         }
 

@@ -34,7 +34,7 @@ class FirebaseModule {
 
     @Singleton
     @Provides
-    fun provideRealtimeDatabase() : FirebaseDatabase = Firebase.database
+    fun provideRealtimeDatabase() : FirebaseDatabase = FirebaseDatabase.getInstance("https://lavada-7777-default-rtdb.europe-west1.firebasedatabase.app/")
 
     @Provides
     fun provideUserRemoteDataSource() : IRemoteDataSource = UsersRemoteDataSourceImpl()
@@ -46,7 +46,7 @@ class FirebaseModule {
     fun provideUserUseCase(localRepository: UserLocalRepository, remoteDataSource: IRemoteDataSource) : UserUseCases = UserUseCases(localRepository, remoteDataSource)
 
     @Provides
-    fun provideMessageRepository(firebaseDatabase: FirebaseDatabase) : IMessageDataSource = MessagesRepository(firebaseDatabase)
+    fun provideMessageRepository(db: FirebaseDatabase) : IMessageDataSource = MessagesRepository(db)
 
     @Provides
     fun provideStorage(): FirebaseStorage = Firebase.storage

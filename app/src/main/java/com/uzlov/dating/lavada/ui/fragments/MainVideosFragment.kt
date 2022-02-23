@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
+import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.ui.adapters.RecyclerViewScrollListener
 import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.databinding.MainVideosFragmentBinding
@@ -70,9 +71,10 @@ class MainVideosFragment :
             // double click send love
             mAdapter.setOnItemClickListener(object : ProfileRecyclerAdapter.OnItemClickListener {
                 override fun onItemClick(position: Int, model: User?) {
-                    Toast.makeText(requireContext(), "Вы отправили симпатию", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Вы отправили симпатию", Toast.LENGTH_SHORT)
+                        .show()
                     lifecycleScope.launchWhenResumed {
-                        with(viewBinding){
+                        with(viewBinding) {
                             delay(500)
                         }
                     }
@@ -85,17 +87,37 @@ class MainVideosFragment :
                 }
 
                 override fun sendHeart() {
-
+                    val heartFragment = FragmentMatch()
+                    heartFragment.show(childFragmentManager, heartFragment.javaClass.simpleName)
                 }
 
                 override fun sendMessage() {
-                    val heartFragment = FragmentMatch()
-                    heartFragment.show(childFragmentManager, heartFragment.javaClass.simpleName)
+
                 }
             })
         }
 
         mAdapter.updateList(testData)
+
+        setOnClickListener()
+    }
+
+    private val chatsFragment by lazy {
+        ChatsFragment()
+    }
+
+    private fun setOnClickListener() {
+        with(viewBinding) {
+            ivMyMessage.setOnClickListener {
+                parentFragmentManager.beginTransaction()
+                    .add(R.id.container, chatsFragment)
+                    .hide(this@MainVideosFragment)
+                    .show(chatsFragment)
+                    .addToBackStack(null)
+                    .commit()
+                PlayerViewAdapter.pauseCurrentPlayingVideo()
+            }
+        }
     }
 
     override fun onDestroyView() {
@@ -111,6 +133,7 @@ class MainVideosFragment :
                 arguments = Bundle().apply {
                 }
             }
+
         fun newInstance(userId: String) =
             MainVideosFragment().apply {
                 arguments = Bundle().apply {
