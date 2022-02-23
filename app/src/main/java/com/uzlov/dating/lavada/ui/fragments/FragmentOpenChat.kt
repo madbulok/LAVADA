@@ -23,7 +23,7 @@ class FragmentOpenChat :
     private var chatOpen: Chat? = null
 
     private val messagesAdapter by lazy {
-        ChatMessageAdapter()
+        ChatMessageAdapter(self = "Artem2")
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

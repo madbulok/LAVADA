@@ -15,7 +15,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
-    <com.google.android.material.imageview.ShapeableImageView
+    <com.uzlov.dating.lavada.ui.custom.UserAvatarImageView
         android:id="@+id/imageProfile"
         style="@style/ShapeAppearanceOverlay.App.CornerSize50Percent"
         android:layout_width="44dp"
@@ -26,7 +26,7 @@
         app:layout_constraintTop_toTopOf="@+id/tbBackAction"
         app:strokeColor="@color/Premium_fill"
         app:strokeWidth="4dp"
-        tools:background="@drawable/tools_test_image_rounded" />
+        app:srcCompat="@drawable/tools_test_image_rounded" />
 
     <TextView
         android:id="@+id/tvProfileName"
@@ -75,7 +75,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageProfile"
-        tools:listitem="@layout/item_mesage"
+        tools:listitem="@layout/item_mesage_recieved"
         tools:itemCount="10"/>
 
     <EditText
