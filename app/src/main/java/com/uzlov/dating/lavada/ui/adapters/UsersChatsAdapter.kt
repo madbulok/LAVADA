@@ -4,15 +4,16 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.uzlov.dating.lavada.databinding.FragmentChatsLayoutBinding
-import com.uzlov.dating.lavada.databinding.ItemProfileStoriesLayoutBinding
+import com.uzlov.dating.lavada.databinding.ItemMessageLayoutBinding
+import com.uzlov.dating.lavada.domain.models.Chat
 
-class UsersChatsAdapter: RecyclerView.Adapter<UsersChatsAdapter.ChatViewHolder>() {
+class UsersChatsAdapter(private var chatClickListener: OnChatClickListener? = null): RecyclerView.Adapter<UsersChatsAdapter.ChatViewHolder>() {
 
-    private val stories = mutableListOf<String>()
+    private val stories = mutableListOf<Chat>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatViewHolder {
-        val binding: FragmentChatsLayoutBinding =
-            FragmentChatsLayoutBinding.inflate(LayoutInflater.from(parent.context),
+        val binding: ItemMessageLayoutBinding =
+            ItemMessageLayoutBinding.inflate(LayoutInflater.from(parent.context),
                 parent,
                 false)
         return ChatViewHolder(binding)
@@ -24,11 +25,25 @@ class UsersChatsAdapter: RecyclerView.Adapter<UsersChatsAdapter.ChatViewHolder>(
 
     override fun getItemCount(): Int = stories.size
 
-    inner class ChatViewHolder(private val binding: FragmentChatsLayoutBinding) :
+    fun setChats(chats: List<Chat>) {
+        stories.clear()
+        stories.addAll(chats)
+        notifyDataSetChanged()
+    }
+
+    inner class ChatViewHolder(private val binding: ItemMessageLayoutBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun onBind(model: String) {
-
-
+        fun onBind(model: Chat) {
+            with(binding){
+                tvProfileName.text = model.uuid
+                root.setOnClickListener {
+                    if (adapterPosition != RecyclerView.NO_POSITION) chatClickListener?.onClick(stories[adapterPosition])
+                }
+            }
         }
+    }
+
+    interface OnChatClickListener {
+        fun onClick(chat: Chat)
     }
 }

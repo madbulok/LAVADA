@@ -49,8 +49,8 @@ dependencies {
     implementation 'androidx.fragment:fragment-ktx:1.4.1'
 
     // mvvm
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.4.0'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.4.1'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1'
 
     // pref
     implementation 'androidx.preference:preference-ktx:1.2.0'
@@ -79,8 +79,8 @@ dependencies {
     annotationProcessor "com.google.dagger:dagger-android-processor:2.11"
 
     implementation 'com.google.firebase:firebase-database:20.0.3'
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.4.0'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.4.0'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.4.1'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.4.1'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
     kapt 'com.google.dagger:dagger-compiler:2.24'
