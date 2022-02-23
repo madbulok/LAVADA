@@ -15,10 +15,16 @@ class ChatViewModel @Inject constructor(var messagesRepository: IMessageDataSour
     private val chats = MutableLiveData<List<Chat>>()
 
     fun observeChat(userId: String) : LiveData<List<Chat>> {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             val result = messagesRepository.getChats(userId)
             chats.postValue(result)
         }
         return chats
+    }
+
+    fun createChat(selfId: String, companionId: String){
+        viewModelScope.launch(Dispatchers.IO) {
+            messagesRepository.createChat(selfId, companionId)
+        }
     }
 }
