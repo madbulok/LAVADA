@@ -5,19 +5,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <com.google.android.material.imageview.ShapeableImageView
+    <com.uzlov.dating.lavada.ui.custom.UserAvatarImageView
         android:id="@+id/imageProfile"
         android:layout_width="44dp"
         android:layout_height="44dp"
-        app:strokeColor="@color/Premium_fill"
-        app:strokeWidth="4dp"
-
+        app:piv_borderColor="@color/Brand_fill"
+        app:piv_borderWidth="1dp"
         android:layout_marginStart="22dp"
         style="@style/ShapeAppearanceOverlay.App.CornerSize50Percent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:background="@drawable/tools_test_image_rounded" />
+        app:srcCompat="@drawable/tools_test_image_rounded" />
 
     <TextView
         android:id="@+id/tvProfileName"
