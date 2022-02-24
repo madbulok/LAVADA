@@ -19,9 +19,9 @@ class ProfileRecyclerAdapter(
     private var actionListener: OnActionListener? = null
 
     interface OnActionListener {
-        fun sendGift()
-        fun sendHeart()
-        fun sendMessage()
+        fun sendGift(user: User)
+        fun sendHeart(user: User)
+        fun sendMessage(user: User)
     }
 
     fun updateList(modelList: List<User>) {
@@ -107,13 +107,13 @@ class ProfileRecyclerAdapter(
             })
 
             binding.ivHeartTo.setOnClickListener {
-                actionListener?.sendHeart()
+                actionListener?.sendHeart(model)
             }
             binding.ivGiftTo.setOnClickListener {
-                actionListener?.sendGift()
+                actionListener?.sendGift(model)
             }
             binding.ivMessageTo.setOnClickListener {
-                actionListener?.sendMessage()
+                actionListener?.sendMessage(model)
             }
 
             binding.apply {

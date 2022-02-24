@@ -82,17 +82,17 @@ class MainVideosFragment :
             })
 
             mAdapter.setOnActionClickListener(object : ProfileRecyclerAdapter.OnActionListener {
-                override fun sendGift() {
+                override fun sendGift(user: User) {
 
                 }
 
-                override fun sendHeart() {
+                override fun sendHeart(user: User) {
                     val heartFragment = FragmentMatch()
                     heartFragment.show(childFragmentManager, heartFragment.javaClass.simpleName)
                 }
 
-                override fun sendMessage() {
-
+                override fun sendMessage(user: User) {
+                    // check VIP
                 }
             })
         }

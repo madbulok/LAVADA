@@ -26,42 +26,37 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/text_layout_search"
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/etSearchQuery"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:backgroundTint="@color/Surface_1"
-        app:startIconDrawable="@drawable/search"
-        app:endIconMode="clear_text"
+        android:layout_height="40dp"
+        android:background="@drawable/dialog_bg_color"
+        android:paddingStart="@dimen/default_margin_16"
+        android:drawablePadding="@dimen/default_margin_16"
+        android:drawableStart="@drawable/search_16"
         android:visibility="gone"
-        android:background="@color/Surface_1"
-        android:layout_marginEnd="@dimen/default_margin_16"
-        android:layout_marginStart="@dimen/default_margin_16"
-        app:boxCornerRadiusBottomEnd="@dimen/default_corner_radius_16"
-        app:boxCornerRadiusBottomStart="@dimen/default_corner_radius_16"
-        app:boxCornerRadiusTopStart="@dimen/default_corner_radius_16"
-        app:boxCornerRadiusTopEnd="@dimen/default_corner_radius_16"
-        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+        android:textSize="@dimen/default_margin_16"
         app:layout_constraintTop_toTopOf="@+id/tbBackAction"
         app:layout_constraintBottom_toBottomOf="@+id/tbBackAction"
         app:layout_constraintStart_toEndOf="@+id/tbBackAction"
         app:layout_constraintEnd_toStartOf="@+id/cancelSearch"
-        tools:visibility="visible">
+        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+        tools:visibility="visible"/>
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etSearchQuery"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:id="@+id/chatLabel"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/chats_label"
-            android:textColor="@color/Primary_text"
-            android:textSize="18sp" />
-    </com.google.android.material.textfield.TextInputLayout>
+    <TextView
+        android:id="@+id/chatLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/chats_label"
+        android:textColor="@color/Primary_text"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/tbBackAction"
+        app:layout_constraintEnd_toStartOf="@+id/tbSearchAction"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/tbBackAction"
+        app:layout_constraintTop_toTopOf="@+id/tbBackAction" />
 
     <TextView
         android:id="@+id/cancelSearch"
@@ -86,7 +81,7 @@
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/chatLabel"
+        app:layout_constraintTop_toBottomOf="@+id/tbBackAction"
         tools:itemCount="10"
         tools:listitem="@layout/item_profile_stories_layout" />
 
@@ -98,10 +93,8 @@
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/historyRecyclerView"
-        app:layout_constraintVertical_bias="1.0"
         tools:itemCount="15"
         tools:listitem="@layout/item_message_layout" />
 
