@@ -45,20 +45,30 @@ class UserAvatarImageView @JvmOverloads constructor (context: Context,
         )
     }
 
+    private var hasPremium: Boolean
     private val TAG = javaClass.simpleName
     @Px
     var mBorderWidth: Float = context.dpTpPx(DEFAULT_BORDER_WIDTH)
     @ColorInt
     private var mBorderColor:Int = Color.RED
 
-    private var mInitials = "  "
+    @ColorInt
+    private var mPremiumColor:Int = Color.RED
+
+    private var mInitials = ""
 
     private val avatarPaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val initialPaint = Paint(Paint.ANTI_ALIAS_FLAG)
 
-    private val borderPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val premiumBorder = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val contentBorder = Paint(Paint.ANTI_ALIAS_FLAG)
+
     private val mViewRect = Rect()
+    private val mPremiumViewRect = Rect()
+
     private val mBorderRect = Rect()
+    private val mPremiumRect = Rect()
+
     private lateinit var  srcBm : Bitmap
     private var half : Int = 1
 
@@ -86,12 +96,15 @@ class UserAvatarImageView @JvmOverloads constructor (context: Context,
         mBorderColor = mTypedArray.getColor(
             R.styleable.UserAvatarImageView_piv_borderColor,
             DEFAULT_BORDER_COLOR)
+        mPremiumColor = mTypedArray.getColor(
+            R.styleable.UserAvatarImageView_piv_premiumColor,
+            DEFAULT_BORDER_COLOR)
         mInitials = mTypedArray.getString(R.styleable.UserAvatarImageView_piv_initial) ?: "??"
         isAnimated = mTypedArray.getBoolean(R.styleable.UserAvatarImageView_piv_isAnimated, true)
         mValueOfIncrease = mTypedArray.getInt(R.styleable.UserAvatarImageView_piv_valueOfIncrease, 10)
         mValueOfIncrease = mTypedArray.getInt(R.styleable.UserAvatarImageView_piv_valueOfIncrease, 10)
         mValueOfSpeedAnimation = mTypedArray.getInt(R.styleable.UserAvatarImageView_piv_valueOfSpeedAnimation, 300)
-
+        hasPremium = mTypedArray.getBoolean(R.styleable.UserAvatarImageView_piv_premium, false)
         scaleType = ScaleType.CENTER_CROP
 
         setup()
@@ -106,7 +119,6 @@ class UserAvatarImageView @JvmOverloads constructor (context: Context,
     }
 
     private fun resolveDefaultSize(spec: Int) : Int {
-        Log.e(TAG, "resolveDefaultSize")
         return when(MeasureSpec.getMode(spec)) {
             MeasureSpec.UNSPECIFIED -> context.dpTpPx(DEFAULT_SIZE).toInt()
             MeasureSpec.AT_MOST -> MeasureSpec.getSize(spec)
@@ -142,11 +154,24 @@ class UserAvatarImageView @JvmOverloads constructor (context: Context,
             right = w
             bottom = h
         }
+
+        with(mPremiumViewRect) {
+            left = (0+mBorderWidth).toInt()
+            top = (0+mBorderWidth).toInt()
+            right = (w-mBorderWidth).toInt()
+            bottom = (h-mBorderWidth).toInt()
+        }
         prepareShaders(w, h)
     }
 
     private fun setup() {
-        with(borderPaint) {
+        with(premiumBorder) {
+            strokeWidth = mBorderWidth
+            color = mPremiumColor
+            style = Paint.Style.STROKE
+        }
+
+        with(contentBorder) {
             strokeWidth = mBorderWidth
             color = mBorderColor
             style = Paint.Style.STROKE
@@ -168,6 +193,8 @@ class UserAvatarImageView @JvmOverloads constructor (context: Context,
 
         mBorderRect.set(mViewRect)
         mBorderRect.inset(half, half)
+        mPremiumRect.set(mPremiumViewRect)
+        mPremiumRect.inset(half, half)
     }
 
     override fun setImageBitmap(bm: Bitmap?) {
@@ -192,7 +219,10 @@ class UserAvatarImageView @JvmOverloads constructor (context: Context,
             drawInitials(canvas)
         }
 
-        canvas.drawOval(mBorderRect.toRectF(), borderPaint)
+        if (hasPremium){
+            canvas.drawOval(mPremiumRect.toRectF(), contentBorder)
+        }
+        canvas.drawOval(mBorderRect.toRectF(), premiumBorder)
     }
 
     private fun drawAvatar(canvas: Canvas) {
@@ -238,30 +268,30 @@ class UserAvatarImageView @JvmOverloads constructor (context: Context,
     }
 
     private fun animateClick() {
-        if (sizeSource <  height) return
-
-        val mValueAnimator = ValueAnimator.ofInt(width, width + mValueOfIncrease).apply {
-            duration = mValueOfSpeedAnimation.toLong()
-            interpolator = LinearInterpolator()
-            repeatMode = ValueAnimator.REVERSE
-            repeatCount = 1
-        }
-
-        mValueAnimator.addUpdateListener {
-            size = it.animatedValue as Int
-            requestLayout()
-        }
-
-        mValueAnimator.doOnRepeat {
-            isAvatarMode = !isAvatarMode
-            invalidate()
-        }
-        mValueAnimator.start()
-        mValueAnimator.addListener { animator ->
-            if (!animator.isRunning) {
-                mValueAnimator.start()
-            }
-        }
+//        if (sizeSource <  height) return
+//
+//        val mValueAnimator = ValueAnimator.ofInt(width, width + mValueOfIncrease).apply {
+//            duration = mValueOfSpeedAnimation.toLong()
+//            interpolator = LinearInterpolator()
+//            repeatMode = ValueAnimator.REVERSE
+//            repeatCount = 1
+//        }
+//
+//        mValueAnimator.addUpdateListener {
+//            size = it.animatedValue as Int
+//            requestLayout()
+//        }
+//
+//        mValueAnimator.doOnRepeat {
+//            isAvatarMode = !isAvatarMode
+//            invalidate()
+//        }
+//        mValueAnimator.start()
+//        mValueAnimator.addListener { animator ->
+//            if (!animator.isRunning) {
+//                mValueAnimator.start()
+//            }
+//        }
     }
 
     override fun onSaveInstanceState(): Parcelable? {
@@ -269,6 +299,7 @@ class UserAvatarImageView @JvmOverloads constructor (context: Context,
         savedState.mIsAvatarMode = isAvatarMode
         savedState.mBorderWidth = mBorderWidth
         savedState.mBorderColor = mBorderColor
+        savedState.mPremiumColor = mPremiumColor
         savedState.mValueSpeedAnimation = mValueOfSpeedAnimation
         return savedState
     }
@@ -279,11 +310,16 @@ class UserAvatarImageView @JvmOverloads constructor (context: Context,
             isAvatarMode = state.mIsAvatarMode
             mBorderWidth = state.mBorderWidth
             mBorderColor = state.mBorderColor
+            mPremiumColor = state.mBorderColor
             isAnimated = state.isAnimated
             mValueOfIncrease = state.mValueOfIncrease
             mValueOfSpeedAnimation = state.mValueSpeedAnimation
 
-            with(borderPaint){
+            with(premiumBorder){
+                color = mPremiumColor
+                strokeWidth = mBorderWidth
+            }
+            with(contentBorder){
                 color = mBorderColor
                 strokeWidth = mBorderWidth
             }
@@ -297,6 +333,7 @@ class UserAvatarImageView @JvmOverloads constructor (context: Context,
         var mIsAvatarMode = true
         var mBorderWidth = 0f
         var mBorderColor = 0
+        var mPremiumColor = 0
         var isAnimated = true
         var mValueOfIncrease = 10
         var mValueSpeedAnimation = 300
@@ -308,6 +345,7 @@ class UserAvatarImageView @JvmOverloads constructor (context: Context,
             mIsAvatarMode = parcel.readInt() == 1
             mBorderWidth = parcel.readFloat()
             mBorderColor = parcel.readInt()
+            mPremiumColor = parcel.readInt()
             isAnimated = parcel.readInt() == 1
             mValueOfIncrease = parcel.readInt()
             mValueSpeedAnimation = parcel.readInt()
@@ -319,6 +357,7 @@ class UserAvatarImageView @JvmOverloads constructor (context: Context,
             parcel.writeInt(if (mIsAvatarMode) 1 else 0)
             parcel.writeFloat(mBorderWidth)
             parcel.writeInt(mBorderColor)
+            parcel.writeInt(mPremiumColor)
             parcel.writeInt(if (isAnimated) 1 else 0)
             parcel.writeInt(mValueOfIncrease)
             parcel.writeInt(mValueSpeedAnimation)
