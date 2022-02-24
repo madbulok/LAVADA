@@ -22,5 +22,6 @@ data class User(
     var url_video: String?= "",
     var lat: Double?= 0.0,
     var lon: Double? = 0.0,
-    var matches: Map<String, Boolean> = mutableMapOf() // хранит лайки пользователей
+    var matches: Map<String, Boolean> = mutableMapOf(), // хранит лайки пользователей <UID друга , взаимно или нет>
+    var chats: Map<String, String> // хранит чаты где он есть <UID собеседника , свой UID>
 ): Parcelable
