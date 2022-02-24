@@ -3,8 +3,10 @@
 
     <declare-styleable name="UserAvatarImageView">
         <attr name="piv_valueOfSpeedAnimation" format="integer"/>
-        <attr name="piv_borderColor" format="color"/>
+        <attr name="piv_premium" format="boolean"/>
+        <attr name="piv_premiumColor" format="color"/>
         <attr name="piv_borderWidth" format="dimension"/>
+        <attr name="piv_borderColor" format="color"/>
         <attr name="piv_initial" format="string"/>
         <attr name="piv_isAnimated" format="boolean"/>
         <attr name="piv_valueOfIncrease" format="integer"/>

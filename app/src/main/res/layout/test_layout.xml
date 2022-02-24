@@ -5,25 +5,42 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Button"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
-    <EditText
-        android:id="@+id/editTextTextPersonName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Name"
-        app:layout_constraintBottom_toTopOf="@+id/button2"
+    <com.uzlov.dating.lavada.ui.custom.UserAvatarImageView
+        android:id="@+id/userAvatarImageView"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        app:srcCompat="@drawable/test_avatar"
+        app:piv_borderColor="@color/Brand_hover"
+        app:piv_premium="true"
+        app:piv_premiumColor="@color/Premium_fill"
+        app:piv_borderWidth="3dp"
+        android:layout_margin="@dimen/default_margin_16"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <com.uzlov.dating.lavada.ui.custom.UserAvatarImageView
+        android:id="@+id/userAvatarImageView2"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        app:srcCompat="@drawable/test_avatar"
+        android:layout_margin="@dimen/default_margin_16"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/userAvatarImageView" />
+
+    <com.uzlov.dating.lavada.ui.custom.UserAvatarImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:srcCompat="@drawable/test_avatar"
+        app:piv_premium="true"
+        app:piv_premiumColor="@color/Premium_fill"
+        app:piv_borderColor="@color/Primary_text"
+        app:piv_borderWidth="2dp"
+        android:layout_margin="@dimen/default_margin_16"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/userAvatarImageView2" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
