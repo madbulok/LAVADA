@@ -31,16 +31,32 @@
         app:layout_constraintTop_toBottomOf="@+id/userAvatarImageView" />
 
     <com.uzlov.dating.lavada.ui.custom.UserAvatarImageView
+        android:id="@+id/userAvatarImageView3"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        app:srcCompat="@drawable/test_avatar"
-        app:piv_premium="true"
-        app:piv_premiumColor="@color/Premium_fill"
-        app:piv_borderColor="@color/Primary_text"
-        app:piv_borderWidth="2dp"
         android:layout_margin="@dimen/default_margin_16"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/userAvatarImageView2" />
+        app:layout_constraintTop_toBottomOf="@+id/userAvatarImageView2"
+        app:piv_borderColor="@color/Primary_text"
+        app:piv_borderWidth="2dp"
+        app:piv_premium="true"
+        app:piv_premiumColor="@color/Premium_fill"
+        app:srcCompat="@drawable/test_avatar" />
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/etSearchQuery"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/another_email"
+        android:background="@drawable/dialog_bg_color"
+        app:background="@drawable/dialog_bg_color"
+        android:padding="@dimen/default_margin_16"
+        android:drawableStart="@drawable/search"
+        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+        android:layout_margin="@dimen/default_margin_16"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

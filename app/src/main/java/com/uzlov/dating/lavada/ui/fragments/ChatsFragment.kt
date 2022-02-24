@@ -103,13 +103,13 @@ class ChatsFragment :
 
         when (visible) {
             View.GONE -> {
-                viewBinding.textLayoutSearch.visibility = visible
+                viewBinding.etSearchQuery.visibility = visible
                 viewBinding.cancelSearch.visibility = visible
                 viewBinding.chatLabel.visibility = View.VISIBLE
                 viewBinding.tbSearchAction.visibility = View.VISIBLE
             }
             View.VISIBLE -> {
-                viewBinding.textLayoutSearch.visibility = visible
+                viewBinding.etSearchQuery.visibility = visible
                 viewBinding.cancelSearch.visibility = visible
                 viewBinding.chatLabel.visibility = View.INVISIBLE
                 viewBinding.tbSearchAction.visibility = View.INVISIBLE

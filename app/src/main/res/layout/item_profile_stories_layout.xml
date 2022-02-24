@@ -13,6 +13,6 @@
         app:strokeWidth="4dp"
         app:strokeColor="@color/Premium_fill"
         style="@style/ShapeAppearanceOverlay.App.CornerSize50Percent"
-        app:srcCompat="@drawable/tools_test_image_rounded"/>
+        tools:srcCompat="@drawable/test_avatar"/>
 
 </FrameLayout>
