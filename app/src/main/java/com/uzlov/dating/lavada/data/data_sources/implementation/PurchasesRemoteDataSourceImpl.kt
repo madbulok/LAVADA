@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import javax.inject.Inject
 
-class IPurchasesRemoteDataSourceImpl @Inject constructor(var database: FirebaseDatabase) :
+class PurchasesRemoteDataSourceImpl @Inject constructor(var database: FirebaseDatabase) :
     IPurchasesDataSource {
 
     private val ref = database.getReference(Constants.FIREBASE_PATH_PURCHASES)

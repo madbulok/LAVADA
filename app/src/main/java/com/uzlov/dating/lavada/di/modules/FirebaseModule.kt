@@ -9,13 +9,13 @@ import com.google.firebase.ktx.initialize
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
 import com.uzlov.dating.lavada.app.App
-import com.uzlov.dating.lavada.data.data_sources.interfaces.IGiftsDataSource
-import com.uzlov.dating.lavada.data.data_sources.interfaces.IMessageDataSource
-import com.uzlov.dating.lavada.data.data_sources.interfaces.IRemoteDataSource
 import com.uzlov.dating.lavada.data.use_cases.UserUseCases
 import com.uzlov.dating.lavada.data.data_sources.IUsersRepository
 import com.uzlov.dating.lavada.data.data_sources.implementation.GiftRemoteDataSourceImpl
+import com.uzlov.dating.lavada.data.data_sources.implementation.SubscriptionsRemoteDataSourceImpl
+import com.uzlov.dating.lavada.data.data_sources.implementation.PurchasesRemoteDataSourceImpl
 import com.uzlov.dating.lavada.data.data_sources.implementation.UsersRemoteDataSourceImpl
+import com.uzlov.dating.lavada.data.data_sources.interfaces.*
 import com.uzlov.dating.lavada.data.repository.*
 import dagger.Module
 import dagger.Provides
@@ -46,6 +46,12 @@ class FirebaseModule {
 
     @Provides
     fun provideGiftRepository(db: FirebaseDatabase) : IGiftsDataSource = GiftRemoteDataSourceImpl(db)
+
+    @Provides
+    fun providePurchaseRepository(db: FirebaseDatabase) : IPurchasesDataSource = PurchasesRemoteDataSourceImpl(db)
+
+    @Provides
+    fun provideSubsRepository(db: FirebaseDatabase) : ISubscriptionsDataSource = SubscriptionsRemoteDataSourceImpl(db)
 
     @Provides
     fun provideMessageRepository(db: FirebaseDatabase) : IMessageDataSource = MessagesRepository(db)

@@ -59,7 +59,7 @@ class RegistrationFragment :
                     Log.d(TAG, "firebaseAuthWithGoogle:" + account.id)
                     firebaseEmailAuthService.setToken(account.idToken!!)
                     user = User(
-                        uid = firebaseEmailAuthService.auth.currentUser?.uid,
+                        uid = firebaseEmailAuthService.auth.currentUser?.uid!!,
                         email = firebaseEmailAuthService.auth.currentUser?.email,
                         "", "", null, 0, "", "", "", 0.0, 0.0
                     )
@@ -247,7 +247,7 @@ class RegistrationFragment :
     //при регистрации перебрасывает на начальную форму заполнения анкеты+ добавляет данные в бд
     private fun updateUIWithBundle() {
         user = User(
-            uid = firebaseEmailAuthService.auth.currentUser?.uid,
+            uid = firebaseEmailAuthService.auth.currentUser?.uid!!,
             email = firebaseEmailAuthService.auth.currentUser?.email,
             "", "", null, 0, "", "", "", 0.0, 0.0
         )

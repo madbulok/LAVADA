@@ -1,9 +1,5 @@
 package com.uzlov.dating.lavada.data.use_cases
 
-import com.uzlov.dating.lavada.data.data_sources.interfaces.ILocalUserDataSource
-import com.uzlov.dating.lavada.data.data_sources.interfaces.IRemoteDataSource
-import com.uzlov.dating.lavada.data.data_sources.ILocalUserDataSource
-import com.uzlov.dating.lavada.data.data_sources.IRemoteDataSource
 import com.uzlov.dating.lavada.data.data_sources.IUsersRepository
 import com.uzlov.dating.lavada.domain.models.User
 import javax.inject.Inject
