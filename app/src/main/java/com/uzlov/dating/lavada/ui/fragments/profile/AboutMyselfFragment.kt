@@ -68,7 +68,7 @@ class AboutMyselfFragment :
             btnNext.setOnClickListener {
                 user.name = tiEtName.text.toString()
                 user.about = tiEtLocation.text.toString()
-                user.uid = firebaseEmailAuthService.getUserUid()
+                user.uid = firebaseEmailAuthService.getUserUid()!!
                 if (user.email.isNullOrBlank()){
                     user.email = firebaseEmailAuthService.auth.currentUser?.email
                 }
