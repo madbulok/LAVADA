@@ -1,4 +1,4 @@
-package com.uzlov.dating.lavada.data.data_sources
+package com.uzlov.dating.lavada.data.data_sources.interfaces
 
 import androidx.lifecycle.LiveData
 import com.uzlov.dating.lavada.domain.models.User

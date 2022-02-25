@@ -1,10 +1,10 @@
-package com.uzlov.dating.lavada.data.repository
+package com.uzlov.dating.lavada.data.data_sources.implementation
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.getValue
-import com.uzlov.dating.lavada.data.data_sources.IRemoteDataSource
+import com.uzlov.dating.lavada.data.data_sources.interfaces.IRemoteDataSource
 import com.uzlov.dating.lavada.domain.models.User
 
 class UsersRemoteDataSourceImpl : IRemoteDataSource {

@@ -54,6 +54,7 @@ class MainVideosFragment :
         ProfileRecyclerAdapter(testData)
     }
 
+    private val self = User() // TODO(Inject current user from dagger)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,12 +88,14 @@ class MainVideosFragment :
                 }
 
                 override fun sendHeart(user: User) {
+                    self.matches[user.uid] = false
                     val heartFragment = FragmentMatch()
                     heartFragment.show(childFragmentManager, heartFragment.javaClass.simpleName)
                 }
 
                 override fun sendMessage(user: User) {
                     // check VIP
+                    self.chats[user.uid] = self.uid
                 }
             })
         }

@@ -1,6 +1,6 @@
 package com.uzlov.dating.lavada.data.repository
 
-import com.uzlov.dating.lavada.data.data_sources.ILocalUserDataSource
+import com.uzlov.dating.lavada.data.data_sources.interfaces.ILocalUserDataSource
 import com.uzlov.dating.lavada.domain.models.MALE
 import com.uzlov.dating.lavada.domain.models.User
 import kotlinx.coroutines.flow.Flow

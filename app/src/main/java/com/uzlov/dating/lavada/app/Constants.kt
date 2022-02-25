@@ -7,6 +7,7 @@ class Constants {
         const val FIREBASE_PATH_SUBSCRIPTIONS = "subscriptions"
         const val FIREBASE_PATH_PURCHASES = "purchases"
         const val FIREBASE_PATH_CHATS = "chats"
+        const val FIREBASE_PATH_GIFTS = "gifts"
 
     }
 }
