@@ -6,9 +6,9 @@ import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.*
 import com.uzlov.dating.lavada.R
+import com.uzlov.dating.lavada.domain.models.User
 import java.lang.IllegalStateException
 import javax.inject.Inject
 
@@ -16,6 +16,9 @@ import javax.inject.Inject
 class FirebaseEmailAuthService @Inject constructor(val auth: FirebaseAuth) : IAuth<User, Activity> {
 
     private var mToken: String? = null
+    private var user: User? = null
+
+
 
     //регистрация нового пользователя. Умеет обрабатывать ошибки регистрации (например, если такой email уже есть в системе
     fun registered(
@@ -105,7 +108,7 @@ class FirebaseEmailAuthService @Inject constructor(val auth: FirebaseAuth) : IAu
         auth.signOut()
     }
 
-//удаляем пользователя совсем (пока не связан с database, данные у бд не удаляет)
+    //удаляем пользователя совсем (пока не связан с database, данные у бд не удаляет)
     fun delUser() {
         val user = auth.currentUser!!
         user.delete()
@@ -116,12 +119,16 @@ class FirebaseEmailAuthService @Inject constructor(val auth: FirebaseAuth) : IAu
             }
     }
 
-//временное решение
+    //временное решение
     private fun updateUI(parentFragmentManager: FragmentManager, fragment: Fragment) {
         parentFragmentManager.beginTransaction()
             .replace(R.id.container, fragment)
             .commit()
 
+    }
+
+    fun getUserUid(): String? {
+        return auth.currentUser?.uid
     }
 
     companion object {
