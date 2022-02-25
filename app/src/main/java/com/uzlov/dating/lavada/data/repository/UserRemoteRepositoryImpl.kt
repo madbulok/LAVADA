@@ -1,7 +1,7 @@
 package com.uzlov.dating.lavada.data.repository
 
 import androidx.lifecycle.LiveData
-import com.uzlov.dating.lavada.data.data_sources.IRemoteDataSource
+import com.uzlov.dating.lavada.data.data_sources.interfaces.IRemoteDataSource
 import com.uzlov.dating.lavada.domain.models.User
 import com.uzlov.dating.lavada.data.data_sources.IUsersRepository
 import javax.inject.Inject

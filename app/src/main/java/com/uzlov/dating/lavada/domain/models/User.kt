@@ -11,7 +11,7 @@ enum class MALE {
 }
 @Parcelize
 data class User(
-    var uid: String? = UUID.randomUUID().toString(),
+    var uid: String = UUID.randomUUID().toString(),
     var email: String?= "",
     var password: String?= "",
     var name: String?= "",
@@ -22,6 +22,6 @@ data class User(
     var url_video: String?= "",
     var lat: Double?= 0.0,
     var lon: Double? = 0.0,
-    var matches: Map<String, Boolean> = mutableMapOf(), // хранит лайки пользователей <UID друга , взаимно или нет>
-    var chats: Map<String, String> // хранит чаты где он есть <UID собеседника , свой UID>
+    var matches: MutableMap<String, Boolean> = mutableMapOf(), // хранит лайки пользователей <UID друга , взаимно или нет>
+    var chats: MutableMap<String, String> = mutableMapOf()// хранит чаты где он есть <UID собеседника , свой UID>
 ): Parcelable

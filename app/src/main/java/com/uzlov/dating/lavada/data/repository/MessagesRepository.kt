@@ -1,22 +1,16 @@
 package com.uzlov.dating.lavada.data.repository
 
-import androidx.lifecycle.MutableLiveData
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.uzlov.dating.lavada.app.Constants
-import com.uzlov.dating.lavada.data.data_sources.IMessageDataSource
+import com.uzlov.dating.lavada.data.data_sources.interfaces.IMessageDataSource
 import com.uzlov.dating.lavada.domain.models.Chat
 import com.uzlov.dating.lavada.domain.models.ChatMessage
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.channels.sendBlocking
 import kotlinx.coroutines.channels.trySendBlocking
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.flow
-import java.lang.Exception
 import java.util.*
 import javax.inject.Inject
 import kotlin.coroutines.resumeWithException
@@ -34,7 +28,7 @@ class MessagesRepository @Inject constructor(mDatabase: FirebaseDatabase) : IMes
         ref.child(uidChat).setValue(message)
     }
 
-    override suspend fun observeMessages(uidChat: String) = callbackFlow<Chat> {
+    override suspend fun observeMessages(uidChat: String) = callbackFlow {
 
         val listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {

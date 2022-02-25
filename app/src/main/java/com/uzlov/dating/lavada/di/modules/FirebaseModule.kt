@@ -4,20 +4,19 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.ktx.initialize
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
 import com.uzlov.dating.lavada.app.App
-import com.uzlov.dating.lavada.data.data_sources.IMessageDataSource
-import com.uzlov.dating.lavada.data.data_sources.IRemoteDataSource
-import com.uzlov.dating.lavada.data.repository.UserLocalRepository
+import com.uzlov.dating.lavada.data.data_sources.interfaces.IGiftsDataSource
+import com.uzlov.dating.lavada.data.data_sources.interfaces.IMessageDataSource
+import com.uzlov.dating.lavada.data.data_sources.interfaces.IRemoteDataSource
 import com.uzlov.dating.lavada.data.use_cases.UserUseCases
-import com.uzlov.dating.lavada.data.repository.UsersRemoteDataSourceImpl
 import com.uzlov.dating.lavada.data.data_sources.IUsersRepository
-import com.uzlov.dating.lavada.data.repository.MessagesRepository
-import com.uzlov.dating.lavada.data.repository.UserRemoteRepositoryImpl
+import com.uzlov.dating.lavada.data.data_sources.implementation.GiftRemoteDataSourceImpl
+import com.uzlov.dating.lavada.data.data_sources.implementation.UsersRemoteDataSourceImpl
+import com.uzlov.dating.lavada.data.repository.*
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -44,6 +43,9 @@ class FirebaseModule {
 
     @Provides
     fun provideUserUseCase(localRepository: UserLocalRepository, remoteDataSource: IRemoteDataSource) : UserUseCases = UserUseCases(localRepository, remoteDataSource)
+
+    @Provides
+    fun provideGiftRepository(db: FirebaseDatabase) : IGiftsDataSource = GiftRemoteDataSourceImpl(db)
 
     @Provides
     fun provideMessageRepository(db: FirebaseDatabase) : IMessageDataSource = MessagesRepository(db)
