@@ -18,6 +18,8 @@ import com.abedelazizshe.lightcompressorlibrary.VideoQuality
 import com.abedelazizshe.lightcompressorlibrary.config.Configuration
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.app.appComponent
+import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
+import com.uzlov.dating.lavada.data.data_sources.IUsersRepository
 import com.uzlov.dating.lavada.databinding.FragmentUploadVideoBinding
 import com.uzlov.dating.lavada.storage.FirebaseStorageService
 import com.uzlov.dating.lavada.storage.URIPathHelper
@@ -34,6 +36,7 @@ class UploadVideoFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         requireContext().appComponent.inject(this)
+        checkPermission()
         viewBinding.btnAddVideo.setOnClickListener {
             if (checkPermission()) {
                 openGalleryForVideo()

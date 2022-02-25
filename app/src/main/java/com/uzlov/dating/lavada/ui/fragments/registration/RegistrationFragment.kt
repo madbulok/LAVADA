@@ -23,11 +23,11 @@ import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService.Companion.TAG
 import com.uzlov.dating.lavada.databinding.FragmentRegistrationBinding
 import com.uzlov.dating.lavada.domain.models.User
-import com.uzlov.dating.lavada.ui.activities.HostActivity
 import com.uzlov.dating.lavada.ui.fragments.BaseFragment
 import com.uzlov.dating.lavada.ui.fragments.PrivatePolicyFragment
 import com.uzlov.dating.lavada.ui.fragments.TermOfUseFragment
 import com.uzlov.dating.lavada.ui.fragments.profile.AboutMyselfFragment
+import com.uzlov.dating.lavada.ui.fragments.profile.ProfileFragment
 import org.json.JSONException
 import java.util.regex.Pattern
 import javax.inject.Inject
@@ -40,6 +40,7 @@ class RegistrationFragment :
 
     lateinit var email: String
     lateinit var firstName: String
+    lateinit var user: User
 
     private lateinit var googleSignInClient: GoogleSignInClient
 
@@ -50,7 +51,6 @@ class RegistrationFragment :
     //колбэк для входа через гугл
     private val mainActivityResultLauncher =
         registerForActivityResult(StartActivityForResult()) { result ->
-
             if (result.resultCode == Activity.RESULT_OK) {
                 val data = result.data
                 val task = GoogleSignIn.getSignedInAccountFromIntent(data)
@@ -58,15 +58,21 @@ class RegistrationFragment :
                     val account = task.getResult(ApiException::class.java)!!
                     Log.d(TAG, "firebaseAuthWithGoogle:" + account.id)
                     firebaseEmailAuthService.setToken(account.idToken!!)
+                    user = User(
+                        uid = firebaseEmailAuthService.auth.currentUser?.uid,
+                        email = firebaseEmailAuthService.auth.currentUser?.email,
+                        "", "", null, 0, "", "", "", 0.0, 0.0
+                    )
                     firebaseEmailAuthService.loginWithGoogleAccount(
                         parentFragmentManager,
-                        AboutMyselfFragment.newInstance()
+                        AboutMyselfFragment.newInstance(user)
                     )
                 } catch (e: ApiException) {
                     Log.w(TAG, "Google sign in failed", e)
                 }
             }
         }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,28 +92,34 @@ class RegistrationFragment :
         addTextChangedListener()
         googleSignInClient =
             GoogleSignIn.getClient(requireContext(), firebaseEmailAuthService.getGSO(context!!))
-        viewBinding.btnLoginWithFacebook.setReadPermissions("email")
-        viewBinding.btnLoginWithFacebook.fragment = this
+        viewBinding.btnFacebook.setReadPermissions("email")
+        viewBinding.btnFacebook.fragment = this
         initListeners()
     }
 
     private fun initListeners() {
         with(viewBinding) {
             btnLogin.setOnClickListener {
+
                 val email = tiEtEmail.text.toString()
                 val password = textInputPassword.text.toString()
+                user = User(
+                    uid = "",
+                    email = email,
+                    "", "", null, 0, "", "", "", 0.0, 0.0
+                )
                 firebaseEmailAuthService.registered(
                     email,
                     password,
                     parentFragmentManager,
-                    AboutMyselfFragment.newInstance()
+                    AboutMyselfFragment.newInstance(user)
                 )
             }
-            btnLoginWithGoogle.setOnClickListener {
+            btnGoogle.setOnClickListener {
                 onAct()
             }
 
-            btnLoginWithFacebook.setOnClickListener {
+            btnFacebook.setOnClickListener {
                 loginWithFacebook()
             }
             tvLogIn.setOnClickListener {
@@ -209,7 +221,8 @@ class RegistrationFragment :
     private fun checkUser() {
         val currentUser = firebaseEmailAuthService.auth.currentUser
         if (currentUser != null) {
-            goToMainVideoFragment(currentUser.uid)
+            currentUser.uid.let { goToMainVideoFragment(it) }
+
         }
     }
 
@@ -221,19 +234,19 @@ class RegistrationFragment :
     }
 
     private fun goToMainVideoFragment(id: String) {
-//        parentFragmentManager.beginTransaction()
+        parentFragmentManager.beginTransaction()
 //            .replace(R.id.container, MainVideosFragment.newInstance(id))
-//            //    .replace(R.id.container, ProfileFragment.newInstance())
+//                .replace(R.id.container, ProfileFragment.newInstance())
 //            .commit()
 
-        startActivity(Intent(requireContext(), HostActivity::class.java))
-        activity?.finish()
+//        startActivity(Intent(requireContext(), HostActivity::class.java))
+//        activity?.finish()
     }
 
 
     //при регистрации перебрасывает на начальную форму заполнения анкеты+ добавляет данные в бд
     private fun updateUIWithBundle() {
-        val user = User(
+        user = User(
             uid = firebaseEmailAuthService.auth.currentUser?.uid,
             email = firebaseEmailAuthService.auth.currentUser?.email,
             "", "", null, 0, "", "", "", 0.0, 0.0

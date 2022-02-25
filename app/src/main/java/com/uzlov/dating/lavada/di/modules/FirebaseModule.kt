@@ -43,7 +43,7 @@ class FirebaseModule {
     fun provideUserRepository(remoteDataSource: IRemoteDataSource) : IUsersRepository = UserRemoteRepositoryImpl(remoteDataSource)
 
     @Provides
-    fun provideUserUseCase(localRepository: UserLocalRepository, remoteDataSource: IRemoteDataSource) : UserUseCases = UserUseCases(localRepository, remoteDataSource)
+    fun provideUserUseCase(userRepository: IUsersRepository) : UserUseCases = UserUseCases(userRepository)
 
     @Provides
     fun provideMessageRepository(db: FirebaseDatabase) : IMessageDataSource = MessagesRepository(db)
