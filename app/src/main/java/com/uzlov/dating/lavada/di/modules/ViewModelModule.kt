@@ -33,9 +33,14 @@ abstract class ViewModelModule {
     @ViewModelKey(GiftsViewModels::class)
     abstract fun giftsViewModels(giftsViewModels: GiftsViewModels) : ViewModel
 
-
     @Binds
     @IntoMap
     @ViewModelKey(SubscriptionsViewModel::class)
     abstract fun subscriptionsViewModel(subscriptionsViewModel: SubscriptionsViewModel) : ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(UsersViewModel::class)
+    abstract fun provideUsersViewModel(usersViewModel: UsersViewModel) : ViewModel
+  
 }

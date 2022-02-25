@@ -3,15 +3,19 @@ package com.uzlov.dating.lavada.ui.fragments.profile
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.app.appComponent
+import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
 import com.uzlov.dating.lavada.data.data_sources.IUsersRepository
 import com.uzlov.dating.lavada.databinding.FragmentAboutMyselfBinding
 import com.uzlov.dating.lavada.domain.models.MALE
 import com.uzlov.dating.lavada.domain.models.User
 import com.uzlov.dating.lavada.ui.fragments.BaseFragment
+import com.uzlov.dating.lavada.viemodels.UsersViewModel
+import com.uzlov.dating.lavada.viemodels.ViewModelFactory
 import javax.inject.Inject
 
 
@@ -20,8 +24,10 @@ class AboutMyselfFragment :
 
     @Inject
     lateinit var usersRepository : IUsersRepository
-
+    @Inject
+    lateinit var firebaseEmailAuthService: FirebaseEmailAuthService
     private var user = User()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +41,8 @@ class AboutMyselfFragment :
                 user = _user.copy()
             }
         }
+
+
         addTextChangedListener()
         initListeners()
 
@@ -60,9 +68,13 @@ class AboutMyselfFragment :
             btnNext.setOnClickListener {
                 user.name = tiEtName.text.toString()
                 user.about = tiEtLocation.text.toString()
+                user.uid = firebaseEmailAuthService.getUserUid()
+                if (user.email.isNullOrBlank()){
+                    user.email = firebaseEmailAuthService.auth.currentUser?.email
+                }
                 usersRepository.putUser(user)
                 updateUI()
-                Toast.makeText(context, "Ваш аккаунт создан. Переход на другой экран будет доступен с ближайшее время", Toast.LENGTH_SHORT).show()
+  //              Toast.makeText(context, "Ваш аккаунт создан. Переход на другой экран будет доступен с ближайшее время", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -88,7 +100,6 @@ class AboutMyselfFragment :
 
     private fun verifyEditText() {
         with(viewBinding) {
-
             btnNext.isEnabled = !tiEtName.text.isNullOrBlank() && !tiEtLocation.text.isNullOrBlank()
         }
 
@@ -107,7 +118,6 @@ class AboutMyselfFragment :
         fun newInstance() =
             AboutMyselfFragment().apply {
                 arguments = Bundle().apply {
-
                 }
             }
 

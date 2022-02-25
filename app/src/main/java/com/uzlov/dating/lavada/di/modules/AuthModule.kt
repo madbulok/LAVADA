@@ -5,6 +5,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.firebase.auth.FirebaseAuth
 import com.uzlov.dating.lavada.app.App
 import com.uzlov.dating.lavada.auth.*
+import com.uzlov.dating.lavada.domain.models.User
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton

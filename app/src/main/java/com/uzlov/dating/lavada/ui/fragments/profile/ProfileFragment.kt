@@ -7,14 +7,18 @@ import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
 import com.uzlov.dating.lavada.databinding.FragmentProfileBinding
 import com.uzlov.dating.lavada.ui.fragments.BaseFragment
-import com.uzlov.dating.lavada.ui.fragments.registration.LogInFragment
-import com.uzlov.dating.lavada.ui.fragments.registration.RegistrationFragment
+import com.uzlov.dating.lavada.viemodels.UsersViewModel
+import com.uzlov.dating.lavada.viemodels.ViewModelFactory
 import javax.inject.Inject
 
 class ProfileFragment: BaseFragment<FragmentProfileBinding>(FragmentProfileBinding::inflate) {
 
     @Inject
     lateinit var firebaseEmailAuthService: FirebaseEmailAuthService
+
+    @Inject
+    lateinit var factoryViewModel: ViewModelFactory
+    private lateinit var model: UsersViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,8 +27,19 @@ class ProfileFragment: BaseFragment<FragmentProfileBinding>(FragmentProfileBindi
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        model = factoryViewModel.create(UsersViewModel::class.java)
+
+        //прочитать данные model.getUser(uid), uid - firebaseEmailAuthService.getUserUid()
+        firebaseEmailAuthService.getUserUid()?.let {
+            model.getUser(it)?.observe(this, { user ->
+                viewBinding.tvAbout.text = "Ссылка на видео: " + user?.url_video
+                viewBinding.tvAbout.text = "email: " + user?.email
+                viewBinding.tvName.text = user?.name
+            })
+        }
         with(viewBinding){
-            tvName.text = firebaseEmailAuthService.auth.currentUser?.email
+
             btnLogOut.setOnClickListener {
                 firebaseEmailAuthService.logout()
                 Toast.makeText(context, "Вы успешно вышли из аккаунта", Toast.LENGTH_SHORT).show()
