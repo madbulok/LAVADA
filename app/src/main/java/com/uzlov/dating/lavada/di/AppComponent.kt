@@ -1,6 +1,7 @@
 package com.uzlov.dating.lavada.di
 
 import com.uzlov.dating.lavada.di.modules.*
+import com.uzlov.dating.lavada.ui.activities.SplashActivity
 import com.uzlov.dating.lavada.ui.fragments.ChatsFragment
 import com.uzlov.dating.lavada.ui.fragments.FragmentOpenChat
 import com.uzlov.dating.lavada.ui.fragments.MainVideosFragment
@@ -36,4 +37,5 @@ interface AppComponent {
     fun inject(settingsFragment: SettingsFragment)
     fun inject(updatePasswordFragment: UpdatePasswordFragment)
     fun inject(fragmentOpenChat: FragmentOpenChat)
+    fun inject(splashActivity: SplashActivity)
 }
