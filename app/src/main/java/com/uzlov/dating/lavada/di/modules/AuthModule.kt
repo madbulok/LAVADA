@@ -1,11 +1,10 @@
 package com.uzlov.dating.lavada.di.modules
 
-import android.app.Activity
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.firebase.auth.FirebaseAuth
 import com.uzlov.dating.lavada.app.App
-import com.uzlov.dating.lavada.auth.*
-import com.uzlov.dating.lavada.domain.models.User
+import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
+import com.uzlov.dating.lavada.auth.FirebaseGoogleSignInAuthService
+import com.uzlov.dating.lavada.auth.FirebasePhoneAuthService
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -14,12 +13,12 @@ import javax.inject.Singleton
 class AuthModule {
     @Singleton
     @Provides
-    fun providePhoneAuthService(auth: FirebaseAuth): IAuth<User, Activity> =
+    fun providePhoneAuthService(auth: FirebaseAuth):FirebasePhoneAuthService =
         FirebasePhoneAuthService(auth)
 
     @Singleton
     @Provides
-    fun provideEmailAuthService(auth: FirebaseAuth): IAuth<User, Activity> =
+    fun provideEmailAuthService(auth: FirebaseAuth): FirebaseEmailAuthService =
         FirebaseEmailAuthService(auth)
 
     @Singleton
@@ -27,5 +26,5 @@ class AuthModule {
     fun provideGoogleSigInAuthService(
         auth: FirebaseAuth,
         app: App,
-    ): IAuth<GoogleSignInAccount, Activity> = FirebaseGoogleSignInAuthService(auth, app)
+    ): FirebaseGoogleSignInAuthService = FirebaseGoogleSignInAuthService(auth, app)
 }

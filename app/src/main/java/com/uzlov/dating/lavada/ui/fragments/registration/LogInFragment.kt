@@ -16,22 +16,16 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.common.api.ApiException
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.firebase.auth.FirebaseAuth
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService.Companion.TAG
-import com.uzlov.dating.lavada.auth.FirebaseGoogleSignInAuthService
 import com.uzlov.dating.lavada.data.repository.PreferenceRepository
 import com.uzlov.dating.lavada.databinding.FragmentLoginBinding
 import com.uzlov.dating.lavada.domain.models.AuthorizedUser
 import com.uzlov.dating.lavada.domain.models.User
 import com.uzlov.dating.lavada.ui.activities.LoginActivity
 import com.uzlov.dating.lavada.ui.fragments.BaseFragment
-import com.uzlov.dating.lavada.ui.fragments.MainVideosFragment
-import com.uzlov.dating.lavada.ui.fragments.profile.AboutMyselfFragment
-import com.uzlov.dating.lavada.ui.fragments.settings.SettingsFragment
-import kotlinx.coroutines.Dispatchers
 import java.util.regex.Pattern
 import javax.inject.Inject
 
