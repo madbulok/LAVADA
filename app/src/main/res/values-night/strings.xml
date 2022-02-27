@@ -77,5 +77,6 @@
     <string name="send_message">Send message</string>
     <string name="chats_label">Chats</string>
     <string name="cancel_label">Cancel</string>
+    <string name="sign_up">Sign up</string>
 
 </resources>

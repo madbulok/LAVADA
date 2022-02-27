@@ -11,9 +11,11 @@
         android:layout_height="0dp"
         android:background="@drawable/background_welcome_layout"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <com.google.android.material.progressindicator.LinearProgressIndicator
         android:id="@+id/progressRegistration"
@@ -22,7 +24,7 @@
         android:layout_marginTop="27dp"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
-        android:progress="10"
+        android:progress="50"
         android:max="100"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -35,7 +37,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
         android:layout_marginStart="20dp"
-        android:text="About myself"
+        android:text="I'm looking for"
         android:textSize="32sp"
         android:textStyle="bold"
         android:textColor="@color/Primary_text"
@@ -49,41 +51,23 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="We will recommend diets and exercises that suit you"
+        android:text="We will recommend diets and exercises \n that suit you"
+        android:gravity="center"
         android:textColor="@color/Primary_text"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="@+id/tv_about_myself"
         app:layout_constraintStart_toStartOf="@+id/tv_about_myself"
         app:layout_constraintTop_toBottomOf="@+id/tv_about_myself" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/til_name"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        app:layout_constraintEnd_toEndOf="@+id/tv_about_myself"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_recommend">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/ti_et_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="name"
-            android:inputType="textEmailAddress" />
-    </com.google.android.material.textfield.TextInputLayout>
-
     <TextView
         android:id="@+id/tv_sex"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
         android:text="sex"
         android:textColor="@color/Secondary_text"
         app:layout_constraintEnd_toEndOf="@+id/tv_recommend"
         app:layout_constraintStart_toStartOf="@+id/tv_recommend"
-        app:layout_constraintTop_toBottomOf="@+id/til_name" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_recommend" />
 
     <com.google.android.material.button.MaterialButtonToggleGroup
         android:id="@+id/toggle_sex"
@@ -142,14 +126,14 @@
         android:id="@+id/tv_age_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:textColor="@color/Primary_text"
         android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_age"
         app:layout_constraintEnd_toEndOf="@+id/tv_sex"
-        app:layout_constraintTop_toTopOf="@+id/tv_age"
-        tools:text="25" />
+        app:layout_constraintTop_toBottomOf="@+id/toggle_sex"
+        tools:text="25"/>
 
-    <com.google.android.material.slider.Slider
+    <com.google.android.material.slider.RangeSlider
         android:id="@+id/sl_age"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -160,36 +144,23 @@
         app:layout_constraintStart_toStartOf="@+id/tv_age"
         app:layout_constraintTop_toBottomOf="@id/tv_age" />
 
-    <com.google.android.material.textfield.TextInputLayout
+    <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/til_location"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:enabled="false"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/sl_age">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/ti_et_location"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="location"
-            android:inputType="text" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/swEnableLocation"
+        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
         android:layout_width="0dp"
-        android:text="My location"
-        android:drawableStart="@drawable/map_pin"
-        app:drawableTint="@color/Secondary_text"
-        android:drawablePadding="@dimen/default_margin_8"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="26dp"
+        android:layout_height="52dp"
+        android:background="@drawable/dialog_bg_color"
+        android:drawableStart="@drawable/search_16"
+        android:drawablePadding="@dimen/default_margin_16"
+        android:layout_marginTop="20dp"
+        android:enabled="false"
+        android:paddingStart="@dimen/default_margin_16"
+        android:textSize="@dimen/default_margin_16"
+        app:boxCornerRadiusBottomEnd="@dimen/default_margin_16"
         app:layout_constraintEnd_toEndOf="@+id/sl_age"
         app:layout_constraintStart_toStartOf="@+id/sl_age"
-        app:layout_constraintTop_toBottomOf="@id/til_location" />
+        app:layout_constraintTop_toBottomOf="@id/sl_age"
+        tools:visibility="visible" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/center_horizontal"
@@ -216,10 +187,10 @@
         android:id="@+id/btn_next"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
-        android:layout_marginTop="23dp"
-        android:layout_marginStart="4dp"
+        android:layout_marginTop="120dp"
         android:backgroundTint="@color/Surface"
         android:enabled="false"
         android:text="Next"
@@ -227,6 +198,6 @@
         android:textColor="@color/Primary_text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/center_horizontal"
-        app:layout_constraintTop_toBottomOf="@+id/swEnableLocation" />
+        app:layout_constraintTop_toBottomOf="@id/til_location"
+        app:layout_constraintStart_toStartOf="@+id/center_horizontal" />
 </androidx.constraintlayout.widget.ConstraintLayout>

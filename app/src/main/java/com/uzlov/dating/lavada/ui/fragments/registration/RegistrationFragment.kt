@@ -21,13 +21,14 @@ import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService.Companion.TAG
+import com.uzlov.dating.lavada.data.repository.PreferenceRepository
 import com.uzlov.dating.lavada.databinding.FragmentRegistrationBinding
 import com.uzlov.dating.lavada.domain.models.User
+import com.uzlov.dating.lavada.ui.activities.LoginActivity
 import com.uzlov.dating.lavada.ui.fragments.BaseFragment
 import com.uzlov.dating.lavada.ui.fragments.PrivatePolicyFragment
 import com.uzlov.dating.lavada.ui.fragments.TermOfUseFragment
 import com.uzlov.dating.lavada.ui.fragments.profile.AboutMyselfFragment
-import com.uzlov.dating.lavada.ui.fragments.profile.ProfileFragment
 import org.json.JSONException
 import java.util.regex.Pattern
 import javax.inject.Inject
@@ -47,6 +48,8 @@ class RegistrationFragment :
     @Inject
     lateinit var firebaseEmailAuthService: FirebaseEmailAuthService
 
+    @Inject
+    lateinit var prefRepository: PreferenceRepository
 
     //колбэк для входа через гугл
     private val mainActivityResultLauncher =
@@ -55,24 +58,33 @@ class RegistrationFragment :
                 val data = result.data
                 val task = GoogleSignIn.getSignedInAccountFromIntent(data)
                 try {
-                    val account = task.getResult(ApiException::class.java)!!
-                    Log.d(TAG, "firebaseAuthWithGoogle:" + account.id)
-                    firebaseEmailAuthService.setToken(account.idToken!!)
-                    user = User(
-                        uid = firebaseEmailAuthService.auth.currentUser?.uid!!,
-                        email = firebaseEmailAuthService.auth.currentUser?.email,
-                        "", "", null, 0, "", "", "", 0.0, 0.0
-                    )
-                    firebaseEmailAuthService.loginWithGoogleAccount(
-                        parentFragmentManager,
-                        AboutMyselfFragment.newInstance(user)
-                    )
+                    task.getResult(ApiException::class.java)?.let {
+                        firebaseEmailAuthService.setToken(it.idToken!!)
+                        user = User(
+                            uid = firebaseEmailAuthService.auth.currentUser?.uid ?: "",
+                            email = firebaseEmailAuthService.auth.currentUser?.email)
+
+                        firebaseEmailAuthService.loginWithGoogleAccount()
+                            .addOnCompleteListener(requireActivity()) { _task ->
+                                if (_task.isSuccessful) {
+                                        prefRepository.readUser()?.let { localUser->
+                                            if (localUser.isReady){
+                                                (requireActivity() as LoginActivity).startHome()
+                                            } else {
+                                                (requireActivity() as LoginActivity).startFillDataFragment(user)
+                                            }
+                                        }
+
+                                } else {
+                                    Log.w(TAG, "createUserWithGoogle:failure", _task.exception)
+                                }
+                            }
+                    }
                 } catch (e: ApiException) {
                     Log.w(TAG, "Google sign in failed", e)
                 }
             }
         }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -92,8 +104,7 @@ class RegistrationFragment :
         addTextChangedListener()
         googleSignInClient =
             GoogleSignIn.getClient(requireContext(), firebaseEmailAuthService.getGSO(context!!))
-        viewBinding.btnFacebook.setReadPermissions("email")
-        viewBinding.btnFacebook.fragment = this
+
         initListeners()
     }
 
@@ -103,29 +114,20 @@ class RegistrationFragment :
 
                 val email = tiEtEmail.text.toString()
                 val password = textInputPassword.text.toString()
-                user = User(
-                    uid = "",
-                    email = email,
-                    "", "", null, 0, "", "", "", 0.0, 0.0
-                )
-                firebaseEmailAuthService.registered(
-                    email,
-                    password,
-                    parentFragmentManager,
-                    AboutMyselfFragment.newInstance(user)
-                )
-            }
-            btnGoogle.setOnClickListener {
-                onAct()
-            }
+                user = User(uid = "", email = email)
 
-            btnFacebook.setOnClickListener {
-                loginWithFacebook()
-            }
-            tvLogIn.setOnClickListener {
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.container, LogInFragment.newInstance())
-                    .commit()
+                firebaseEmailAuthService.registered(email, password)
+                    .addOnCompleteListener(requireActivity()) { task ->
+                    if (task.isSuccessful) {
+                        Log.d(TAG, "createUserWithEmail:success")
+                        //здесь вместо обновления ui прям отсюда нужен статус для передачи в ui слой
+                        (requireActivity() as LoginActivity).startFillDataFragment(user)
+                    } else {
+                        Log.w(TAG, "createUserWithEmail:failure", task.exception)
+                        //Это тоже нужно передавать пользователю, но пока нет понимания, куда. Вызывается вот так:
+                        //   task.exception?.let { Log.d(TAG, it.localizedMessage) }
+                    }
+                }
             }
 
             tvPolicy.setOnClickListener {
@@ -220,10 +222,7 @@ class RegistrationFragment :
     //начальная проверка, если юзер уже входил в систему, его сразу на главную страницу
     private fun checkUser() {
         val currentUser = firebaseEmailAuthService.auth.currentUser
-        if (currentUser != null) {
-            currentUser.uid.let { goToMainVideoFragment(it) }
-
-        }
+        currentUser?.uid?.let { goToMainVideoFragment(it) }
     }
 
 

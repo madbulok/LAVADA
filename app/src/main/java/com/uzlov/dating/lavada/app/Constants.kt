@@ -9,5 +9,9 @@ class Constants {
         const val FIREBASE_PATH_CHATS = "chats"
         const val FIREBASE_PATH_GIFTS = "gifts"
 
+        // preferences
+        const val LOCAL_PREF_USER_ID = "user_id"
+        const val LOCAL_PREF_USER_NAME = "user_name"
+        const val LOCAL_PREF_USER_DATETIME = "user_datetime"
     }
 }

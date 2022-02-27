@@ -44,19 +44,33 @@
         app:piv_premiumColor="@color/Premium_fill"
         app:srcCompat="@drawable/test_avatar" />
 
-    <androidx.appcompat.widget.AppCompatEditText
-        android:id="@+id/etSearchQuery"
-        android:layout_width="0dp"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_email"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/another_email"
-        android:background="@drawable/dialog_bg_color"
-        app:background="@drawable/dialog_bg_color"
-        android:padding="@dimen/default_margin_16"
-        android:drawableStart="@drawable/search"
-        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
-        android:layout_margin="@dimen/default_margin_16"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_margin="20dp"
+        app:boxBackgroundColor="#F0F5F8"
+        app:boxStrokeErrorColor="@color/Error"
+        app:boxStrokeWidth="0dp"
+        app:boxStrokeWidthFocused="0dp"
+        app:boxBackgroundMode="outline"
+        app:boxCollapsedPaddingTop="@dimen/default_margin_16"
+        android:hint="@string/hint_e_mail"
+        app:hintTextColor="@color/Secondary_text"
+        app:boxCornerRadiusBottomEnd="18dp"
+        app:boxCornerRadiusBottomStart="18dp"
+        app:boxCornerRadiusTopEnd="18dp"
+        app:boxCornerRadiusTopStart="18dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/userAvatarImageView3">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/ti_et_email"
+            android:text="werwer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textEmailAddress" />
+    </com.google.android.material.textfield.TextInputLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
