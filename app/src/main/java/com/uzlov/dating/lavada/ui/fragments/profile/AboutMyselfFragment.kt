@@ -44,7 +44,6 @@ class AboutMyselfFragment :
             }
         }
 
-
         addTextChangedListener()
         initListeners()
 
@@ -53,15 +52,19 @@ class AboutMyselfFragment :
     private fun initListeners() {
         with(viewBinding) {
             toggleSex.addOnButtonCheckedListener { group, checkedId, isChecked ->
-                if (checkedId == btnSexM.id) {
-                    user.male = MALE.MAN
-                    Toast.makeText(context, "Button1 Clicked", Toast.LENGTH_SHORT).show()
-                } else if (checkedId == btnSexW.id) {
-                    user.male = MALE.WOMAN
-                    Toast.makeText(context, "Button2 Clicked", Toast.LENGTH_SHORT).show()
-                } else if (checkedId == btnSexAnother.id) {
-                    user.male = MALE.ANOTHER
-                    Toast.makeText(context, "Button3 Clicked", Toast.LENGTH_SHORT).show()
+                when (checkedId) {
+                    btnSexM.id -> {
+                        user.male = MALE.MAN
+                        Toast.makeText(context, "Button1 Clicked", Toast.LENGTH_SHORT).show()
+                    }
+                    btnSexW.id -> {
+                        user.male = MALE.WOMAN
+                        Toast.makeText(context, "Button2 Clicked", Toast.LENGTH_SHORT).show()
+                    }
+                    btnSexAnother.id -> {
+                        user.male = MALE.ANOTHER
+                        Toast.makeText(context, "Button3 Clicked", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
             slAge.addOnChangeListener { _, value, _ ->
@@ -75,21 +78,13 @@ class AboutMyselfFragment :
                     user.email = firebaseEmailAuthService.auth.currentUser?.email
                 }
                 usersRepository.putUser(user)
-                updateUI()
                 (requireActivity() as LoginActivity).startSettingsLookInForFragment(user)
-  //              Toast.makeText(context, "Ваш аккаунт создан. Переход на другой экран будет доступен с ближайшее время", Toast.LENGTH_SHORT).show()
+
             }
-            slAge.addOnSliderTouchListener(object : Slider.OnChangeListener,
-                Slider.OnSliderTouchListener {
-                override fun onValueChange(slider: Slider, value: Float, fromUser: Boolean) {
-                    tvAgeValue.text = value.toString()
-                    progressRegistration.setProgressCompat(50, true)
-                }
-
-                override fun onStartTrackingTouch(slider: Slider) {}
-
-                override fun onStopTrackingTouch(slider: Slider) {}
-            })
+            slAge.addOnChangeListener { _, value, _ ->
+                tvAgeValue.text = value.toInt().toString()
+                progressRegistration.setProgressCompat(50, true)
+            }
         }
     }
 
@@ -121,13 +116,6 @@ class AboutMyselfFragment :
                 progressRegistration.setProgressCompat(10, true)
             }
         }
-    }
-
-    private fun updateUI() {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.container, UploadVideoFragment.newInstance())
-                .commit()
-
     }
 
     companion object {
