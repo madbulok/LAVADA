@@ -1,20 +1,16 @@
 package com.uzlov.dating.lavada.auth
 
-import android.app.Activity
 import android.content.Context
 import android.util.Log
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.*
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.domain.models.User
-import java.lang.IllegalStateException
 import javax.inject.Inject
 
 
-class FirebaseEmailAuthService @Inject constructor(val auth: FirebaseAuth) : IAuth<User, Activity> {
+class FirebaseEmailAuthService @Inject constructor(val auth: FirebaseAuth) {
 
     private var mToken: String? = null
     private var user: User? = null
@@ -38,22 +34,8 @@ class FirebaseEmailAuthService @Inject constructor(val auth: FirebaseAuth) : IAu
             .build()
     }
 
-
     fun setToken(idToken: String) {
         mToken = idToken
-    }
-
-    override fun login(t: User, a: Activity) {
-        if (mToken == null) throw IllegalStateException("Авторизация не увенчалась успехом =(")
-        val credential = GoogleAuthProvider.getCredential(mToken, null)
-        auth.signInWithCredential(credential)
-            .addOnCompleteListener(a) { task ->
-                if (task.isSuccessful) {
-                    Log.d(TAG, "createUserWithGoogle:success")
-                } else {
-                    Log.w(TAG, "createUserWithGoogle:failure", task.exception)
-                }
-            }
     }
 
     // непосредственный вход через google, создает аккаунт
@@ -71,19 +53,20 @@ class FirebaseEmailAuthService @Inject constructor(val auth: FirebaseAuth) : IAu
         return auth.signInWithEmailAndPassword(email, password)
     }
 
-    override fun logout() {
+    fun logout() {
         auth.signOut()
     }
 
     //удаляем пользователя совсем (пока не связан с database, данные у бд не удаляет)
     fun delUser() {
-        val user = auth.currentUser!!
-        user.delete()
+        auth.currentUser?.let {
+            it.delete()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     Log.d(TAG, "User account deleted.")
                 }
             }
+        }
     }
 
     fun getUserUid(): String? {

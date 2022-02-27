@@ -8,8 +8,7 @@ import javax.inject.Inject
 
 //data class User(val name: String, val phone: String, val password: String)
 
-class FirebasePhoneAuthService @Inject constructor(private val auth: FirebaseAuth) :
-    IAuth<User, Activity> {
+class FirebasePhoneAuthService @Inject constructor(private val auth: FirebaseAuth) {
 
 
   fun startAuth(user: User, host: Activity) {
@@ -32,19 +31,9 @@ class FirebasePhoneAuthService @Inject constructor(private val auth: FirebaseAut
       }
     }
 
-    override fun logout() {
+    fun logout() {
         auth.signOut()
     }
-
-     fun registered(login: String, password: String) {
-        TODO("Not yet implemented")
-    }
-
-
-    override fun login(t: User, a: Activity) {
-        TODO("Not yet implemented")
-    }
-
 }
 
 

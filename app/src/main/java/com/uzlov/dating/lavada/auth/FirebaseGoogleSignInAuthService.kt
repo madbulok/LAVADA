@@ -13,7 +13,7 @@ import com.uzlov.dating.lavada.app.App
 import javax.inject.Inject
 
 
-class FirebaseGoogleSignInAuthService @Inject constructor(private val auth: FirebaseAuth, private val app: App) : IAuth<GoogleSignInAccount, Activity> {
+class FirebaseGoogleSignInAuthService @Inject constructor(private val auth: FirebaseAuth, private val app: App) {
 
     private var storedVerificationId: String? = null
     private lateinit var resendToken: PhoneAuthProvider.ForceResendingToken
@@ -48,7 +48,7 @@ class FirebaseGoogleSignInAuthService @Inject constructor(private val auth: Fire
 //                    loginFailed(it)
                 }
         } catch (e: ApiException) {
-//            loginFailed(e)
+            e.printStackTrace()
         }
     }
 
@@ -62,12 +62,8 @@ class FirebaseGoogleSignInAuthService @Inject constructor(private val auth: Fire
         }
     }
 
-    override fun logout() {
+    fun logout() {
         auth.signOut()
-    }
-
-    override fun login(t: GoogleSignInAccount, a: Activity) {
-
     }
 
 }
