@@ -6,6 +6,7 @@ import com.uzlov.dating.lavada.ui.fragments.ChatsFragment
 import com.uzlov.dating.lavada.ui.fragments.FragmentOpenChat
 import com.uzlov.dating.lavada.ui.fragments.MainVideosFragment
 import com.uzlov.dating.lavada.ui.fragments.profile.AboutMyselfFragment
+import com.uzlov.dating.lavada.ui.fragments.profile.FilterLookingForFragment
 import com.uzlov.dating.lavada.ui.fragments.profile.ProfileFragment
 import com.uzlov.dating.lavada.ui.fragments.profile.UploadVideoFragment
 import com.uzlov.dating.lavada.ui.fragments.registration.LogInFragment
@@ -38,4 +39,5 @@ interface AppComponent {
     fun inject(updatePasswordFragment: UpdatePasswordFragment)
     fun inject(fragmentOpenChat: FragmentOpenChat)
     fun inject(splashActivity: SplashActivity)
+    fun inject(filterLookingForFragment: FilterLookingForFragment)
 }

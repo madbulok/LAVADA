@@ -12,6 +12,7 @@ import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
 import com.uzlov.dating.lavada.data.data_sources.IUsersRepository
 import com.uzlov.dating.lavada.databinding.FragmentAboutMyselfBinding
+import com.uzlov.dating.lavada.databinding.FragmentLookingForBinding
 import com.uzlov.dating.lavada.domain.models.MALE
 import com.uzlov.dating.lavada.domain.models.User
 import com.uzlov.dating.lavada.ui.activities.LoginActivity
@@ -21,8 +22,8 @@ import com.uzlov.dating.lavada.viemodels.ViewModelFactory
 import javax.inject.Inject
 
 
-class AboutMyselfFragment :
-    BaseFragment<FragmentAboutMyselfBinding>(FragmentAboutMyselfBinding::inflate) {
+class FilterLookingForFragment :
+    BaseFragment<FragmentLookingForBinding>(FragmentLookingForBinding::inflate) {
 
     @Inject
     lateinit var usersRepository : IUsersRepository
@@ -43,7 +44,6 @@ class AboutMyselfFragment :
                 user = _user.copy()
             }
         }
-
 
         addTextChangedListener()
         initListeners()
@@ -68,60 +68,27 @@ class AboutMyselfFragment :
                 user.age = value.toInt()
             }
             btnNext.setOnClickListener {
-                user.name = tiEtName.text.toString()
-                user.about = tiEtLocation.text.toString()
                 user.uid = firebaseEmailAuthService.getUserUid()!!
                 if (user.email.isNullOrBlank()){
                     user.email = firebaseEmailAuthService.auth.currentUser?.email
                 }
                 usersRepository.putUser(user)
                 updateUI()
-                (requireActivity() as LoginActivity).startSettingsLookInForFragment(user)
   //              Toast.makeText(context, "Ваш аккаунт создан. Переход на другой экран будет доступен с ближайшее время", Toast.LENGTH_SHORT).show()
             }
-            slAge.addOnSliderTouchListener(object : Slider.OnChangeListener,
-                Slider.OnSliderTouchListener {
-                override fun onValueChange(slider: Slider, value: Float, fromUser: Boolean) {
-                    tvAgeValue.text = value.toString()
-                    progressRegistration.setProgressCompat(50, true)
-                }
 
-                override fun onStartTrackingTouch(slider: Slider) {}
+            btnBack.setOnClickListener {
+                (requireActivity() as LoginActivity).rollbackFragment()
+            }
 
-                override fun onStopTrackingTouch(slider: Slider) {}
-            })
         }
     }
 
     private fun addTextChangedListener() {
-        viewBinding.tiEtName.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable) {
-                verifyEditText()
-            }
 
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
-        })
-        viewBinding.tiEtLocation.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable) {
-                verifyEditText()
-            }
-
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
-        })
     }
 
-    private fun verifyEditText() {
-        with(viewBinding) {
-            btnNext.isEnabled = !tiEtName.text.isNullOrBlank()
-            if (!tiEtName.text.isNullOrBlank()){
-                progressRegistration.setProgressCompat(20, true)
-            } else {
-                progressRegistration.setProgressCompat(10, true)
-            }
-        }
-    }
+
 
     private fun updateUI() {
             parentFragmentManager.beginTransaction()
@@ -134,12 +101,12 @@ class AboutMyselfFragment :
         private const val NEW_USER = "user"
 
         fun newInstance() =
-            AboutMyselfFragment().apply {
+            FilterLookingForFragment().apply {
                 arguments = Bundle().apply {
                 }
             }
 
-        fun newInstance(user: User?) = AboutMyselfFragment().apply {
+        fun newInstance(user: User?) = FilterLookingForFragment().apply {
             arguments = Bundle().apply {
                 putParcelable(NEW_USER, user)
             }

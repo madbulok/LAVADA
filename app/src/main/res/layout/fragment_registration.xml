@@ -2,15 +2,19 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/welcome_screen_background">
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.activities.LoginActivity">
 
     <View
         android:id="@+id/fl_background"
         android:layout_width="match_parent"
         android:layout_height="497dp"
         android:background="@drawable/background_welcome_layout"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_label_welcome"
@@ -33,7 +37,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
         android:gravity="center"
-        android:text="@string/log_in_to_your_account"
+        android:text="Sign up to Lavada"
         app:layout_constraintTop_toBottomOf="@+id/tv_label_welcome" />
 
     <com.google.android.material.textfield.TextInputLayout
@@ -73,65 +77,33 @@
             android:inputType="textPassword" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <TextView
-        android:id="@+id/tv_log_in"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginEnd="30dp"
-        android:text="Have an account? Log in"
-        android:textColor="@color/Link_text"
-        app:layout_constraintTop_toBottomOf="@id/til_password" />
-
-    <ImageButton
-        android:id="@+id/btn_google"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/default_margin_16"
-        android:background="@drawable/google_button"
-        app:layout_constraintEnd_toStartOf="@+id/btn_facebook"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_log_in" />
-
-    <com.facebook.login.widget.LoginButton
-        android:id="@+id/btn_facebook"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/default_margin_16"
-        android:layout_marginEnd="50dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:visibility="gone"
-        app:layout_constraintStart_toEndOf="@id/btn_google"
-        app:layout_constraintTop_toBottomOf="@id/tv_log_in" />
-
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_before"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="30dp"
-        android:text="By continuing, you agree to our"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_google" />
+        android:text="By continuing, you agree to our "
+        app:layout_constraintBottom_toTopOf="@+id/tv_policy"
+        app:layout_constraintStart_toStartOf="@+id/til_password" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_termOfUse"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:layout_marginEnd="30dp"
         android:text="Terms of Service"
         android:textColor="@color/Link_text"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_before"
         app:layout_constraintStart_toEndOf="@+id/tv_before"
-        app:layout_constraintTop_toBottomOf="@id/btn_google" />
+        app:layout_constraintTop_toTopOf="@+id/tv_before" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_policy"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
         android:text="and Privacy Policy."
+        android:layout_marginBottom="@dimen/default_margin_16"
         android:textColor="@color/Link_text"
-        app:layout_constraintTop_toBottomOf="@id/tv_before" />
+        app:layout_constraintBottom_toTopOf="@+id/btnLogin"
+        app:layout_constraintStart_toStartOf="@+id/tv_before" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnLogin"
@@ -141,7 +113,9 @@
         android:layout_margin="20dp"
         android:layout_marginBottom="46dp"
         android:enabled="false"
-        android:text="@string/log_in_btn_label"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        android:text="@string/sign_up"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/til_password"
+        app:layout_constraintStart_toStartOf="@+id/til_password" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

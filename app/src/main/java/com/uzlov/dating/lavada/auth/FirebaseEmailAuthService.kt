@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.*
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.domain.models.User
@@ -18,28 +19,12 @@ class FirebaseEmailAuthService @Inject constructor(val auth: FirebaseAuth) : IAu
     private var mToken: String? = null
     private var user: User? = null
 
-
-
     //регистрация нового пользователя. Умеет обрабатывать ошибки регистрации (например, если такой email уже есть в системе
     fun registered(
         login: String,
-        password: String,
-        parentFragmentManager: FragmentManager,
-        fragment: Fragment
-    ) {
-        auth.createUserWithEmailAndPassword(login, password)
-            .addOnCompleteListener(Activity()) { task ->
-                if (task.isSuccessful) {
-                    Log.d(TAG, "createUserWithEmail:success")
-                    //здесь вместо обновления ui прям отсюда нужен статус для передачи в ui слой
-                    updateUI(parentFragmentManager, fragment)
-                } else {
-                    Log.w(TAG, "createUserWithEmail:failure", task.exception)
-                    //Это тоже нужно передавать пользователю, но пока нет понимания, куда. Вызывается вот так:
-                    //   task.exception?.let { Log.d(TAG, it.localizedMessage) }
-
-                }
-            }
+        password: String
+    ) : Task<AuthResult>{
+        return auth.createUserWithEmailAndPassword(login, password)
     }
 
     // вспомогательный метод для входа через google, .requestIdToken - это из Web client (Auto-created for Google Sign-in)
@@ -72,36 +57,18 @@ class FirebaseEmailAuthService @Inject constructor(val auth: FirebaseAuth) : IAu
     }
 
     // непосредственный вход через google, создает аккаунт
-    fun loginWithGoogleAccount(parentFragmentManager: FragmentManager, fragment: Fragment) {
+    fun loginWithGoogleAccount() : Task<AuthResult> {
         if (mToken == null) throw IllegalStateException("Авторизация не увенчалась успехом =(")
         val credential = GoogleAuthProvider.getCredential(mToken, null)
-        auth.signInWithCredential(credential)
-            .addOnCompleteListener(Activity()) { task ->
-                if (task.isSuccessful) {
-                    Log.d(TAG, "createUserWithGoogle:success")
-                    updateUI(parentFragmentManager, fragment)
-                } else {
-                    Log.w(TAG, "createUserWithGoogle:failure", task.exception)
-                }
-            }
+        return auth.signInWithCredential(credential)
     }
 
     //вход с помощью email и password, не создает аккаунт, проверяет наличие, возвращает task.exception.localizedMessage
     fun loginWithEmailAndPassword(
         email: String,
-        password: String,
-        parentFragmentManager: FragmentManager,
-        fragment: Fragment
-    ) {
-        auth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener(Activity()) { task ->
-                if (task.isSuccessful) {
-                    Log.d(TAG, "signInWithEmail:success")
-                    updateUI(parentFragmentManager, fragment)
-                } else {
-                    Log.w(TAG, "signInWithEmail:failure", task.exception)
-                }
-            }
+        password: String
+    ):  Task<AuthResult> {
+        return auth.signInWithEmailAndPassword(email, password)
     }
 
     override fun logout() {
@@ -117,14 +84,6 @@ class FirebaseEmailAuthService @Inject constructor(val auth: FirebaseAuth) : IAu
                     Log.d(TAG, "User account deleted.")
                 }
             }
-    }
-
-    //временное решение
-    private fun updateUI(parentFragmentManager: FragmentManager, fragment: Fragment) {
-        parentFragmentManager.beginTransaction()
-            .replace(R.id.container, fragment)
-            .commit()
-
     }
 
     fun getUserUid(): String? {

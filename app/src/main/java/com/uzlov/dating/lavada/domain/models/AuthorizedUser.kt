@@ -7,5 +7,6 @@ import kotlinx.parcelize.Parcelize
 data class AuthorizedUser (
     val uuid: String,
     val datetime: Long,
-    val name: String
+    val name: String,
+    val isReady: Boolean = false
 ) : Parcelable

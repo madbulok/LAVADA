@@ -118,5 +118,6 @@
     <string name="gifts">Gifts</string>
     <string name="news">News</string>
     <string name="another_email">Or sign in with another email</string>
+    <string name="sign_up">Sign up</string>
 
 </resources>
