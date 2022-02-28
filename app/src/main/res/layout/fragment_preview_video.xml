@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:src="http://schemas.android.com/tools">
+
+    <com.google.android.exoplayer2.ui.PlayerView
+        android:id="@+id/item_video_exoplayer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:resize_mode="fixed_width"
+        app:surface_type="texture_view"/>
+
+
+    <com.uzlov.dating.lavada.ui.custom.UserAvatarImageView
+        android:id="@+id/userAvatarImageView"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginBottom="24dp"
+        app:srcCompat="@drawable/test_avatar"
+        app:layout_constraintBottom_toTopOf="@id/btn_back"
+        app:layout_constraintStart_toStartOf="@id/btn_back" />
+
+    <TextView
+        android:id="@+id/tvNameProfile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/default_margin_16"
+        app:layout_constraintTop_toTopOf="@+id/userAvatarImageView"
+        app:layout_constraintStart_toEndOf="@id/userAvatarImageView"/>
+
+    <TextView
+        android:id="@+id/tvLocationProfile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/default_margin_16"
+        app:layout_constraintBottom_toBottomOf="@+id/userAvatarImageView"
+        app:layout_constraintStart_toEndOf="@id/userAvatarImageView"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent=".5" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_back"
+        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+        android:layout_width="0dp"
+        android:layout_height="55dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="4dp"
+        android:text="Back"
+        android:textAllCaps="false"
+        android:textColor="@color/Primary_text"
+        app:backgroundTint="#F0F5F8"
+        app:cornerRadius="@dimen/default_margin_16"
+        app:layout_constraintEnd_toStartOf="@+id/center_horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/btn_next" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_next"
+        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+        android:layout_width="0dp"
+        android:layout_height="55dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="12dp"
+        app:backgroundTint="@color/Brand_fill"
+        android:enabled="false"
+        android:text="Complete"
+        android:textAllCaps="false"
+        android:textColor="@color/Primary_text"
+        app:cornerRadius="@dimen/default_margin_16"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/center_horizontal" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

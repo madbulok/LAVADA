@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.uzlov.dating.lavada.R
+import com.uzlov.dating.lavada.ui.adapters.PlayerViewAdapter
 import com.uzlov.dating.lavada.ui.fragments.MainVideosFragment
 import com.uzlov.dating.lavada.ui.fragments.VideoCaptureFragment
 import com.uzlov.dating.lavada.ui.fragments.profile.UploadVideoFragment
@@ -29,7 +30,7 @@ class HostActivity : AppCompatActivity() {
         bottomNavigation?.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.upload_video -> {
-                    setFragment(UploadVideoFragment.newInstance())
+//                    setFragment(UploadVideoFragment.newInstance())
                     return@setOnItemSelectedListener true
                 }
                 R.id.create_video -> {
@@ -50,6 +51,11 @@ class HostActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.container, fragment)
             .commit()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        PlayerViewAdapter.releaseAllPlayers()
     }
 
     override fun onRequestPermissionsResult(

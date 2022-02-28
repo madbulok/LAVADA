@@ -42,7 +42,7 @@ class UsersRemoteDataSourceImpl : IRemoteDataSource {
     }
 
     override fun putUser(user: User) {
-        user.uid?.let { userReference.child(it).setValue(user) }
+        user.uid.let { userReference.child(it).setValue(user) }
     }
 
     override fun getUsersWithUserID(id: String): LiveData<List<User>> {

@@ -8,6 +8,8 @@ import com.uzlov.dating.lavada.databinding.LoginActivityBinding
 import com.uzlov.dating.lavada.domain.models.User
 import com.uzlov.dating.lavada.ui.fragments.profile.AboutMyselfFragment
 import com.uzlov.dating.lavada.ui.fragments.profile.FilterLookingForFragment
+import com.uzlov.dating.lavada.ui.fragments.profile.PreviewVideoFragment
+import com.uzlov.dating.lavada.ui.fragments.profile.UploadVideoFragment
 import com.uzlov.dating.lavada.ui.fragments.registration.BenefitFragment
 import com.uzlov.dating.lavada.ui.fragments.registration.LogInFragment
 import com.uzlov.dating.lavada.ui.fragments.registration.RegistrationFragment
@@ -69,7 +71,7 @@ class LoginActivity: AppCompatActivity(){
                 .hide(benefitFragment)
                 .hide(registrationFragment)
                 .show(loginFragment)
-                .addToBackStack("logIn")
+                .addToBackStack("null")
                 .commit()
         }
     }
@@ -80,7 +82,7 @@ class LoginActivity: AppCompatActivity(){
                 .hide(benefitFragment)
                 .hide(loginFragment)
                 .show(registrationFragment)
-                .addToBackStack("reg")
+                .addToBackStack("null")
                 .commit()
         }
     }
@@ -91,7 +93,7 @@ class LoginActivity: AppCompatActivity(){
         aboutMyselfFragment = AboutMyselfFragment.newInstance(user)
         supportFragmentManager.apply {
             beginTransaction()
-                .replace(R.id.container, aboutMyselfFragment, "about")
+                .replace(R.id.container, aboutMyselfFragment, "null")
                 .commit()
         }
     }
@@ -105,7 +107,7 @@ class LoginActivity: AppCompatActivity(){
                 .add(R.id.container, filterLookingForFragment)
                 .hide(aboutMyselfFragment)
                 .show(filterLookingForFragment)
-                .addToBackStack("look for")
+                .addToBackStack("null")
                 .commit()
         }
     }
@@ -120,5 +122,38 @@ class LoginActivity: AppCompatActivity(){
     fun startHome() {
         startActivity(Intent(this@LoginActivity, LoginActivity::class.java))
         finish()
+    }
+
+    fun clearFragments() {
+        supportFragmentManager.clearBackStack("null")
+        for (i in 0..supportFragmentManager.backStackEntryCount) supportFragmentManager.popBackStack()
+    }
+
+    private lateinit var selectVideoFragment: UploadVideoFragment
+    fun startSelectVideo(user: User) {
+        selectVideoFragment = UploadVideoFragment.newInstance(user)
+        supportFragmentManager.apply {
+            beginTransaction()
+                .add(R.id.container, selectVideoFragment)
+                .hide(aboutMyselfFragment)
+                .hide(filterLookingForFragment)
+                .show(selectVideoFragment)
+                .addToBackStack("null")
+                .commit()
+        }
+    }
+
+    private lateinit var previewFragment: PreviewVideoFragment
+    fun showPreviewVideo(_path: String, user: User) {
+        previewFragment = PreviewVideoFragment.newInstance(_path, user)
+        supportFragmentManager.apply {
+            beginTransaction()
+                .add(R.id.container, previewFragment)
+                .hide(selectVideoFragment)
+                .hide(filterLookingForFragment)
+                .show(previewFragment)
+                .addToBackStack("null")
+                .commit()
+        }
     }
 }

@@ -28,7 +28,7 @@ class SplashActivity : AppCompatActivity() {
         // get cached user
         val userLocal = preferenceRepository.readUser()
 
-        if (userLocal != null){
+        if (userLocal?.isReady == true){
             lifecycleScope.launchWhenResumed {
                 delay(1000)
                 startActivity(Intent(this@SplashActivity, HostActivity::class.java))
