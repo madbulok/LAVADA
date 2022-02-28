@@ -47,26 +47,28 @@ class AboutMyselfFragment :
         addTextChangedListener()
         initListeners()
 
+        (requireContext() as LoginActivity).clearFragments()
     }
 
     private fun initListeners() {
         with(viewBinding) {
-            toggleSex.addOnButtonCheckedListener { group, checkedId, isChecked ->
-                when (checkedId) {
-                    btnSexM.id -> {
+            radioGroup.setOnCheckedChangeListener { group, checkedId ->
+                when(checkedId){
+                    R.id.rbMan -> {
                         user.male = MALE.MAN
                         Toast.makeText(context, "Button1 Clicked", Toast.LENGTH_SHORT).show()
                     }
-                    btnSexW.id -> {
+                    R.id.rvWoman -> {
                         user.male = MALE.WOMAN
                         Toast.makeText(context, "Button2 Clicked", Toast.LENGTH_SHORT).show()
                     }
-                    btnSexAnother.id -> {
+                    R.id.rbAnother -> {
                         user.male = MALE.ANOTHER
                         Toast.makeText(context, "Button3 Clicked", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
+
             slAge.addOnChangeListener { _, value, _ ->
                 user.age = value.toInt()
             }

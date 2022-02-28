@@ -1,9 +1,9 @@
 package com.uzlov.dating.lavada.domain.models
 
 class UserFilter(
-    val sex: Int,
-    val ageStart: Int,
-    val ageEnd: Int,
-    val latitude: Float,
-    val longitude: Float,
+    var sex: Int = -1,
+    var ageStart: Int = 18,
+    var ageEnd: Int = 60,
+    var latitude: Float = 0F,
+    var longitude: Float = 0F,
 )

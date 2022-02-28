@@ -1,95 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
+
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/progressRegistration"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="27dp"
+        android:layout_marginEnd="20dp"
+        android:max="100"
+        android:progress="70"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/fl_background"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/background_welcome_layout"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/tv_video"
+        android:id="@+id/tv_about_myself"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
-        android:text="Location"
-        android:textSize="30sp"
+        android:layout_marginEnd="20dp"
+        android:gravity="center"
+        android:text="Upload a short video about yourself"
+        android:textColor="@color/Primary_text"
+        android:textSize="32sp"
         android:textStyle="bold"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/progressRegistration" />
 
     <TextView
-        android:id="@+id/tv_video_about"
-        android:layout_width="match_parent"
+        android:id="@+id/tv_recommend"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
         android:layout_marginTop="10dp"
-        android:layout_marginEnd="20dp"
-        android:text="Turn on the location and we will display people near you, more information"
-        app:layout_constraintTop_toBottomOf="@+id/tv_video" />
+        android:gravity="center"
+        android:text="We will recommend diets and exercises \n that suit you"
+        android:textColor="@color/Primary_text"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@+id/tv_about_myself"
+        app:layout_constraintStart_toStartOf="@+id/tv_about_myself"
+        app:layout_constraintTop_toBottomOf="@+id/tv_about_myself" />
 
-    <VideoView
-        android:id="@+id/vv_upload_video"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_margin="20dp"
-        android:text="My Location"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/btn_back"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_video_about" />
 
-    <FrameLayout
-        android:id="@+id/frame_layout_video"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/btn_back"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_video_about">
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_select_video"
+        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="55dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginBottom="100dp"
+        android:text="Add video"
+        android:textAllCaps="false"
+        android:textColor="@color/Primary_text"
+        app:backgroundTint="@color/Brand_fill"
+        app:cornerRadius="@dimen/default_margin_16"
+        app:layout_constraintBottom_toTopOf="@+id/btn_next"
+        app:layout_constraintEnd_toEndOf="@+id/tv_recommend"
+        app:layout_constraintStart_toStartOf="@+id/tv_recommend"
+        app:layout_constraintTop_toBottomOf="@+id/tv_recommend" />
 
-        <View
-            android:id="@+id/v_frame"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="20dp"
-            android:background="#E8E6E6"
-            app:layout_constraintBottom_toTopOf="@id/btn_back"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/til_location" />
 
-        <Button
-            android:id="@+id/btn_add_video"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Add video" />
-    </FrameLayout>
 
-    <Button
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent=".5" />
+
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_back"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+        android:layout_width="0dp"
+        android:layout_height="55dp"
         android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="10dp"
-        android:backgroundTint="@color/Surface"
+        android:layout_marginEnd="4dp"
         android:text="Back"
+        android:textAllCaps="false"
         android:textColor="@color/Primary_text"
-        app:layout_constraintBottom_toTopOf="@id/btn_next"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:backgroundTint="#F0F5F8"
+        app:cornerRadius="@dimen/default_margin_16"
+        app:layout_constraintEnd_toStartOf="@+id/center_horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/btn_next" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_next"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
+        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+        android:layout_width="0dp"
+        android:layout_height="55dp"
+        android:layout_marginStart="4dp"
         android:layout_marginEnd="20dp"
-        android:layout_marginBottom="20dp"
-        android:backgroundTint="@color/Surface"
-        android:text="Go to my profile"
+        android:layout_marginBottom="12dp"
+        android:enabled="false"
+        android:text="Next"
+        android:textAllCaps="false"
         android:textColor="@color/Primary_text"
+        app:cornerRadius="@dimen/default_margin_16"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="@+id/center_horizontal" />
 </androidx.constraintlayout.widget.ConstraintLayout>

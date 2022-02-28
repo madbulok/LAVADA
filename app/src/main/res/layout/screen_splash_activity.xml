@@ -4,18 +4,21 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@drawable/ic_launch_screen"
     tools:viewBindingIgnore="false">
 
-    <ImageView
-        android:id="@+id/star1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/ic_star_3"
-        android:layout_marginEnd="40dp"
-        android:layout_marginTop="40dp"
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/imageView2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scaleType="fitXY"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:lottie_autoPlay="true"
+        app:lottie_imageAssetsFolder="images/"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/lott_2340_1080" />
 
     <TextView
         android:id="@+id/tvLabelApp"
@@ -23,12 +26,11 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/app_name"
+        android:textColor="@color/Primary_text"
         android:textSize="32sp"
         android:textStyle="bold"
-        android:textColor="@color/Primary_text"
-        app:layout_constraintTop_toBottomOf="@id/star1"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"/>
 
     <TextView
         android:id="@+id/tvSubLabelApp"
@@ -60,23 +62,5 @@
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="@id/ivLogo"
         app:layout_constraintTop_toTopOf="@id/ivLogo" />
-
-    <ImageView
-        android:id="@+id/start2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ivLogo"
-        app:srcCompat="@drawable/ic_star_1" />
-
-    <ImageView
-        android:id="@+id/start3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ivLogo"
-        app:srcCompat="@drawable/ic_star_2" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
