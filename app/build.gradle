@@ -130,4 +130,7 @@ dependencies {
 
     // viewer photos with scaling - zooming
     implementation 'com.davemorrissey.labs:subsampling-scale-image-view:3.6.0'
+
+    def lottieVersion = "3.7.2"
+    implementation "com.airbnb.android:lottie:$lottieVersion"
 }
