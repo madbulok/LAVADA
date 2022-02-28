@@ -154,9 +154,7 @@ class RegistrationFragment :
                 override fun onSuccess(loginResult: LoginResult) {
 
                     val token = loginResult.accessToken
-                    val request = GraphRequest.newMeRequest(
-                        token
-                    ) { obj, _ ->
+                    val request = GraphRequest.newMeRequest(token) { obj, _ ->
                         try {
                             email = obj!!.getString("email")
                             firstName = obj.getString("first_name")
@@ -233,7 +231,7 @@ class RegistrationFragment :
     }
 
     private fun goToMainVideoFragment(id: String) {
-        parentFragmentManager.beginTransaction()
+//        parentFragmentManager.beginTransaction()
 //            .replace(R.id.container, MainVideosFragment.newInstance(id))
 //                .replace(R.id.container, ProfileFragment.newInstance())
 //            .commit()
