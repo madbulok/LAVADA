@@ -16,6 +16,7 @@
         <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/drawable/gift.xml" value="0.3828125" />
         <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/drawable/heart.xml" value="0.3828125" />
         <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/drawable/ic_chips.xml" value="0.3828125" />
+        <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/drawable/ic_frame_logo.xml" value="0.3828125" />
         <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/drawable/ic_launch_screen.xml" value="0.22135416666666666" />
         <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/drawable/ic_star_1.xml" value="0.22135416666666666" />
         <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/drawable/ic_star_2.xml" value="0.22135416666666666" />
@@ -38,14 +39,16 @@
         <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/layout/fragment_benefits.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/layout/fragment_chats_layout.xml" value="0.5" />
         <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/layout/fragment_login.xml" value="0.36666666666666664" />
-        <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/layout/fragment_looking_for.xml" value="0.5" />
+        <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/layout/fragment_looking_for.xml" value="0.33" />
         <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/layout/fragment_match_bottom_layout.xml" value="0.33" />
+        <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/layout/fragment_preview_video.xml" value="0.25" />
         <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/layout/fragment_private_police.xml" value="0.2876992235390274" />
         <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/layout/fragment_profile.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/layout/fragment_registration.xml" value="0.33" />
+        <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/layout/fragment_select_video.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/layout/fragment_single_chat.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/layout/fragment_term_of_use.xml" value="0.2516082916368835" />
-        <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/layout/fragment_upload_video.xml" value="0.1390625" />
+        <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/layout/fragment_upload_video.xml" value="0.33" />
         <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/layout/fragment_video_capture.xml" value="0.22" />
         <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/layout/fragment_viewer_image_layout.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/layout/host_activity.xml" value="0.36666666666666664" />
@@ -56,11 +59,11 @@
         <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/layout/item_message_layout.xml" value="0.6346899224806202" />
         <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/layout/item_profile_chat.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/layout/item_profile_stories_layout.xml" value="0.67" />
-        <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/layout/login_activity.xml" value="0.25" />
+        <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/layout/login_activity.xml" value="0.12" />
         <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/layout/main_videos_fragment.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/layout/questionnaire_item_view.xml" value="0.22" />
-        <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/layout/screen_splash_activity.xml" value="0.16" />
-        <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/layout/test_layout.xml" value="1.5" />
+        <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/layout/screen_splash_activity.xml" value="0.33" />
+        <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/layout/test_layout.xml" value="0.37713894592744696" />
         <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/layout/tiktok_timeline_item_recycler.xml" value="0.33" />
         <entry key="..\:/Users/Artem/AndroidStudioProjects/LAVADA/app/src/main/res/layout/uzlov_test_layout.xml" value="0.1390625" />
       </map>

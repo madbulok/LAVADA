@@ -148,12 +148,22 @@ class LoginActivity: AppCompatActivity(){
         previewFragment = PreviewVideoFragment.newInstance(_path, user)
         supportFragmentManager.apply {
             beginTransaction()
-                .add(R.id.container, previewFragment)
+                .add(R.id.fullScreen_container, previewFragment)
                 .hide(selectVideoFragment)
                 .hide(filterLookingForFragment)
                 .show(previewFragment)
                 .addToBackStack("null")
                 .commit()
         }
+    }
+
+    fun routeToMainScreen() {
+        startActivity(
+            Intent(
+            this, HostActivity::class.java
+            )
+        )
+        clearFragments()
+        finish()
     }
 }
