@@ -16,7 +16,8 @@ class PreferenceRepository @Inject constructor(private var preferences: SharedPr
             AuthorizedUser(
                 uuid = preferences.getString(Constants.LOCAL_PREF_USER_ID, "") ?: "",
                 name = preferences.getString(Constants.LOCAL_PREF_USER_NAME, "") ?: "",
-                datetime = preferences.getLong(Constants.LOCAL_PREF_USER_DATETIME, 0)
+                datetime = preferences.getLong(Constants.LOCAL_PREF_USER_DATETIME, 0),
+                isReady = preferences.getBoolean(Constants.LOCAL_PREF_USER_IS_READY, false)
             )
         } else {
             null
@@ -28,6 +29,7 @@ class PreferenceRepository @Inject constructor(private var preferences: SharedPr
             putString(Constants.LOCAL_PREF_USER_ID, profile.uuid)
             putString(Constants.LOCAL_PREF_USER_NAME, profile.name)
             putLong(Constants.LOCAL_PREF_USER_DATETIME, profile.datetime)
+            putBoolean(Constants.LOCAL_PREF_USER_IS_READY, profile.isReady)
         }.apply()
     }
 

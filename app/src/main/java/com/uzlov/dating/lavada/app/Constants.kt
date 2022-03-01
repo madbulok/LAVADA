@@ -13,6 +13,7 @@ class Constants {
         const val LOCAL_PREF_USER_ID = "user_id"
         const val LOCAL_PREF_USER_NAME = "user_name"
         const val LOCAL_PREF_USER_DATETIME = "user_datetime"
+        const val LOCAL_PREF_USER_IS_READY = "user_is_ready"
 
         // pref filter
         const val LOCAL_PREF_FILTER_SEX = "FILTER_SEX"
