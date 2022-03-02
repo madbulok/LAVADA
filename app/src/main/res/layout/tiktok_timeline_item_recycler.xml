@@ -146,11 +146,12 @@
             app:layout_constraintStart_toStartOf="@+id/ivInstagramProfile"
             tools:text="Art-director of Lavada. I love cinema, design, parties, travel. Looking for interesting creative people." />
 
-        <com.google.android.material.imageview.ShapeableImageView
+        <com.uzlov.dating.lavada.ui.custom.UserAvatarImageView
             android:id="@+id/ivRandomProfile"
             android:layout_width="@dimen/size_image_profile"
             android:layout_height="@dimen/size_image_profile"
             android:layout_marginBottom="@dimen/default_margin_8"
+            app:srcCompat="@drawable/test_avatar"
             app:layout_constraintBottom_toTopOf="@+id/tvDescriptionProfile"
             app:layout_constraintStart_toStartOf="@+id/tvDescriptionProfile"
             app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent"

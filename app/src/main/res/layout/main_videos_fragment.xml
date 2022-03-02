@@ -19,15 +19,15 @@
         tools:listitem="@layout/tiktok_timeline_item_recycler" />
 
 <!--    top profile bar-->
-    <com.google.android.material.imageview.ShapeableImageView
+    <com.uzlov.dating.lavada.ui.custom.UserAvatarImageView
         android:id="@+id/ivProfile"
         android:layout_width="@dimen/size_image_profile"
         android:layout_height="@dimen/size_image_profile"
         android:layout_marginTop="10dp"
         android:layout_marginStart="@dimen/default_margin_16"
+        app:srcCompat="@drawable/test_avatar"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent"
         tools:background="@tools:sample/avatars"/>
 
     <ImageView

@@ -71,9 +71,17 @@ class LogInFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
                     firebaseEmailAuthService.loginWithEmailAndPassword(email, password)
                         .addOnCompleteListener(requireActivity()) { task ->
                             if (task.isSuccessful) {
+                                preferenceRepository.updateUser(
+                                    AuthorizedUser(
+                                        uuid = firebaseEmailAuthService.auth.currentUser?.uid ?: "",
+                                        datetime = System.currentTimeMillis() / 1000,
+                                        name = firebaseEmailAuthService.auth.currentUser?.email ?: "",
+                                        isReady = true
+                                    )
+                                )
                                 (requireActivity() as LoginActivity).startHome()
                             } else {
-                                Log.w(TAG, "signInWithEmail:failure", task.exception)
+                                Toast.makeText(requireContext(), task.exception?.localizedMessage ?: "Ошибка входа. Возможно неверные данные", Toast.LENGTH_SHORT).show()
                             }
                         }
                 }

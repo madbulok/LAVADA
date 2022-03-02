@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.os.bundleOf
 import com.abedelazizshe.lightcompressorlibrary.CompressionListener
@@ -50,7 +51,7 @@ class UploadVideoFragment :
         }
         viewBinding.btnNext.setOnClickListener {
             path?.let {
-                (requireActivity() as LoginActivity).showPreviewVideo(it, user)
+                (requireActivity() as LoginActivity).showPreviewVideo(path ?: "", user)
             }
         }
 
@@ -108,37 +109,61 @@ class UploadVideoFragment :
             listener = object : CompressionListener {
                 override fun onProgress(index: Int, percent: Float) {
                     // Update UI with progress value
+                    viewBinding.progressRegistration.setProgressCompat(percent.toInt(), true)
                 }
 
                 override fun onStart(index: Int) {
                     // Compression start
+                    viewBinding.progressRegistration.setProgressCompat(0, true)
+                    startCompressing()
                 }
 
                 override fun onSuccess(index: Int, size: Long, path: String?) {
                     this@UploadVideoFragment.path = path
-                    viewBinding.btnNext.isEnabled = true
-                    (requireActivity() as LoginActivity).showPreviewVideo(path ?: "", user)
+                    stopCompressing()
+                    viewBinding.progressRegistration.setProgressCompat(100, true)
+                    viewBinding.btnSelectVideo.text = "Видео выбрано. Нажмите чтоб выбрать другое"
                 }
 
                 override fun onFailure(index: Int, failureMessage: String) {
                     // On Failure
-                    Log.d("Error", failureMessage)
+                    Toast.makeText(requireContext(), failureMessage, Toast.LENGTH_SHORT).show()
+                    stopCompressing()
                 }
 
                 override fun onCancelled(index: Int) {
                     // On Cancelled
+                    stopCompressing()
                 }
 
             },
             configureWith = Configuration(
                 quality = VideoQuality.MEDIUM,
                 frameRate = 24, /*Int, ignore, or null*/
-                isMinBitrateCheckEnabled = true,
+                isMinBitrateCheckEnabled = false,
                 videoBitrate = 3677198, /*Int, ignore, or null*/
                 disableAudio = false, /*Boolean, or ignore*/
                 keepOriginalResolution = true, /*Boolean, or ignore*/
             )
         )
+    }
+
+    fun startCompressing() {
+        with(viewBinding){
+            btnBack.isEnabled = false
+            btnNext.isEnabled = false
+            btnSelectVideo.visibility = View.GONE
+            progressCompressing.visibility = View.VISIBLE
+        }
+    }
+
+    fun stopCompressing() {
+        with(viewBinding){
+            btnBack.isEnabled = true
+            btnNext.isEnabled = true
+            btnSelectVideo.visibility = View.VISIBLE
+            progressCompressing.visibility = View.GONE
+        }
     }
 
     companion object {
