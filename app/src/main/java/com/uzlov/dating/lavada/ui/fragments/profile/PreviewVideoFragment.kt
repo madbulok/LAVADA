@@ -14,6 +14,7 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.data.repository.PreferenceRepository
 import com.uzlov.dating.lavada.databinding.FragmentPreviewVideoBinding
+import com.uzlov.dating.lavada.domain.models.AuthorizedUser
 import com.uzlov.dating.lavada.domain.models.User
 import com.uzlov.dating.lavada.storage.FirebaseStorageService
 import com.uzlov.dating.lavada.ui.activities.LoginActivity
@@ -75,9 +76,19 @@ class PreviewVideoFragment : BaseFragment<FragmentPreviewVideoBinding>(FragmentP
                 result.first.addOnSuccessListener {
                     user.url_video = result.second.toString()
                     userViewModel.addUser(user)
-                    preferenceRepository.readUser()?.let {
-                        preferenceRepository.updateUser(it.copy(isReady = true))
+                    val localUser = preferenceRepository.readUser()
+                    if (localUser != null) {
+                        preferenceRepository.updateUser(localUser.copy(isReady = true))
+                    } else {
+                        val localUserNew = AuthorizedUser(
+                            uuid = user.uid,
+                            datetime = System.currentTimeMillis() / 1000,
+                            name = user.name ?: "No name",
+                            isReady = true
+                        )
+                        preferenceRepository.updateUser(localUserNew)
                     }
+
                     endLoading()
                     (requireActivity() as LoginActivity).routeToMainScreen()
                 }.addOnFailureListener {

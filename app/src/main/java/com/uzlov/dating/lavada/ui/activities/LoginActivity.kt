@@ -120,7 +120,7 @@ class LoginActivity: AppCompatActivity(){
     fun rollbackFragment() = supportFragmentManager.popBackStack()
 
     fun startHome() {
-        startActivity(Intent(this@LoginActivity, LoginActivity::class.java))
+        startActivity(Intent(this@LoginActivity, HostActivity::class.java))
         finish()
     }
 

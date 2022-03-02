@@ -29,7 +29,6 @@
     </FrameLayout>
 
 
-
     <com.uzlov.dating.lavada.ui.custom.UserAvatarImageView
         android:id="@+id/userAvatarImageView"
         android:layout_width="44dp"

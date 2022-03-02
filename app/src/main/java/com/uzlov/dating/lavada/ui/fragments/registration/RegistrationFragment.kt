@@ -116,7 +116,7 @@ class RegistrationFragment :
                 val password = textInputPassword.text.toString()
                 user = User(uid = "", email = email)
 
-                firebaseEmailAuthService.registered(email, password)
+                firebaseEmailAuthService.registerWithEmailAndPassword(email, password)
                     .addOnCompleteListener(requireActivity()) { task ->
                     if (task.isSuccessful) {
                         Log.d(TAG, "createUserWithEmail:success")
@@ -124,8 +124,7 @@ class RegistrationFragment :
                         (requireActivity() as LoginActivity).startFillDataFragment(user)
                     } else {
                         Log.w(TAG, "createUserWithEmail:failure", task.exception)
-                        //Это тоже нужно передавать пользователю, но пока нет понимания, куда. Вызывается вот так:
-                        //   task.exception?.let { Log.d(TAG, it.localizedMessage) }
+                        Toast.makeText(requireContext(), task.exception?.localizedMessage ?: "Ошибка регистрации! Возможно такой аккаунт уже существует.", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -144,7 +143,6 @@ class RegistrationFragment :
             }
         }
     }
-
 
     //вход через facebook
     private fun loginWithFacebook() {
@@ -296,6 +294,12 @@ class RegistrationFragment :
         with(viewBinding) {
             btnLogin.isEnabled = isValidEmail(viewBinding.tiEtEmail.text.toString()) &&
                     isValidPassword(viewBinding.textInputPassword.text.toString())
+
+            if (!isValidPassword(viewBinding.textInputPassword.text.toString())){
+                viewBinding.textInputPassword.error = "Пароль должен быть длиной более 8 симоволов и включать в себя символы нижнего и верхнего регистра."
+            } else {
+                viewBinding.textInputPassword.error = null
+            }
         }
     }
 }
