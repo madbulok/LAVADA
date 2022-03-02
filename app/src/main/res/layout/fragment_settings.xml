@@ -125,7 +125,7 @@
         android:drawablePadding="9dp"
         android:gravity="start|center"
         android:text="@string/about_lavada"
-        app:drawableStartCompat="@drawable/heart"
+        app:drawableStartCompat="@drawable/heart_for_settings"
         app:layout_constraintTop_toBottomOf="@id/btn_help" />
 
     <TextView
