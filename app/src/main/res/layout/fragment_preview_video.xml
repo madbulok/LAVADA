@@ -5,17 +5,28 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:src="http://schemas.android.com/tools">
 
-    <com.google.android.exoplayer2.ui.PlayerView
-        android:id="@+id/item_video_exoplayer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="visible"
+
+    <FrameLayout
+        android:id="@+id/frameLayout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:resize_mode="fixed_width"
-        app:surface_type="texture_view"/>
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.exoplayer2.ui.PlayerView
+            android:id="@+id/item_video_exoplayer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toTopOf="@+id/btn_back"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:resize_mode="fill"
+            app:use_controller="true"
+            app:surface_type="texture_view" />
+    </FrameLayout>
 
 
     <com.uzlov.dating.lavada.ui.custom.UserAvatarImageView
@@ -32,6 +43,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/default_margin_16"
+        android:textColor="@color/Inverse_text"
         app:layout_constraintTop_toTopOf="@+id/userAvatarImageView"
         app:layout_constraintStart_toEndOf="@id/userAvatarImageView"/>
 
@@ -40,6 +52,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/default_margin_16"
+        android:textColor="@color/Inverse_text"
         app:layout_constraintBottom_toBottomOf="@+id/userAvatarImageView"
         app:layout_constraintStart_toEndOf="@id/userAvatarImageView"/>
 
@@ -49,6 +62,16 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent=".5" />
+
+    <ProgressBar
+        android:id="@+id/progressUploading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_back"

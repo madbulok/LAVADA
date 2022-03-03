@@ -1,18 +1,27 @@
 package com.uzlov.dating.lavada.ui.fragments.profile
 
+import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.core.os.bundleOf
+import com.google.android.exoplayer2.DefaultLoadControl
+import com.google.android.exoplayer2.DefaultRenderersFactory
+import com.google.android.exoplayer2.ExoPlayerFactory
+import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.source.ExtractorMediaSource
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.data.repository.PreferenceRepository
 import com.uzlov.dating.lavada.databinding.FragmentPreviewVideoBinding
+import com.uzlov.dating.lavada.domain.models.AuthorizedUser
 import com.uzlov.dating.lavada.domain.models.User
 import com.uzlov.dating.lavada.storage.FirebaseStorageService
 import com.uzlov.dating.lavada.ui.activities.LoginActivity
 import com.uzlov.dating.lavada.ui.fragments.BaseFragment
 import com.uzlov.dating.lavada.viemodels.UsersViewModel
 import com.uzlov.dating.lavada.viemodels.ViewModelFactory
+import java.io.File
 import javax.inject.Inject
 
 class PreviewVideoFragment : BaseFragment<FragmentPreviewVideoBinding>(FragmentPreviewVideoBinding::inflate) {
@@ -31,6 +40,13 @@ class PreviewVideoFragment : BaseFragment<FragmentPreviewVideoBinding>(FragmentP
     private var user: User = User()
     private var path: String = "" // local path
 
+    private val player by lazy {
+        ExoPlayerFactory.newSimpleInstance(
+            requireContext(),
+            DefaultRenderersFactory(requireContext()),
+            DefaultTrackSelector(), DefaultLoadControl())
+    };
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requireContext().appComponent.inject(this)
@@ -47,21 +63,75 @@ class PreviewVideoFragment : BaseFragment<FragmentPreviewVideoBinding>(FragmentP
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(viewBinding){
+
+            tvLocationProfile.text = user.name
+
             btnBack.setOnClickListener {
                 (requireActivity() as LoginActivity).rollbackFragment()
             }
             btnNext.setOnClickListener {
+
                 val result = firebaseStorageService.uploadVideo(path)
+                startLoading()
                 result.first.addOnSuccessListener {
                     user.url_video = result.second.toString()
                     userViewModel.addUser(user)
-                    preferenceRepository.readUser()?.let {
-                        preferenceRepository.updateUser(it.copy(isReady = true))
+                    val localUser = preferenceRepository.readUser()
+                    if (localUser != null) {
+                        preferenceRepository.updateUser(localUser.copy(isReady = true))
+                    } else {
+                        val localUserNew = AuthorizedUser(
+                            uuid = user.uid,
+                            datetime = System.currentTimeMillis() / 1000,
+                            name = user.name ?: "No name",
+                            isReady = true
+                        )
+                        preferenceRepository.updateUser(localUserNew)
                     }
+
+                    endLoading()
+                    (requireActivity() as LoginActivity).routeToMainScreen()
                 }.addOnFailureListener {
                     it.printStackTrace()
+                    endLoading()
                 }
             }
+
+            viewBinding.btnNext.isEnabled = true
+            viewBinding.itemVideoExoplayer.player = player
+
+            playVideo(path)
+        }
+    }
+
+    private fun playVideo(path: String) {
+        val videoFile = File(path)
+        val pathVideo = Uri.fromFile(videoFile).toString()
+
+        val uri = Uri.parse(pathVideo)
+        val mediaSource = ExtractorMediaSource.Factory(
+            DefaultDataSourceFactory(
+                requireActivity(), "exo-local"
+            )
+        ).createMediaSource(uri)
+
+        player.repeatMode = Player.REPEAT_MODE_ALL
+        player.playWhenReady
+        player.prepare(mediaSource)
+    }
+
+    private fun startLoading(){
+        with(viewBinding){
+            btnNext.isEnabled = false
+            progressUploading.visibility = View.VISIBLE
+            btnBack.isEnabled = false
+        }
+    }
+    private fun endLoading(){
+        with(viewBinding){
+            btnNext.isEnabled = true
+            progressUploading.visibility = View.INVISIBLE
+            btnBack.isEnabled = true
         }
     }
 

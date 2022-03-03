@@ -54,7 +54,6 @@ class FilterLookingForFragment :
             }
         }
 
-        addTextChangedListener()
         initListeners()
         updateUiFilter()
     }
@@ -105,11 +104,6 @@ class FilterLookingForFragment :
             )
         )
     }
-
-    private fun addTextChangedListener() {
-
-    }
-
 
     companion object {
         private const val NEW_USER = "user"

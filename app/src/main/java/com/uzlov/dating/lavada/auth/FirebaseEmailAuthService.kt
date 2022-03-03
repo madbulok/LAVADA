@@ -16,7 +16,7 @@ class FirebaseEmailAuthService @Inject constructor(val auth: FirebaseAuth) {
     private var user: User? = null
 
     //регистрация нового пользователя. Умеет обрабатывать ошибки регистрации (например, если такой email уже есть в системе
-    fun registered(
+    fun registerWithEmailAndPassword(
         login: String,
         password: String
     ) : Task<AuthResult>{
