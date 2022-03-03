@@ -16,8 +16,6 @@
         <variable
             name="index"
             type="int"/>
-
-
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -43,7 +41,7 @@
             app:layout_constraintVertical_bias="0.0"
             app:on_state_change="@{callback}"
             app:progressbar="@{progressBar}"
-            app:resize_mode="fixed_width"
+            app:resize_mode="fill"
             app:surface_type="texture_view"
             app:video_url="@{dataModel.url_video}"
             tools:background="@color/Primary_text" />
