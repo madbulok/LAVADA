@@ -23,5 +23,6 @@ data class User(
     var lat: Double?= 0.0,
     var lon: Double? = 0.0,
     var matches: MutableMap<String, Boolean> = mutableMapOf(), // хранит лайки пользователей <UID друга , взаимно или нет>
-    var chats: MutableMap<String, String> = mutableMapOf()// хранит чаты где он есть <UID собеседника , свой UID>
+    var chats: MutableMap<String, String> = mutableMapOf(),// хранит чаты где он есть <UID собеседника , свой UID>
+    var dist: Double? = 0.0 //хранит расстояние между ним и тем, кому его показывать
 ): Parcelable

@@ -231,7 +231,7 @@ class RegistrationFragment :
     private fun goToMainVideoFragment(id: String) {
 //        parentFragmentManager.beginTransaction()
 //            .replace(R.id.container, MainVideosFragment.newInstance(id))
-//                .replace(R.id.container, ProfileFragment.newInstance())
+//                .replace(R.id.container, com.uzlov.dating.lavada.ui.fragments.profile.ProfileFragment.newInstance())
 //            .commit()
 
 //        startActivity(Intent(requireContext(), HostActivity::class.java))
