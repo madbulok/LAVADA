@@ -17,6 +17,7 @@ import com.uzlov.dating.lavada.domain.models.UserFilter
 import com.uzlov.dating.lavada.ui.SingleSnap
 import com.uzlov.dating.lavada.ui.adapters.PlayerViewAdapter
 import com.uzlov.dating.lavada.ui.adapters.ProfileRecyclerAdapter
+import com.uzlov.dating.lavada.ui.fragments.profile.FilterLookingForFragment
 import com.uzlov.dating.lavada.ui.fragments.profile.ProfileFragment
 import com.uzlov.dating.lavada.viemodels.UsersViewModel
 import com.uzlov.dating.lavada.viemodels.ViewModelFactory
@@ -148,6 +149,9 @@ class MainVideosFragment :
     private val profileFragment by lazy {
         ProfileFragment()
     }
+    private val filterLookingForFragment by lazy {
+        FilterLookingForFragment()
+    }
 
     private fun setOnClickListener() {
         with(viewBinding) {
@@ -169,6 +173,19 @@ class MainVideosFragment :
                     .commit()
                 PlayerViewAdapter.pauseCurrentPlayingVideo()
             }
+            ivFilter.setOnClickListener {
+                // TODO: 03.03.2022 нужно на filterLookingForFragment навесить откуда пришел или решить переход как-то иначе
+//                parentFragmentManager.beginTransaction()
+//                    .add(R.id.container, filterLookingForFragment)
+//                    .hide(this@MainVideosFragment)
+//                    .show(filterLookingForFragment)
+//                    .addToBackStack(null)
+//                    .commit()
+//                PlayerViewAdapter.pauseCurrentPlayingVideo()
+                Toast.makeText(context, "Меняем фильтры поиска", Toast.LENGTH_SHORT).show()
+            }
+
+
         }
     }
 
