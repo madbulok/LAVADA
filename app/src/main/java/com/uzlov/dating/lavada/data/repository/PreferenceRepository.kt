@@ -52,4 +52,13 @@ class PreferenceRepository @Inject constructor(private var preferences: SharedPr
              preferences.getFloat(Constants.LOCAL_PREF_FILTER_LONGITUDE, 0.0F),
         )
     }
+
+    fun clearUser() {
+        preferences.edit().apply {
+            putString(Constants.LOCAL_PREF_USER_ID, "")
+            putString(Constants.LOCAL_PREF_USER_NAME, "")
+            putLong(Constants.LOCAL_PREF_USER_DATETIME, -1L)
+            putBoolean(Constants.LOCAL_PREF_USER_IS_READY, false)
+        }.apply()
+    }
 }
