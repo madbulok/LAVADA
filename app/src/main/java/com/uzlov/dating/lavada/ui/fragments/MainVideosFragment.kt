@@ -2,20 +2,43 @@ package com.uzlov.dating.lavada.ui.fragments
 
 import android.os.Bundle
 import android.view.View
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.ui.adapters.RecyclerViewScrollListener
 import com.uzlov.dating.lavada.app.appComponent
+import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
+import com.uzlov.dating.lavada.data.repository.PreferenceRepository
 import com.uzlov.dating.lavada.databinding.MainVideosFragmentBinding
 import com.uzlov.dating.lavada.domain.models.User
+import com.uzlov.dating.lavada.domain.models.UserFilter
 import com.uzlov.dating.lavada.ui.SingleSnap
 import com.uzlov.dating.lavada.ui.adapters.PlayerViewAdapter
 import com.uzlov.dating.lavada.ui.adapters.ProfileRecyclerAdapter
+import com.uzlov.dating.lavada.ui.fragments.profile.FilterLookingForFragment
+import com.uzlov.dating.lavada.ui.fragments.profile.ProfileFragment
+import com.uzlov.dating.lavada.viemodels.UsersViewModel
+import com.uzlov.dating.lavada.viemodels.ViewModelFactory
 import kotlinx.coroutines.delay
+import javax.inject.Inject
+
 
 class MainVideosFragment :
     BaseFragment<MainVideosFragmentBinding>(MainVideosFragmentBinding::inflate) {
+    @Inject
+    lateinit var preferenceRepository: PreferenceRepository
+
+    @Inject
+    lateinit var firebaseEmailAuthService: FirebaseEmailAuthService
+
+    @Inject
+    lateinit var factoryViewModel: ViewModelFactory
+    private lateinit var model: UsersViewModel
+
+    private var self = User()
+    private var userFilter = UserFilter()
 
     private val scrollListener: RecyclerViewScrollListener by lazy {
         object : RecyclerViewScrollListener() {
@@ -34,40 +57,60 @@ class MainVideosFragment :
     }
 
     private val snapHelper: SingleSnap = SingleSnap(callback)
-
-    private val testData = listOf<User>(
-        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
-        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
-        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
-        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
-        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
-        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
-        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
-        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
-        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
-        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
-        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
-        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
-        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
-    )
+    private var testData = listOf<User>(
+//        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
+//        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
+//        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
+//        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
+//        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
+//        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
+//        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
+//        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
+//        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
+//        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
+//        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
+//        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
+//        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
+   )
     private val mAdapter: ProfileRecyclerAdapter by lazy {
         ProfileRecyclerAdapter(testData)
     }
 
-    private val self = User() // TODO(Inject current user from dagger)
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requireContext().appComponent.inject(this)
+        userFilter = preferenceRepository.readFilter()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        model = factoryViewModel.create(UsersViewModel::class.java)
+        model.getUsers()?.observe(this, { users ->
+            firebaseEmailAuthService.getUserUid()?.let { it ->
+                model.getUser(it)?.observe(this, {
+                    it?.url_avatar?.let { it1 -> loadImage(it1, viewBinding.ivProfile) }
+                    self = it!!
+                    testData = users
+                    mAdapter.updateList(
+                        model.sortUsers(
+                            users, self.lat!!, self.lon!!,
+                            userFilter.sex, userFilter.ageStart, userFilter.ageEnd
+                        )
+                    )
+//                              Log.d("TESTMODELWORKED", model.sortUsers(users, self.lat!!, self.lon!!,
+//                                  userFilter.sex, userFilter.ageStart, userFilter.ageEnd).toString())
+                }
+                )
+            }
+        })
+
         with(viewBinding) {
             rvVideosUsers.adapter = mAdapter
             rvVideosUsers.setHasFixedSize(true)
             rvVideosUsers.addOnScrollListener(scrollListener)
             snapHelper.attachToRecyclerView(rvVideosUsers)
+
 
             // double click send love
             mAdapter.setOnItemClickListener(object : ProfileRecyclerAdapter.OnItemClickListener {
@@ -75,13 +118,11 @@ class MainVideosFragment :
                     Toast.makeText(requireContext(), "Вы отправили симпатию", Toast.LENGTH_SHORT)
                         .show()
                     lifecycleScope.launchWhenResumed {
-                        with(viewBinding) {
-                            delay(500)
-                        }
+                        delay(500)
+
                     }
                 }
             })
-
             mAdapter.setOnActionClickListener(object : ProfileRecyclerAdapter.OnActionListener {
                 override fun sendGift(user: User) {
 
@@ -99,14 +140,17 @@ class MainVideosFragment :
                 }
             })
         }
-
-        mAdapter.updateList(testData)
-
         setOnClickListener()
     }
 
     private val chatsFragment by lazy {
         ChatsFragment()
+    }
+    private val profileFragment by lazy {
+        ProfileFragment()
+    }
+    private val filterLookingForFragment by lazy {
+        FilterLookingForFragment()
     }
 
     private fun setOnClickListener() {
@@ -120,6 +164,37 @@ class MainVideosFragment :
                     .commit()
                 PlayerViewAdapter.pauseCurrentPlayingVideo()
             }
+            ivProfile.setOnClickListener {
+                parentFragmentManager.beginTransaction()
+                    .add(R.id.container, profileFragment)
+                    .hide(this@MainVideosFragment)
+                    .show(profileFragment)
+                    .addToBackStack(null)
+                    .commit()
+                PlayerViewAdapter.pauseCurrentPlayingVideo()
+            }
+            ivFilter.setOnClickListener {
+                // TODO: 03.03.2022 нужно на filterLookingForFragment навесить откуда пришел или решить переход как-то иначе
+//                parentFragmentManager.beginTransaction()
+//                    .add(R.id.container, filterLookingForFragment)
+//                    .hide(this@MainVideosFragment)
+//                    .show(filterLookingForFragment)
+//                    .addToBackStack(null)
+//                    .commit()
+//                PlayerViewAdapter.pauseCurrentPlayingVideo()
+                Toast.makeText(context, "Меняем фильтры поиска", Toast.LENGTH_SHORT).show()
+            }
+
+
+        }
+    }
+
+    private fun loadImage(image: String, container: ImageView) {
+        view?.let {
+            Glide
+                .with(it.context)
+                .load(image)
+                .into(container)
         }
     }
 
