@@ -2,11 +2,15 @@ package com.uzlov.dating.lavada.ui.fragments.profile
 
 import android.os.Bundle
 import android.view.View
+import android.widget.ImageView
 import android.widget.Toast
+import com.bumptech.glide.Glide
+import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
 import com.uzlov.dating.lavada.databinding.FragmentProfileBinding
 import com.uzlov.dating.lavada.ui.fragments.BaseFragment
+import com.uzlov.dating.lavada.ui.fragments.settings.SettingsFragment
 import com.uzlov.dating.lavada.viemodels.UsersViewModel
 import com.uzlov.dating.lavada.viemodels.ViewModelFactory
 import javax.inject.Inject
@@ -19,6 +23,14 @@ class ProfileFragment: BaseFragment<FragmentProfileBinding>(FragmentProfileBindi
     @Inject
     lateinit var factoryViewModel: ViewModelFactory
     private lateinit var model: UsersViewModel
+
+    private val settingsFragment by lazy {
+        SettingsFragment()
+    }
+
+    private val uploadVideoFragment by lazy {
+        UploadVideoFragment()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,24 +45,41 @@ class ProfileFragment: BaseFragment<FragmentProfileBinding>(FragmentProfileBindi
         //прочитать данные model.getUser(uid), uid - firebaseEmailAuthService.getUserUid()
         firebaseEmailAuthService.getUserUid()?.let {
             model.getUser(it)?.observe(this, { user ->
-                viewBinding.tvAbout.text = "Ссылка на видео: " + user?.url_video
-                viewBinding.tvAbout.text = "email: " + user?.email
-                viewBinding.tvName.text = user?.name
+                viewBinding.tvLocation.text = "location " + user?.lat + ", " + user?.lon
+                viewBinding.tvName.text = user?.name + ", " + user?.age
+                user?.url_avatar?.let { it1 -> loadImage(it1, viewBinding.ivProfile) }
+
             })
         }
         with(viewBinding){
 
-            btnLogOut.setOnClickListener {
-                firebaseEmailAuthService.logout()
-                Toast.makeText(context, "Вы успешно вышли из аккаунта", Toast.LENGTH_SHORT).show()
+
+            btnSettings.setOnClickListener {
+                parentFragmentManager.beginTransaction()
+//                    .add(R.id.container, settingsFragment)
+//                    .hide(this@com.uzlov.dating.lavada.ui.fragments.profile.ProfileFragment)
+//                    .show(settingsFragment)
+                    .replace(R.id.container, settingsFragment)
+                    .addToBackStack(null)
+                    .commit()
             }
-            btnDel.setOnClickListener {
-                firebaseEmailAuthService.delUser()
-                Toast.makeText(context, "Ваш аккаунт успешно удален!", Toast.LENGTH_SHORT).show()
+            btnChangeVideo.setOnClickListener {
+                Toast.makeText(context, "Переходим на фрагмент обновления видео", Toast.LENGTH_SHORT).show()
             }
         }
 
     }
+
+    private fun loadImage(image: String, container: ImageView) {
+        view?.let {
+            Glide
+                .with(it.context)
+                .load(image)
+                .into(container)
+        }
+    }
+
+
     companion object {
         fun newInstance() =
             ProfileFragment().apply {

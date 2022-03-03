@@ -5,11 +5,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.google.android.exoplayer2.Player
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.databinding.TiktokTimelineItemRecyclerBinding
 import com.uzlov.dating.lavada.domain.models.User
 import java.util.*
+import kotlin.math.roundToInt
 
 class ProfileRecyclerAdapter(
     private var modelList: List<User>,
@@ -105,6 +107,16 @@ class ProfileRecyclerAdapter(
                     )
                 }
             })
+                .let {
+                    Glide
+                        .with(binding.root)
+                        .load(model.url_avatar)
+                        .into(binding.ivRandomProfile)
+                }
+            //было бы неплохо уточнить, какие именно цифры показываем
+            binding.tvNameProfile. text = model.name + ", " + model.age
+            binding.tvLocationProfile.text = "В " + model.dist?.roundToInt().toString() + " км от вас"
+            binding.tvDescriptionProfile.text = model.about
 
             binding.ivHeartTo.setOnClickListener {
                 actionListener?.sendHeart(model)

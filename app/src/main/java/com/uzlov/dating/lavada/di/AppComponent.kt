@@ -1,5 +1,6 @@
 package com.uzlov.dating.lavada.di
 
+import com.uzlov.dating.lavada.ui.fragments.profile.ProfileFragment
 import com.uzlov.dating.lavada.di.modules.*
 import com.uzlov.dating.lavada.ui.activities.SplashActivity
 import com.uzlov.dating.lavada.ui.fragments.ChatsFragment
