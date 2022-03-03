@@ -57,7 +57,20 @@ class MainVideosFragment :
 
     private val snapHelper: SingleSnap = SingleSnap(callback)
     private var testData = listOf<User>(
-    )
+//        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
+//        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
+//        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
+//        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
+//        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
+//        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
+//        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
+//        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
+//        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
+//        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
+//        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
+//        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
+//        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
+   )
     private val mAdapter: ProfileRecyclerAdapter by lazy {
         ProfileRecyclerAdapter(testData)
     }
