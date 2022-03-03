@@ -21,7 +21,8 @@ import javax.inject.Singleton
         FirebaseModule::class,
         ViewModelModule::class,
         BillingModule::class,
-        StorageModule::class
+        StorageModule::class,
+        GeoModule::class
     ]
 )
 @Singleton
