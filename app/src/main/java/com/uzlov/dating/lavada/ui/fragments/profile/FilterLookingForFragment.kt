@@ -60,8 +60,8 @@ class FilterLookingForFragment :
 
     private fun updateUiFilter() {
         with(viewBinding) {
-            slAge.valueFrom = 18F
-            slAge.valueTo = 50F
+            slAge.valueFrom = userFilter.ageStart.toFloat()
+            slAge.valueTo = userFilter.ageEnd.toFloat()
             when (userFilter.sex) {
                 0 -> radioGroup.check(R.id.rbMan)
                 1 -> radioGroup.check(R.id.rvWoman)
