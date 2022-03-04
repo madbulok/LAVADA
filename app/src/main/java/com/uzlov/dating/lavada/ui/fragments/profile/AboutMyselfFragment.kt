@@ -3,16 +3,17 @@ package com.uzlov.dating.lavada.ui.fragments.profile
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
-import android.location.Location
-import android.location.LocationManager
 import android.os.Bundle
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
-import androidx.core.location.LocationManagerCompat
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.location.*
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.app.appComponent
@@ -23,13 +24,11 @@ import com.uzlov.dating.lavada.domain.models.MALE
 import com.uzlov.dating.lavada.domain.models.User
 import com.uzlov.dating.lavada.ui.activities.LoginActivity
 import com.uzlov.dating.lavada.ui.fragments.BaseFragment
+import com.uzlov.dating.lavada.viemodels.GeocodingViewModel
+import com.uzlov.dating.lavada.viemodels.ViewModelFactory
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 
 class AboutMyselfFragment :
@@ -42,12 +41,50 @@ class AboutMyselfFragment :
     lateinit var firebaseEmailAuthService: FirebaseEmailAuthService
     private var user = User()
 
+    @Inject
+    lateinit var factoryModel: ViewModelFactory
+
+    private lateinit var geocodingViewModel: GeocodingViewModel
+
+    private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        requestPermissionLauncher =
+            registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+                if (isGranted) {
+                    startGetLocation()
+                } else {
+                    requirePermissionsLocation()
+                    Toast.makeText(requireContext(),
+                        "Вы запретили доступ к геолокации",
+                        Toast.LENGTH_SHORT).show()
+                }
+            }
+    }
+
+    private val mFusedLocationClient: FusedLocationProviderClient by lazy {
+        LocationServices.getFusedLocationProviderClient(requireContext())
+    }
+
+    private val mSettingsClient: SettingsClient by lazy {
+        LocationServices.getSettingsClient(requireContext())
+    }
+
+    private val mLocationRequest: LocationRequest by lazy {
+        createLocationRequest()
+    }
+
+    private val mLocationCallback: LocationCallback by lazy {
+        createLocationCallback()
+    }
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requireContext().appComponent.inject(this)
-        checkPermission()
+        geocodingViewModel = factoryModel.create(GeocodingViewModel::class.java)
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -62,24 +99,17 @@ class AboutMyselfFragment :
         initListeners()
 
         (requireContext() as LoginActivity).clearFragments()
+
+        checkPermission()
     }
 
     private fun initListeners() {
         with(viewBinding) {
             radioGroup.setOnCheckedChangeListener { group, checkedId ->
                 when (checkedId) {
-                    R.id.rbMan -> {
-                        user.male = MALE.MAN
-                        Toast.makeText(context, "Button1 Clicked", Toast.LENGTH_SHORT).show()
-                    }
-                    R.id.rvWoman -> {
-                        user.male = MALE.WOMAN
-                        Toast.makeText(context, "Button2 Clicked", Toast.LENGTH_SHORT).show()
-                    }
-                    R.id.rbAnother -> {
-                        user.male = MALE.ANOTHER
-                        Toast.makeText(context, "Button3 Clicked", Toast.LENGTH_SHORT).show()
-                    }
+                    R.id.rbMan ->  user.male = MALE.MAN
+                    R.id.rvWoman -> user.male = MALE.WOMAN
+                    R.id.rbAnother -> user.male = MALE.ANOTHER
                 }
             }
 
@@ -102,132 +132,86 @@ class AboutMyselfFragment :
                 progressRegistration.setProgressCompat(50, true)
             }
             swEnableLocation.setOnCheckedChangeListener { _, isChecked ->
-                if (isChecked){
-                    if (checkPermission()){
-                        GlobalScope.launch {
-                                context?.let { getLocation(it, 1) }
-                                context?.let { getLocationLast(it) }
+                if (isChecked) {
+                    if (checkPermission()) {
+                        lifecycleScope.launch(Dispatchers.Main) {
+                            startGetLocation()
                         }
-
-
-                        user.lat = 55.33333
-                        user.lon = 37.66666
                         user.location = tiEtLocation.text.toString()
                     }
                 }
-
-
-
-            }
-
-        }
-    }
-    private val locationRequestGPS by lazy {
-        LocationRequest.create()
-            .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-            .setNumUpdates(1)
-            .setExpirationDuration(1000)
-    }
-
-    private val locationRequestNETWORK by lazy {
-        LocationRequest.create()
-            .setPriority(LocationRequest.PRIORITY_LOW_POWER)
-            .setNumUpdates(1)
-            .setExpirationDuration(1000)
-    }
-    private suspend fun getLocation(context: Context, offsetMinutes: Int): Location? = suspendCoroutine { task ->
-        val ctx = context.applicationContext
-        if (!checkPermission()) {
-            task.resume(null)
-        } else {
-            val manager = ctx.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-            if (!LocationManagerCompat.isLocationEnabled(manager)) {
-                task.resume(null)
-            } else {
-                val service = LocationServices.getFusedLocationProviderClient(ctx)
-                service.lastLocation
-                    .addOnCompleteListener { locTask ->
-                        if (locTask.result == null
-                            || System.currentTimeMillis() - locTask.result!!.time > offsetMinutes
-                        )
-                            {
-                            GlobalScope.launch(Dispatchers.Main) {
-                                viewBinding.tiEtLocation.setText(locTask.result.latitude.toString()+", " + locTask.result.longitude.toString())
-                                user.lat = locTask.result.latitude
-                                user.lon = locTask.result.longitude
-                                user.location = viewBinding.tiEtLocation.text.toString()
-                                   task.resume(locationRequest(manager, service))
-                            }
-                        } else {
-                            task.resume(locTask.result)
-
-                        }
-                    }
-
             }
         }
     }
 
-    private suspend fun getLocationLast(context: Context): Location? = suspendCoroutine { task ->
-        val ctx = context.applicationContext
-        if (!checkPermission()) {
-            task.resume(null)
-        } else {
-            if (!LocationManagerCompat.isLocationEnabled(ctx.getSystemService(Context.LOCATION_SERVICE) as LocationManager)) {
-                task.resume(null)
-            } else {
-                LocationServices.getFusedLocationProviderClient(ctx)
-                    .lastLocation
-                    .addOnCompleteListener { locTask ->
-                        task.resume(locTask.result)
-                         }
-
-            }
-
+    private fun createLocationRequest(): LocationRequest {
+        return LocationRequest().apply {
+            interval = UPDATE_INTERVAL_IN_MILLISECONDS
+            fastestInterval = FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         }
     }
 
-    private suspend fun locationRequest(locationManager: LocationManager, service: FusedLocationProviderClient): Location? = suspendCoroutine { task ->
-        val callback = object : LocationCallback() {
-            override fun onLocationResult(p0: LocationResult) {
-                service.removeLocationUpdates(this)
-                task.resume(p0.lastLocation)
-            }
-        }
-        when {
-            locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) -> {
-                if (checkPermission()) {
-                    service.requestLocationUpdates(locationRequestGPS, callback, Looper.getMainLooper())
-                }
-            }
-            locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER) -> {
-                service.requestLocationUpdates(locationRequestNETWORK, callback, Looper.getMainLooper())
-            }
-            else -> {
-                task.resume(null)
-            }
+    private fun createLocationCallback() = object : LocationCallback() {
+        override fun onLocationResult(result: LocationResult) {
+            super.onLocationResult(result)
+
+            user.lat = result.lastLocation.latitude
+            user.lon = result.lastLocation.longitude
+            geocodingViewModel.fetchGeocoding(
+                result.lastLocation.latitude.toString(),
+                result.lastLocation.longitude.toString()
+            ).observe(viewLifecycleOwner, {
+                viewBinding.tiEtLocation.setText(it.getViewAddress())
+            })
         }
     }
-
-
-
-
 
     private fun checkPermission(): Boolean {
-        return if (ActivityCompat.checkSelfPermission(
-                requireActivity(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED &&
-            ActivityCompat.checkSelfPermission(
-                requireActivity(),
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(
-                requireActivity(),
-               PERMISSIONS_STORAGE, REQUEST_EXTERNAL_STORAGE
-            )
+        return if (!isGrantedAccessCoarseLocation() || !isGrantedAccessFineLocation()
+        ) {
+            requirePermissionsLocation()
             false
         } else true
+    }
+
+    private fun isGrantedAccessCoarseLocation(): Boolean {
+        return ContextCompat.checkSelfPermission(requireContext(),
+            Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun isGrantedAccessFineLocation(): Boolean {
+        return ContextCompat.checkSelfPermission(requireContext(),
+            Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun requirePermissionsLocation() {
+        when {
+            isGrantedAccessCoarseLocation() || isGrantedAccessFineLocation() -> {
+                startGetLocation()
+            }
+            shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_COARSE_LOCATION) ||
+                    shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) -> {
+                // show message
+            }
+            else -> {
+                requestPermissionLauncher.launch(Manifest.permission.ACCESS_COARSE_LOCATION)
+                requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            }
+        }
+    }
+
+    private fun startGetLocation() {
+        if (ActivityCompat.checkSelfPermission(requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        }
+        mFusedLocationClient.requestLocationUpdates(mLocationRequest,
+                mLocationCallback, Looper.getMainLooper())
+
     }
 
     private fun addTextChangedListener() {
@@ -263,10 +247,9 @@ class AboutMyselfFragment :
     companion object {
         private const val NEW_USER = "user"
         const val REQUEST_EXTERNAL_STORAGE = 1
-        private val PERMISSIONS_STORAGE = arrayOf(
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION
-        )
+        private const val UPDATE_INTERVAL_IN_MILLISECONDS: Long = 5000
+        private const val FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = UPDATE_INTERVAL_IN_MILLISECONDS / 2
+
         fun newInstance() =
             AboutMyselfFragment().apply {
                 arguments = Bundle().apply {

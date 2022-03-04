@@ -24,8 +24,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:resize_mode="fill"
-            app:use_controller="true"
-            app:surface_type="texture_view" />
+            app:surface_type="texture_view"
+            app:use_controller="true" />
     </FrameLayout>
 
 

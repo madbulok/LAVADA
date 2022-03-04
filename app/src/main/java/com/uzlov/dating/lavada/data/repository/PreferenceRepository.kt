@@ -46,10 +46,19 @@ class PreferenceRepository @Inject constructor(private var preferences: SharedPr
     fun readFilter(): UserFilter {
         return UserFilter(
              preferences.getInt(Constants.LOCAL_PREF_FILTER_SEX, 0),
-             preferences.getInt(Constants.LOCAL_PREF_FILTER_AGE_START, 0),
-             preferences.getInt(Constants.LOCAL_PREF_FILTER_AGE_END, 0),
+             preferences.getInt(Constants.LOCAL_PREF_FILTER_AGE_START, 18),
+             preferences.getInt(Constants.LOCAL_PREF_FILTER_AGE_END, 50),
              preferences.getFloat(Constants.LOCAL_PREF_FILTER_LATITUDE, 0.0F),
              preferences.getFloat(Constants.LOCAL_PREF_FILTER_LONGITUDE, 0.0F),
         )
+    }
+
+    fun clearUser() {
+        preferences.edit().apply {
+            putString(Constants.LOCAL_PREF_USER_ID, "")
+            putString(Constants.LOCAL_PREF_USER_NAME, "")
+            putLong(Constants.LOCAL_PREF_USER_DATETIME, -1L)
+            putBoolean(Constants.LOCAL_PREF_USER_IS_READY, false)
+        }.apply()
     }
 }
