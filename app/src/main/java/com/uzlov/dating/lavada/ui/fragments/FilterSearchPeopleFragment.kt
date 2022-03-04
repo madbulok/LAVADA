@@ -64,7 +64,7 @@ class FilterSearchPeopleFragment :
                 saveLocalFilter()
                 (requireActivity() as HostActivity).openFragment()
             }
-            btnBack.setOnClickListener {
+            tbBackAction.setOnClickListener {
                 (requireActivity() as HostActivity).rollbackFragment()
             }
             slAge.addOnChangeListener { rangeSlider, _, _ ->
