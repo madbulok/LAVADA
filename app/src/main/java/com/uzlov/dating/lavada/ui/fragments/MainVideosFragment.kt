@@ -17,7 +17,6 @@ import com.uzlov.dating.lavada.domain.models.UserFilter
 import com.uzlov.dating.lavada.ui.SingleSnap
 import com.uzlov.dating.lavada.ui.adapters.PlayerViewAdapter
 import com.uzlov.dating.lavada.ui.adapters.ProfileRecyclerAdapter
-import com.uzlov.dating.lavada.ui.fragments.profile.FilterLookingForFragment
 import com.uzlov.dating.lavada.ui.fragments.profile.ProfileFragment
 import com.uzlov.dating.lavada.viemodels.UsersViewModel
 import com.uzlov.dating.lavada.viemodels.ViewModelFactory
@@ -98,8 +97,6 @@ class MainVideosFragment :
                             userFilter.sex, userFilter.ageStart, userFilter.ageEnd
                         )
                     )
-//                              Log.d("TESTMODELWORKED", model.sortUsers(users, self.lat!!, self.lon!!,
-//                                  userFilter.sex, userFilter.ageStart, userFilter.ageEnd).toString())
                 }
                 )
             }
@@ -149,8 +146,8 @@ class MainVideosFragment :
     private val profileFragment by lazy {
         ProfileFragment()
     }
-    private val filterLookingForFragment by lazy {
-        FilterLookingForFragment()
+    private val filterSearchPeopleFragment by lazy {
+        FilterSearchPeopleFragment()
     }
 
     private fun setOnClickListener() {
@@ -175,14 +172,14 @@ class MainVideosFragment :
             }
             ivFilter.setOnClickListener {
                 // TODO: 03.03.2022 нужно на filterLookingForFragment навесить откуда пришел или решить переход как-то иначе
-//                parentFragmentManager.beginTransaction()
-//                    .add(R.id.container, filterLookingForFragment)
-//                    .hide(this@MainVideosFragment)
-//                    .show(filterLookingForFragment)
-//                    .addToBackStack(null)
-//                    .commit()
-//                PlayerViewAdapter.pauseCurrentPlayingVideo()
-                Toast.makeText(context, "Меняем фильтры поиска", Toast.LENGTH_SHORT).show()
+                parentFragmentManager.beginTransaction()
+                    .add(R.id.container, filterSearchPeopleFragment)
+                    .hide(this@MainVideosFragment)
+                    .show(filterSearchPeopleFragment)
+                    .addToBackStack(null)
+                    .commit()
+                PlayerViewAdapter.pauseCurrentPlayingVideo()
+  //              Toast.makeText(context, "Меняем фильтры поиска", Toast.LENGTH_SHORT).show()
             }
 
 
@@ -194,6 +191,7 @@ class MainVideosFragment :
             Glide
                 .with(it.context)
                 .load(image)
+                .error(R.drawable.ic_default_user)
                 .into(container)
         }
     }

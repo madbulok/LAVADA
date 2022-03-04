@@ -4,6 +4,7 @@ import com.uzlov.dating.lavada.ui.fragments.profile.ProfileFragment
 import com.uzlov.dating.lavada.di.modules.*
 import com.uzlov.dating.lavada.ui.activities.SplashActivity
 import com.uzlov.dating.lavada.ui.fragments.ChatsFragment
+import com.uzlov.dating.lavada.ui.fragments.FilterSearchPeopleFragment
 import com.uzlov.dating.lavada.ui.fragments.FragmentOpenChat
 import com.uzlov.dating.lavada.ui.fragments.MainVideosFragment
 import com.uzlov.dating.lavada.ui.fragments.profile.*
@@ -40,4 +41,5 @@ interface AppComponent {
     fun inject(splashActivity: SplashActivity)
     fun inject(filterLookingForFragment: FilterLookingForFragment)
     fun inject(previewVideoFragment: PreviewVideoFragment)
+    fun inject(filterSearchPeopleFragment: FilterSearchPeopleFragment)
 }
