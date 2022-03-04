@@ -3,7 +3,7 @@ package com.uzlov.dating.lavada.data.repository
 import android.content.SharedPreferences
 import com.uzlov.dating.lavada.app.Constants
 import com.uzlov.dating.lavada.domain.models.AuthorizedUser
-import com.uzlov.dating.lavada.domain.models.MALE
+import com.uzlov.dating.lavada.domain.models.NotificationsFilter
 import com.uzlov.dating.lavada.domain.models.UserFilter
 import javax.inject.Inject
 
@@ -61,4 +61,27 @@ class PreferenceRepository @Inject constructor(private var preferences: SharedPr
             putBoolean(Constants.LOCAL_PREF_USER_IS_READY, false)
         }.apply()
     }
+
+    fun updateNotificationsFilter(filter: NotificationsFilter){
+        preferences.edit().apply {
+            putBoolean(Constants.NOTIFICATION_FILER_MESSAGES, filter.messages)
+            putBoolean(Constants.NOTIFICATION_FILER_MATCHES, filter.matches)
+            putBoolean(Constants.NOTIFICATION_FILER_LIKES, filter.likes)
+            putBoolean(Constants.NOTIFICATION_FILER_WATCHING_VIDEO, filter.watchingVideo)
+            putBoolean(Constants.NOTIFICATION_FILER_GIFTS, filter.gifts)
+            putBoolean(Constants.NOTIFICATION_FILER_NEWS, filter.news)
+        }.apply()
+    }
+    fun readNotificationsFilter(): NotificationsFilter{
+        return NotificationsFilter(
+            preferences.getBoolean(Constants.NOTIFICATION_FILER_MESSAGES, true),
+            preferences.getBoolean(Constants.NOTIFICATION_FILER_MATCHES, true),
+            preferences.getBoolean(Constants.NOTIFICATION_FILER_LIKES, true),
+            preferences.getBoolean(Constants.NOTIFICATION_FILER_WATCHING_VIDEO, true),
+            preferences.getBoolean(Constants.NOTIFICATION_FILER_GIFTS, true),
+            preferences.getBoolean(Constants.NOTIFICATION_FILER_NEWS, true),
+
+        )
+    }
+
 }

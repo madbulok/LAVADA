@@ -10,6 +10,7 @@ import com.uzlov.dating.lavada.ui.fragments.MainVideosFragment
 import com.uzlov.dating.lavada.ui.fragments.profile.*
 import com.uzlov.dating.lavada.ui.fragments.registration.LogInFragment
 import com.uzlov.dating.lavada.ui.fragments.registration.RegistrationFragment
+import com.uzlov.dating.lavada.ui.fragments.settings.NotificationsFragment
 import com.uzlov.dating.lavada.ui.fragments.settings.SettingsFragment
 import com.uzlov.dating.lavada.ui.fragments.settings.UpdatePasswordFragment
 import dagger.Component
@@ -42,4 +43,5 @@ interface AppComponent {
     fun inject(filterLookingForFragment: FilterLookingForFragment)
     fun inject(previewVideoFragment: PreviewVideoFragment)
     fun inject(filterSearchPeopleFragment: FilterSearchPeopleFragment)
+    fun inject(notificationsFragment: NotificationsFragment)
 }
