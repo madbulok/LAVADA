@@ -8,6 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.data.repository.PreferenceRepository
+import com.uzlov.dating.lavada.ui.adapters.PlayerViewAdapter
 import kotlinx.coroutines.delay
 import javax.inject.Inject
 
@@ -41,5 +42,10 @@ class SplashActivity : AppCompatActivity() {
                 finish()
             }
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        PlayerViewAdapter.releaseAllPlayers()
     }
 }
