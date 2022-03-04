@@ -15,6 +15,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.location.LocationManagerCompat
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.location.*
+import com.google.android.gms.tasks.RuntimeExecutionException
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
@@ -131,6 +132,7 @@ class AboutMyselfFragment :
             .setNumUpdates(1)
             .setExpirationDuration(1000)
     }
+
     private suspend fun getLocation(context: Context, offsetMinutes: Int): Location? = suspendCoroutine { task ->
         val ctx = context.applicationContext
         if (!checkPermission()) {
@@ -143,27 +145,31 @@ class AboutMyselfFragment :
                 val service = LocationServices.getFusedLocationProviderClient(ctx)
                 service.lastLocation
                     .addOnCompleteListener { locTask ->
-                        if (locTask.result == null
-                            || System.currentTimeMillis() - locTask.result!!.time > offsetMinutes
-                        )
-                        {
-                            lifecycleScope.launch(Dispatchers.Main) {
-                                geocodingViewModel.fetchGeocoding(
-                                    locTask.result.latitude.toString(),
-                                    locTask.result.longitude.toString()
-                                ).observe(viewLifecycleOwner, {
-                                    viewBinding.tiEtLocation.setText(it.getViewAddress())
-                                    user.location = it.getViewAddress()
-                                })
+                        try {
+                            if (locTask.result == null
+                                || System.currentTimeMillis() - locTask.result!!.time > offsetMinutes
+                            )
+                            {
+                                lifecycleScope.launch(Dispatchers.Main) {
+                                    geocodingViewModel.fetchGeocoding(
+                                        locTask.result.latitude.toString(),
+                                        locTask.result.longitude.toString()
+                                    ).observe(viewLifecycleOwner, {
+                                        viewBinding.tiEtLocation.setText(it.getViewAddress())
+                                        user.location = it.getViewAddress()
+                                    })
 
-                                user.lat = locTask.result.latitude
-                                user.lon = locTask.result.longitude
-                                task.resume(locationRequest(manager, service))
+                                    user.lat = locTask.result.latitude
+                                    user.lon = locTask.result.longitude
+                                    task.resume(locationRequest(manager, service))
+                                }
+                            } else {
+                                task.resume(locTask.result)
                             }
-                        } else {
-                            task.resume(locTask.result)
-
+                        } catch (e: RuntimeExecutionException){
+                            Toast.makeText(requireContext(), "Ваше устройство не поддерживает Google Services", Toast.LENGTH_SHORT).show()
                         }
+
                     }
             }
         }
