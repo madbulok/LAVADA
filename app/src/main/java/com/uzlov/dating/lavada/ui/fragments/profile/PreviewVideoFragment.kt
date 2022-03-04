@@ -135,6 +135,11 @@ class PreviewVideoFragment : BaseFragment<FragmentPreviewVideoBinding>(FragmentP
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        player.stop(false)
+        player.release()
+    }
     companion object {
         fun newInstance(_path: String, user: User): PreviewVideoFragment {
             val args = bundleOf("user" to user, "path" to _path)

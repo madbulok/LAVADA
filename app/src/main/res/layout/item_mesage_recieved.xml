@@ -7,18 +7,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ui.activities.HostActivity">
 
-    <TextView
-        android:id="@+id/messageText"
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textColor="@color/Primary_text"
-        android:layout_margin="6dp"
-        android:background="#B6E0E3"
+        app:cardCornerRadius="@dimen/default_margin_16"
+        app:cardElevation="3dp"
+        android:layout_marginEnd="@dimen/default_margin_8"
+        android:layout_marginTop="@dimen/default_margin_8"
+        android:layout_marginBottom="@dimen/default_margin_8"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/rightBorder"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="@tools:sample/first_names" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/messageText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="6dp"
+            android:gravity="center_vertical"
+            android:textColor="@color/Primary_text"
+            android:padding="@dimen/default_margin_8"
+            tools:text="@tools:sample/lorem/random" />
+    </com.google.android.material.card.MaterialCardView>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/rightBorder"

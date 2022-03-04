@@ -69,28 +69,46 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_margin="@dimen/default_margin_16"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/etMessage"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toTopOf="@+id/textInputLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageProfile"
-        tools:listitem="@layout/item_mesage_recieved"
-        tools:itemCount="10"/>
+        tools:itemCount="10"
+        tools:listitem="@layout/item_mesage_recieved" />
 
-    <EditText
-        android:id="@+id/etMessage"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_margin="@dimen/default_margin_16"
+        app:boxCornerRadiusBottomEnd="@dimen/default_margin_16"
+        app:boxCornerRadiusBottomStart="@dimen/default_margin_16"
+        app:boxCornerRadiusTopEnd="@dimen/default_margin_16"
+        app:boxCornerRadiusTopStart="@dimen/default_margin_16"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/btnSend"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:startIconDrawable="@drawable/image">
 
-    <Button
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnSend"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:cornerRadius="@dimen/default_margin_16"
+        app:icon="@drawable/arrow_right"
+        app:iconGravity="textStart"
+        app:layout_constraintBottom_toBottomOf="@+id/textInputLayout"
+        app:layout_constraintEnd_toEndOf="@+id/btnInfo"
+        app:layout_constraintTop_toTopOf="@+id/textInputLayout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

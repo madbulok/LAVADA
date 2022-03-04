@@ -44,7 +44,7 @@
             app:resize_mode="fill"
             app:surface_type="texture_view"
             app:video_url="@{dataModel.url_video}"
-            tools:background="@color/Primary_text" />
+            tools:background="@color/Primary_text"/>
 
         <ProgressBar
             android:id="@+id/progressBar"
@@ -71,8 +71,8 @@
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/message_circle"
             app:tint="@color/Surface"
-            android:layout_marginEnd="@dimen/default_margin_16"
-            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="18dp"
+            android:layout_marginBottom="24dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toTopOf="@+id/ivHeartTo"
             app:layout_constraintBottom_toBottomOf="@+id/center_vertical"/>
@@ -82,23 +82,21 @@
             android:id="@+id/ivHeartTo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/heart"
-            app:tint="@color/Surface"
-            android:layout_marginEnd="@dimen/default_margin_16"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/center_vertical"
+            app:layout_constraintEnd_toEndOf="@+id/ivMessageTo"
             app:layout_constraintTop_toTopOf="@+id/center_vertical"
-            app:layout_constraintBottom_toBottomOf="@+id/center_vertical"/>
+            app:srcCompat="@drawable/heart"
+            app:tint="@color/Surface" />
 
         <ImageView
             android:id="@+id/ivGiftTo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/default_margin_16"
-            android:layout_marginTop="@dimen/default_margin_16"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="24dp"
+            app:layout_constraintEnd_toEndOf="@+id/ivHeartTo"
             app:layout_constraintTop_toBottomOf="@+id/ivHeartTo"
             app:srcCompat="@drawable/gift"
-            app:tint="@color/Surface"/>
+            app:tint="@color/Surface" />
 
         <!--    bottom random profile bar-->
 
@@ -139,6 +137,7 @@
             android:layout_height="wrap_content"
             android:lineSpacingExtra="5sp"
             android:layout_marginBottom="@dimen/default_margin_16"
+            android:textColor="@color/Inverse_text"
             app:layout_constraintBottom_toTopOf="@+id/ivInstagramProfile"
             app:layout_constraintEnd_toEndOf="@+id/ivGiftTo"
             app:layout_constraintStart_toStartOf="@+id/ivInstagramProfile"
@@ -159,6 +158,7 @@
             android:id="@+id/tvLocationProfile"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:textColor="@color/Inverse_text"
             android:layout_marginStart="@dimen/default_margin_16"
             app:layout_constraintStart_toEndOf="@+id/ivRandomProfile"
             app:layout_constraintBottom_toBottomOf="@id/ivRandomProfile"
@@ -170,6 +170,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textStyle="bold"
+            android:textColor="@color/Inverse_text"
             android:layout_marginStart="@dimen/default_margin_16"
             app:layout_constraintStart_toEndOf="@+id/ivRandomProfile"
             app:layout_constraintTop_toTopOf="@id/ivRandomProfile"

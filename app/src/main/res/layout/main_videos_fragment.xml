@@ -23,7 +23,7 @@
         android:id="@+id/ivProfile"
         android:layout_width="@dimen/size_image_profile"
         android:layout_height="@dimen/size_image_profile"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="22dp"
         android:layout_marginStart="@dimen/default_margin_16"
         app:srcCompat="@drawable/test_avatar"
         app:layout_constraintTop_toTopOf="parent"
@@ -36,6 +36,7 @@
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/filter"
         android:layout_marginEnd="@dimen/default_margin_16"
+        app:tint="@color/Inverse_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/ivProfile"
         app:layout_constraintBottom_toBottomOf="@+id/ivProfile"/>
@@ -46,6 +47,7 @@
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/message_circle"
         android:layout_marginEnd="@dimen/default_margin_16"
+        app:tint="@color/Inverse_text"
         app:layout_constraintEnd_toStartOf="@+id/ivFilter"
         app:layout_constraintTop_toTopOf="@+id/ivProfile"
         app:layout_constraintBottom_toBottomOf="@+id/ivProfile"/>
