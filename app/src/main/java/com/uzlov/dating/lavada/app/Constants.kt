@@ -21,5 +21,17 @@ class Constants {
         const val LOCAL_PREF_FILTER_AGE_END = "FILTER_AGE_END"
         const val LOCAL_PREF_FILTER_LATITUDE = "FILTER_LATITUDE"
         const val LOCAL_PREF_FILTER_LONGITUDE = "FILTER_LONGITUDE"
+
+        //notification filter
+        const val NOTIFICATION_FILER_MESSAGES = "FILTER_MESSAGES"
+        const val NOTIFICATION_FILER_MATCHES = "FILTER_MATCHES"
+        const val NOTIFICATION_FILER_LIKES = "FILTER_LIKES"
+        const val NOTIFICATION_FILER_WATCHING_VIDEO = "FILTER_WATCHING_VIDEO"
+        const val NOTIFICATION_FILER_GIFTS = "FILTER_GIFTS"
+        const val NOTIFICATION_FILER_NEWS = "FILTER_NEWS"
+
+
+
+
     }
 }

@@ -141,17 +141,29 @@
     <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/sw_premium"
         style="@style/Regular"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="6dp"
         android:layout_marginEnd="20dp"
-        android:drawableStart="@drawable/ic_ponch"
+        android:checked="true"
         android:drawablePadding="9dp"
         android:text="@string/only_premium"
-        android:checked="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/iv_ponch"
         app:layout_constraintTop_toBottomOf="@+id/til_location"
         app:thumbTint="@color/Surface" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_ponch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        app:layout_constraintBottom_toBottomOf="@id/sw_premium"
+        app:layout_constraintEnd_toStartOf="@id/sw_premium"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/sw_premium"
+        />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_next"
