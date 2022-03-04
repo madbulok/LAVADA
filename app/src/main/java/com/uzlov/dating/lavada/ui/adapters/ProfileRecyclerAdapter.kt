@@ -111,6 +111,7 @@ class ProfileRecyclerAdapter(
                     Glide
                         .with(binding.root)
                         .load(model.url_avatar)
+                        .error(R.drawable.ic_default_user)
                         .into(binding.ivRandomProfile)
                 }
             //было бы неплохо уточнить, какие именно цифры показываем

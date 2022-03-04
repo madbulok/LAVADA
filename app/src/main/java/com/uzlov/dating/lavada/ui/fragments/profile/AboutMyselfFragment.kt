@@ -47,6 +47,7 @@ class AboutMyselfFragment :
     private lateinit var geocodingViewModel: GeocodingViewModel
 
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         requestPermissionLauncher =
