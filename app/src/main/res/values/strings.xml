@@ -119,5 +119,9 @@
     <string name="news">News</string>
     <string name="another_email">Or sign in with another email</string>
     <string name="sign_up">Sign up</string>
+    <string name="show">Show</string>
+    <string name="filter">Filter</string>
+    <string name="reset">Reset</string>
+    <string name="location">location</string>
 
 </resources>
