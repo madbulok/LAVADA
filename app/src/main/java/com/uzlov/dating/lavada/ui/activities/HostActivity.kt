@@ -5,65 +5,30 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.uzlov.dating.lavada.R
+import com.uzlov.dating.lavada.databinding.HostActivityBinding
+import com.uzlov.dating.lavada.databinding.LoginActivityBinding
 import com.uzlov.dating.lavada.ui.adapters.PlayerViewAdapter
 import com.uzlov.dating.lavada.ui.fragments.MainVideosFragment
 import com.uzlov.dating.lavada.ui.fragments.VideoCaptureFragment
 import com.uzlov.dating.lavada.ui.fragments.profile.UploadVideoFragment
 
 class HostActivity : AppCompatActivity() {
-
-    private var bottomNavigation: BottomNavigationView? = null
-
-    private val videoCaptureFragment by lazy {
-        VideoCaptureFragment()
-    }
+    private var _viewBinding: HostActivityBinding? = null
+    private val viewBinding get() = _viewBinding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.host_activity)
+        _viewBinding = HostActivityBinding.inflate(layoutInflater)
+        setContentView(viewBinding.root)
+        openFragment()
+    }
 
-        bottomNavigation = findViewById(R.id.bottom_navigation)
-        bottomNavigation?.itemIconTintList = null
-        setFragment(MainVideosFragment.newInstance())
-        bottomNavigation?.inflateMenu(R.menu.main_menu)
-
-        bottomNavigation?.setOnItemSelectedListener {
-            when (it.itemId) {
-                R.id.upload_video -> {
-//                    setFragment(UploadVideoFragment.newInstance())
-                    return@setOnItemSelectedListener true
-                }
-                R.id.create_video -> {
-                    //поменять на нужное
-                    setFragment(videoCaptureFragment)
-                    return@setOnItemSelectedListener true
-                }
-                R.id.main_action -> {
-                    setFragment(MainVideosFragment.newInstance())
-                    return@setOnItemSelectedListener true
-                }
-                else -> false
-            }
+    fun openFragment(){
+        supportFragmentManager.apply {
+            beginTransaction()
+                .replace(R.id.container, MainVideosFragment())
+                .commit()
         }
     }
-
-    private fun setFragment(fragment: Fragment) {
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.container, fragment)
-            .commit()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        PlayerViewAdapter.releaseAllPlayers()
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        videoCaptureFragment.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    }
+    fun rollbackFragment() = supportFragmentManager.popBackStack()
 }

@@ -31,9 +31,10 @@ class UsersViewModel @Inject constructor(private var usersUseCases: UserUseCases
             val itemLat = item.lat!!
             val itemLon = item.lon!!
             item.dist = distance(myLat, myLon, itemLat, itemLon)
-            if (item.dist == 0.0
+            if (item.dist == 0.0 || item.dist!!.isNaN()
                 || item.male!!.ordinal != prefMALE
                 || item.age!! !in prefAgeStart..prefAgeEnd
+                || item.url_video!!.isNullOrEmpty()
             ) {
                 iterator.remove()
             }

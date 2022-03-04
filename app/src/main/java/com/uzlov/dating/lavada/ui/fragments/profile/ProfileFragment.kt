@@ -75,6 +75,7 @@ class ProfileFragment: BaseFragment<FragmentProfileBinding>(FragmentProfileBindi
             Glide
                 .with(it.context)
                 .load(image)
+                .error(R.drawable.ic_default_user)
                 .into(container)
         }
     }
