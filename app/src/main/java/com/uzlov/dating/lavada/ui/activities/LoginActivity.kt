@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.databinding.LoginActivityBinding
 import com.uzlov.dating.lavada.domain.models.User
+import com.uzlov.dating.lavada.ui.adapters.PlayerViewAdapter
 import com.uzlov.dating.lavada.ui.fragments.profile.AboutMyselfFragment
 import com.uzlov.dating.lavada.ui.fragments.profile.FilterLookingForFragment
 import com.uzlov.dating.lavada.ui.fragments.profile.PreviewVideoFragment
@@ -165,5 +166,10 @@ class LoginActivity: AppCompatActivity(){
         )
         clearFragments()
         finish()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        PlayerViewAdapter.releaseAllPlayers()
     }
 }
