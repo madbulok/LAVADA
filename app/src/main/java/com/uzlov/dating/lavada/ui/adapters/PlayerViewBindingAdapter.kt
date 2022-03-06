@@ -43,6 +43,7 @@ class PlayerViewAdapter {
         // call when scroll to pause any playing player
         fun pauseCurrentPlayingVideo(){
             if (currentPlayingVideo != null){
+                currentPlayingVideo?.second?.seekTo(0)
                 currentPlayingVideo?.second?.playWhenReady = false
             }
         }
