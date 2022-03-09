@@ -31,4 +31,9 @@ class HostActivity : AppCompatActivity() {
         }
     }
     fun rollbackFragment() = supportFragmentManager.popBackStack()
+
+    override fun onStop() {
+        super.onStop()
+        PlayerViewAdapter.pauseAllPlayers()
+    }
 }

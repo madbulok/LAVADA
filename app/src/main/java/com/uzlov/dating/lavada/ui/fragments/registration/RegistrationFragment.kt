@@ -296,9 +296,10 @@ class RegistrationFragment :
                     isValidPassword(viewBinding.textInputPassword.text.toString())
 
             if (!isValidPassword(viewBinding.textInputPassword.text.toString())){
-                viewBinding.textInputPassword.error = "Пароль должен быть длиной более 8 симоволов и включать в себя символы нижнего и верхнего регистра."
+                viewBinding.tilPassword.helperText = "Пароль должен быть длиной более 8 симоволов и включать в себя символы нижнего и верхнего регистра."
             } else {
-                viewBinding.textInputPassword.error = null
+                viewBinding.tilPassword.error = null
+                viewBinding.tilPassword.helperText = null
             }
         }
     }

@@ -17,6 +17,7 @@ import com.uzlov.dating.lavada.data.data_sources.implementation.PurchasesRemoteD
 import com.uzlov.dating.lavada.data.data_sources.implementation.UsersRemoteDataSourceImpl
 import com.uzlov.dating.lavada.data.data_sources.interfaces.*
 import com.uzlov.dating.lavada.data.repository.*
+import com.uzlov.dating.lavada.data.use_cases.ChatUseCase
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -58,5 +59,8 @@ class FirebaseModule {
 
     @Provides
     fun provideStorage(): FirebaseStorage = Firebase.storage
+
+    @Provides
+    fun provideChatUseCases(chatRepository: IMessageDataSource, userRepository: IUsersRepository): ChatUseCase = ChatUseCase(chatRepository, userRepository)
 
 }

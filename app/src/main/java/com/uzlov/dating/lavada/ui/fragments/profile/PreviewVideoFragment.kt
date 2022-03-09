@@ -69,6 +69,7 @@ class PreviewVideoFragment : BaseFragment<FragmentPreviewVideoBinding>(FragmentP
             btnBack.setOnClickListener {
                 (requireActivity() as LoginActivity).rollbackFragment()
             }
+
             btnNext.setOnClickListener {
 
                 val result = firebaseStorageService.uploadVideo(path)
@@ -93,11 +94,9 @@ class PreviewVideoFragment : BaseFragment<FragmentPreviewVideoBinding>(FragmentP
                     (requireActivity() as LoginActivity).routeToMainScreen()
                 }.addOnFailureListener {
                     it.printStackTrace()
-                    endLoading()
+                    endWithErrorLoading()
                 }
             }
-
-            viewBinding.btnNext.isEnabled = true
             viewBinding.itemVideoExoplayer.player = player
 
             playVideo(path)
@@ -115,9 +114,9 @@ class PreviewVideoFragment : BaseFragment<FragmentPreviewVideoBinding>(FragmentP
             )
         ).createMediaSource(uri)
 
-        player.repeatMode = Player.REPEAT_MODE_ALL
-        player.playWhenReady
         player.prepare(mediaSource)
+        player.repeatMode = Player.REPEAT_MODE_ALL
+        player.playWhenReady = true
     }
 
     private fun startLoading(){
@@ -130,6 +129,14 @@ class PreviewVideoFragment : BaseFragment<FragmentPreviewVideoBinding>(FragmentP
     private fun endLoading(){
         with(viewBinding){
             btnNext.isEnabled = true
+            progressUploading.visibility = View.INVISIBLE
+            btnBack.isEnabled = true
+        }
+    }
+
+    private fun endWithErrorLoading(){
+        with(viewBinding){
+            btnNext.isEnabled = false
             progressUploading.visibility = View.INVISIBLE
             btnBack.isEnabled = true
         }

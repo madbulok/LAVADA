@@ -1,12 +1,14 @@
 package com.uzlov.dating.lavada.ui.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModelProvider
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.app.appComponent
+import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
 import com.uzlov.dating.lavada.databinding.FragmentChatsLayoutBinding
 import com.uzlov.dating.lavada.domain.models.Chat
 import com.uzlov.dating.lavada.ui.adapters.PlayerViewAdapter
@@ -24,6 +26,8 @@ class ChatsFragment :
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var chatViewModel: ChatViewModel
 
+    @Inject
+    lateinit var auth: FirebaseEmailAuthService
 
     private val openChatCallback by lazy {
         object : UsersChatsAdapter.OnChatClickListener {
@@ -69,10 +73,13 @@ class ChatsFragment :
     }
 
     private fun loadAllChats() {
-        chatViewModel.observeChat("222") // TODO(нужно подставить реальный идентификатор)
-            .observe(viewLifecycleOwner, {
-                renderUi(it)
-            })
+        auth.getUserUid()?.let {
+            Log.e(javaClass.simpleName, "loadAllChats: for $it")
+            chatViewModel.observeChat(it)
+                .observe(viewLifecycleOwner, { result ->
+                    renderUi(result)
+                })
+        }
     }
 
     private fun renderUi(chats: List<Chat>?) {

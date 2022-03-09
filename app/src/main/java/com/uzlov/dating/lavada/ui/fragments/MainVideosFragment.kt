@@ -18,6 +18,7 @@ import com.uzlov.dating.lavada.ui.SingleSnap
 import com.uzlov.dating.lavada.ui.adapters.PlayerViewAdapter
 import com.uzlov.dating.lavada.ui.adapters.ProfileRecyclerAdapter
 import com.uzlov.dating.lavada.ui.fragments.profile.ProfileFragment
+import com.uzlov.dating.lavada.viemodels.ChatViewModel
 import com.uzlov.dating.lavada.viemodels.UsersViewModel
 import com.uzlov.dating.lavada.viemodels.ViewModelFactory
 import kotlinx.coroutines.delay
@@ -34,7 +35,12 @@ class MainVideosFragment :
 
     @Inject
     lateinit var factoryViewModel: ViewModelFactory
+
     private lateinit var model: UsersViewModel
+
+    private val chatViewModel: ChatViewModel by lazy {
+        factoryViewModel.create(ChatViewModel::class.java)
+    }
 
     private var self = User()
     private var userFilter = UserFilter()
@@ -56,21 +62,8 @@ class MainVideosFragment :
     }
 
     private val snapHelper: SingleSnap = SingleSnap(callback)
-    private var testData = listOf<User>(
-//        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
-//        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
-//        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
-//        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
-//        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
-//        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
-//        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
-//        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
-//        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
-//        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
-//        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
-//        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
-//        User(url_video = "https://firebasestorage.googleapis.com/v0/b/lavada-7777.appspot.com/o/video%2F1646254684222_VID_20220302_233649.mp4?alt=media&token=11dfb4d1-f689-4078-8c7c-238fbca121e1"),
-   )
+    private var testData = listOf<User>()
+
     private val mAdapter: ProfileRecyclerAdapter by lazy {
         ProfileRecyclerAdapter(testData)
     }
@@ -133,7 +126,11 @@ class MainVideosFragment :
 
                 override fun sendMessage(user: User) {
                     // check VIP
-                    self.chats[user.uid] = self.uid
+                    firebaseEmailAuthService.getUserUid()?.let { uid->
+                        self.chats[user.uid] = self.uid
+                        chatViewModel.createChat(uid, user.uid)
+                    }
+
                 }
             })
         }

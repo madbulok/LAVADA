@@ -1,25 +1,21 @@
 package com.uzlov.dating.lavada.ui.fragments.profile
 
 import android.Manifest
-import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
-import android.location.LocationManager
 import android.os.Bundle
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
-import androidx.core.location.LocationManagerCompat
 import androidx.lifecycle.lifecycleScope
-import com.google.android.gms.location.*
 import com.google.android.gms.tasks.RuntimeExecutionException
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
 import com.uzlov.dating.lavada.data.data_sources.IUsersRepository
+import com.uzlov.dating.lavada.data.repository.LocationRepository
 import com.uzlov.dating.lavada.databinding.FragmentAboutMyselfBinding
 import com.uzlov.dating.lavada.domain.models.MALE
 import com.uzlov.dating.lavada.domain.models.User
@@ -27,13 +23,7 @@ import com.uzlov.dating.lavada.ui.activities.LoginActivity
 import com.uzlov.dating.lavada.ui.fragments.BaseFragment
 import com.uzlov.dating.lavada.viemodels.GeocodingViewModel
 import com.uzlov.dating.lavada.viemodels.ViewModelFactory
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 
 class AboutMyselfFragment :
@@ -48,6 +38,9 @@ class AboutMyselfFragment :
 
     @Inject
     lateinit var factoryModel: ViewModelFactory
+
+    @Inject
+    lateinit var locationRepository: LocationRepository
 
     private lateinit var geocodingViewModel: GeocodingViewModel
 
@@ -104,11 +97,24 @@ class AboutMyselfFragment :
                 progressRegistration.setProgressCompat(50, true)
             }
             swEnableLocation.setOnCheckedChangeListener { _, isChecked ->
-                if (isChecked){
-                    if (checkPermission()){
-                        lifecycleScope.launch {
-                            getLocation(requireContext(), 1)
-                            getLocationLast(requireContext())
+                if (isChecked) {
+                    if (checkPermission()) {
+                        lifecycleScope.launchWhenResumed {
+                            try {
+                                val location = locationRepository.getLocation()
+                                btnNext.isEnabled = true
+                                swEnableLocation.isChecked = true
+                                if (location != null) {
+                                    startGeocoding(location)
+                                } else {
+                                    val l = locationRepository.requestLocation()
+                                    startGeocoding(l)
+                                }
+                            } catch (e: RuntimeException){
+                                Toast.makeText(requireContext(), e.localizedMessage, Toast.LENGTH_SHORT).show()
+                            } catch (e: RuntimeExecutionException){
+                                Toast.makeText(requireContext(), "Ваше устройство не поддерживает Google Services", Toast.LENGTH_SHORT).show()
+                            }
                         }
 
                         user.location = tiEtLocation.text.toString()
@@ -119,99 +125,19 @@ class AboutMyselfFragment :
             }
         }
     }
-    private val locationRequestGPS by lazy {
-        LocationRequest.create()
-            .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-            .setNumUpdates(1)
-            .setExpirationDuration(1000)
-    }
 
-    private val locationRequestNETWORK by lazy {
-        LocationRequest.create()
-            .setPriority(LocationRequest.PRIORITY_LOW_POWER)
-            .setNumUpdates(1)
-            .setExpirationDuration(1000)
-    }
+    private fun startGeocoding(location: Location) {
 
-    private suspend fun getLocation(context: Context, offsetMinutes: Int): Location? = suspendCoroutine { task ->
-        val ctx = context.applicationContext
-        if (!checkPermission()) {
-            task.resume(null)
-        } else {
-            val manager = ctx.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-            if (!LocationManagerCompat.isLocationEnabled(manager)) {
-                task.resume(null)
-            } else {
-                val service = LocationServices.getFusedLocationProviderClient(ctx)
-                service.lastLocation
-                    .addOnCompleteListener { locTask ->
-                        try {
-                            if (locTask.result == null
-                                || System.currentTimeMillis() - locTask.result!!.time > offsetMinutes
-                            )
-                            {
-                                lifecycleScope.launch(Dispatchers.Main) {
-                                    geocodingViewModel.fetchGeocoding(
-                                        locTask.result.latitude.toString(),
-                                        locTask.result.longitude.toString()
-                                    ).observe(viewLifecycleOwner, {
-                                        viewBinding.tiEtLocation.setText(it.getViewAddress())
-                                        user.location = it.getViewAddress()
-                                    })
+        geocodingViewModel.fetchGeocoding(
+            location.latitude.toString(),
+            location.longitude.toString()
+        ).observe(viewLifecycleOwner, {
+            viewBinding.tiEtLocation.setText(it.getViewAddress())
+            user.location = it.getViewAddress()
+        })
 
-                                    user.lat = locTask.result.latitude
-                                    user.lon = locTask.result.longitude
-                                    task.resume(locationRequest(manager, service))
-                                }
-                            } else {
-                                task.resume(locTask.result)
-                            }
-                        } catch (e: RuntimeExecutionException){
-                            Toast.makeText(requireContext(), "Ваше устройство не поддерживает Google Services", Toast.LENGTH_SHORT).show()
-                        }
-
-                    }
-            }
-        }
-    }
-
-    private suspend fun getLocationLast(context: Context): Location? = suspendCoroutine { task ->
-        val ctx = context.applicationContext
-        if (!checkPermission()) {
-            task.resume(null)
-        } else {
-            if (!LocationManagerCompat.isLocationEnabled(ctx.getSystemService(Context.LOCATION_SERVICE) as LocationManager)) {
-                task.resume(null)
-            } else {
-                LocationServices.getFusedLocationProviderClient(ctx)
-                    .lastLocation
-                    .addOnCompleteListener { locTask ->
-                        task.resume(locTask.result)
-                    }
-            }
-        }
-    }
-
-    private suspend fun locationRequest(locationManager: LocationManager, service: FusedLocationProviderClient): Location? = suspendCoroutine { task ->
-        val callback = object : LocationCallback() {
-            override fun onLocationResult(p0: LocationResult) {
-                service.removeLocationUpdates(this)
-                task.resume(p0.lastLocation)
-            }
-        }
-        when {
-            locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) -> {
-                if (checkPermission()) {
-                    service.requestLocationUpdates(locationRequestGPS, callback, Looper.getMainLooper())
-                }
-            }
-            locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER) -> {
-                service.requestLocationUpdates(locationRequestNETWORK, callback, Looper.getMainLooper())
-            }
-            else -> {
-                task.resume(null)
-            }
-        }
+        user.lat = location.latitude
+        user.lon = location.longitude
     }
 
 
@@ -223,7 +149,8 @@ class AboutMyselfFragment :
             ActivityCompat.checkSelfPermission(
                 requireActivity(),
                 Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED) {
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
             ActivityCompat.requestPermissions(
                 requireActivity(),
                 PERMISSIONS_STORAGE, REQUEST_EXTERNAL_STORAGE
@@ -269,6 +196,7 @@ class AboutMyselfFragment :
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION
         )
+
         fun newInstance() =
             AboutMyselfFragment().apply {
                 arguments = Bundle().apply {
