@@ -69,13 +69,12 @@
             android:id="@+id/ivMessageTo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/message_circle"
-            app:tint="@color/Surface"
             android:layout_marginEnd="18dp"
-            android:layout_marginBottom="24dp"
+            android:layout_marginTop="27dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/ivHeartTo"
-            app:layout_constraintBottom_toBottomOf="@+id/center_vertical"/>
+            app:layout_constraintTop_toBottomOf="@+id/ivHeartTo"
+            app:srcCompat="@drawable/message_circle"
+            app:tint="@color/Surface" />
 
 
         <ImageView
@@ -92,9 +91,9 @@
             android:id="@+id/ivGiftTo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginBottom="27dp"
+            app:layout_constraintBottom_toTopOf="@+id/ivHeartTo"
             app:layout_constraintEnd_toEndOf="@+id/ivHeartTo"
-            app:layout_constraintTop_toBottomOf="@+id/ivHeartTo"
             app:srcCompat="@drawable/gift"
             app:tint="@color/Surface" />
 

@@ -40,10 +40,14 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/til_email"
-        style="@style/MyOutlinedBoxStyle"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_margin="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
+        app:boxCornerRadiusBottomEnd="@dimen/default_margin_16"
+        app:boxCornerRadiusBottomStart="@dimen/default_margin_16"
+        app:boxCornerRadiusTopEnd="@dimen/default_margin_16"
+        app:boxCornerRadiusTopStart="@dimen/default_margin_16"
         app:layout_constraintTop_toBottomOf="@id/tv_label_login">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -56,15 +60,19 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/til_password"
-        style="@style/MyOutlinedBoxStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:layout_margin="20dp"
         app:endIconDrawable="@drawable/show_password_selector"
         app:endIconMode="password_toggle"
         app:errorEnabled="true"
         app:helperText=" "
         app:helperTextEnabled="true"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        app:boxCornerRadiusBottomEnd="@dimen/default_margin_16"
+        app:boxCornerRadiusBottomStart="@dimen/default_margin_16"
+        app:boxCornerRadiusTopEnd="@dimen/default_margin_16"
+        app:boxCornerRadiusTopStart="@dimen/default_margin_16"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/til_email">
 
         <com.google.android.material.textfield.TextInputEditText

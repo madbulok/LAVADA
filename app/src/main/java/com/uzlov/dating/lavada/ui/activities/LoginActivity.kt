@@ -151,6 +151,7 @@ class LoginActivity: AppCompatActivity(){
             beginTransaction()
                 .add(R.id.fullScreen_container, previewFragment)
                 .hide(selectVideoFragment)
+                .hide(aboutMyselfFragment)
                 .hide(filterLookingForFragment)
                 .show(previewFragment)
                 .addToBackStack("null")

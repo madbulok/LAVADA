@@ -60,10 +60,6 @@ class LogInFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
 
     private fun addClickListeners() {
         viewBinding.btnLogin.setOnClickListener {
-            /*
-            И вот тут вообще непонятно, отсюда мыло брать или будет какое-то еще поле
-            для ввода пароля
-            */
             if (!viewBinding.tiEtEmail.text.isNullOrEmpty()) {
                 val email = viewBinding.tiEtEmail.text.toString()
                 val password = viewBinding.textInputPassword.text.toString()

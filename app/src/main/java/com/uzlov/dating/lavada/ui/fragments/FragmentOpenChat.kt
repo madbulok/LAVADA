@@ -5,22 +5,38 @@ import android.view.View
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.Glide
+import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.app.appComponent
+import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
 import com.uzlov.dating.lavada.databinding.FragmentSingleChatBinding
 import com.uzlov.dating.lavada.domain.models.Chat
 import com.uzlov.dating.lavada.domain.models.ChatMessage
+import com.uzlov.dating.lavada.domain.models.User
 import com.uzlov.dating.lavada.ui.adapters.ChatMessageAdapter
+import com.uzlov.dating.lavada.viemodels.ChatViewModel
 import com.uzlov.dating.lavada.viemodels.MessageViewModel
+import com.uzlov.dating.lavada.viemodels.UsersViewModel
 import javax.inject.Inject
 
 class FragmentOpenChat :
     BaseFragment<FragmentSingleChatBinding>(FragmentSingleChatBinding::inflate) {
 
     @Inject
+    lateinit var firebaseEmailAuthService: FirebaseEmailAuthService
+
+    @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
+
     private lateinit var messageViewModel: MessageViewModel
+    private lateinit var userViewModel: UsersViewModel
+    private lateinit var chatViewModel: ChatViewModel
+
     private lateinit var chatId: String
     private var chatOpen: Chat? = null
+    private val selfUid by lazy {
+        firebaseEmailAuthService.getUserUid() ?: ""
+    }
 
     private val messagesAdapter by lazy {
         ChatMessageAdapter(self = "Artem2")
@@ -30,6 +46,8 @@ class FragmentOpenChat :
         super.onCreate(savedInstanceState)
         requireContext().appComponent.inject(this)
         messageViewModel = viewModelFactory.create(MessageViewModel::class.java)
+        userViewModel = viewModelFactory.create(UsersViewModel::class.java)
+        chatViewModel = viewModelFactory.create(ChatViewModel::class.java)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -44,27 +62,45 @@ class FragmentOpenChat :
         loadMessagesHistory()
     }
 
+
     private fun loadMessagesHistory() {
         messageViewModel.retrieveMessages(chatId).observe(viewLifecycleOwner, {
             if (it != null) {
-                chatOpen = it
-                messagesAdapter.setMessages(chatOpen!!.messages ?: emptyList())
+                chatOpen = it.copy()
+                messagesAdapter.setMessages(it.messages ?: emptyList())
+
+                it.members?.firstOrNull { it != selfUid }?.let { uidCompanion->
+                    userViewModel.getUser(uidCompanion)?.observe(viewLifecycleOwner, { user->
+                        user?.let { it1 -> updateUiCompanion(it1) }
+                    })
+                }
             } else {
                 Toast.makeText(requireContext(), "response is null", Toast.LENGTH_SHORT).show()
             }
         })
     }
 
+    private fun updateUiCompanion(user: User){
+        with(viewBinding){
+            tvProfileName.text = user.name
+            tvSubMessageName.text = user.location
+            Glide.with(requireContext())
+                .load(user.url_avatar)
+                .error(resources.getDrawable(R.drawable.test_avatar))
+                .into(imageProfile)
+        }
+    }
+
     private fun setOnClickListeners() {
         with(viewBinding) {
             btnSend.setOnClickListener {
-                if (!chatId.isNullOrEmpty()) {
+                if (!chatId.isNullOrEmpty() && etMessage.text?.length ?: 0 > 0) {
 
                     chatOpen?.let {
                         it.messages?.add(
                             ChatMessage(
                                 message = etMessage.text.toString(),
-                                sender = "Artem",
+                                sender = selfUid,
                                 viewed = false,
                                 mediaUrl = "link1"
                             )

@@ -4,13 +4,16 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.getValue
 import com.uzlov.dating.lavada.app.Constants
 import com.uzlov.dating.lavada.data.data_sources.interfaces.IMessageDataSource
 import com.uzlov.dating.lavada.domain.models.Chat
 import com.uzlov.dating.lavada.domain.models.ChatMessage
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.callbackFlow
+import java.lang.RuntimeException
 import java.util.*
 import javax.inject.Inject
 import kotlin.coroutines.resumeWithException
@@ -28,6 +31,7 @@ class MessagesRepository @Inject constructor(mDatabase: FirebaseDatabase) : IMes
         ref.child(uidChat).setValue(message)
     }
 
+    @ExperimentalCoroutinesApi
     override suspend fun observeMessages(uidChat: String) = callbackFlow {
 
         val listener = object : ValueEventListener {
@@ -83,5 +87,22 @@ class MessagesRepository @Inject constructor(mDatabase: FirebaseDatabase) : IMes
                 messages = arrayListOf()
             )
         )
+    }
+
+    override suspend fun getChat(uid: String) : Chat {
+        return suspendCoroutine { continuation->
+            ref.child(uid).get().addOnSuccessListener {
+                try {
+                    val result = it.getValue<Chat>()
+                    if (result != null){
+                        continuation.resumeWith(Result.success(result))
+                    } else {
+                        throw RuntimeException()
+                    }
+                } catch (e:Throwable){
+                    continuation.resumeWith(Result.failure(e))
+                }
+            }
+        }
     }
 }

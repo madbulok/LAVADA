@@ -1,5 +1,6 @@
 package com.uzlov.dating.lavada.ui.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -135,6 +136,7 @@ class ProfileRecyclerAdapter(
                 index = adapterPosition
                 executePendingBindings()
             }
+            Log.e("TAG", "onBind: ${model.url_video}")
         }
     }
 
