@@ -40,7 +40,7 @@
             app:layout_constraintTop_toTopOf="@+id/textView"
             app:srcCompat="@drawable/close" />
 
-        <com.google.android.material.imageview.ShapeableImageView
+        <com.uzlov.dating.lavada.ui.custom.UserAvatarImageView
             android:id="@+id/ivRandomProfile"
             android:layout_width="64dp"
             android:layout_height="64dp"
@@ -48,8 +48,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView"
-            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent"
-            tools:background="@tools:sample/avatars" />
+            app:srcCompat="@drawable/test_avatar" />
 
         <ImageView
             android:id="@+id/ivHeartSubIcon"
@@ -59,8 +58,7 @@
             app:layout_constraintBottom_toBottomOf="@id/ivRandomProfile"
             app:layout_constraintStart_toStartOf="@id/ivRandomProfile"
             app:layout_constraintEnd_toEndOf="@id/ivRandomProfile"
-            app:srcCompat="@drawable/heart"
-            app:tint="@color/Error"/>
+            app:srcCompat="@drawable/heart_filled"/>
 
         <TextView
             android:id="@+id/tvLocationProfile"
@@ -68,6 +66,7 @@
             android:gravity="center"
             android:layout_marginBottom="@dimen/default_margin_32"
             android:layout_width="0dp"
+            android:textSize="16sp"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -80,6 +79,7 @@
             android:gravity="center"
             android:textColor="@color/Primary_text"
             android:layout_width="0dp"
+            android:textSize="18sp"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -95,7 +95,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="@dimen/default_margin_32"
-        android:layout_height="wrap_content"
+        android:layout_height="55dp"
         android:layout_width="match_parent"
         style="@style/DefaultButtons"/>
 
