@@ -99,15 +99,11 @@ class LoginActivity: AppCompatActivity(){
         }
     }
 
-    private lateinit var filterLookingForFragment: FilterLookingForFragment
 
     fun startSettingsLookInForFragment(user: User){
-        filterLookingForFragment =  FilterLookingForFragment.newInstance(user)
         supportFragmentManager.apply {
             beginTransaction()
-                .add(R.id.container, filterLookingForFragment)
-                .hide(aboutMyselfFragment)
-                .show(filterLookingForFragment)
+                .replace(R.id.container, FilterLookingForFragment.newInstance(user))
                 .addToBackStack("null")
                 .commit()
         }
@@ -130,30 +126,19 @@ class LoginActivity: AppCompatActivity(){
         for (i in 0..supportFragmentManager.backStackEntryCount) supportFragmentManager.popBackStack()
     }
 
-    private lateinit var selectVideoFragment: UploadVideoFragment
     fun startSelectVideo(user: User) {
-        selectVideoFragment = UploadVideoFragment.newInstance(user)
         supportFragmentManager.apply {
             beginTransaction()
-                .add(R.id.container, selectVideoFragment)
-                .hide(aboutMyselfFragment)
-                .hide(filterLookingForFragment)
-                .show(selectVideoFragment)
+                .replace(R.id.container, UploadVideoFragment.newInstance(user))
                 .addToBackStack("null")
                 .commit()
         }
     }
 
-    private lateinit var previewFragment: PreviewVideoFragment
     fun showPreviewVideo(_path: String, user: User) {
-        previewFragment = PreviewVideoFragment.newInstance(_path, user)
         supportFragmentManager.apply {
             beginTransaction()
-                .add(R.id.fullScreen_container, previewFragment)
-                .hide(selectVideoFragment)
-                .hide(aboutMyselfFragment)
-                .hide(filterLookingForFragment)
-                .show(previewFragment)
+                .replace(R.id.fullScreen_container, PreviewVideoFragment.newInstance(_path, user))
                 .addToBackStack("null")
                 .commit()
         }
