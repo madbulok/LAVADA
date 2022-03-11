@@ -2,17 +2,19 @@ package com.uzlov.dating.lavada.ui.activities
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.uzlov.dating.lavada.R
+import com.uzlov.dating.lavada.data.repository.PreferenceRepository
 import com.uzlov.dating.lavada.databinding.HostActivityBinding
-import com.uzlov.dating.lavada.databinding.LoginActivityBinding
 import com.uzlov.dating.lavada.ui.adapters.PlayerViewAdapter
 import com.uzlov.dating.lavada.ui.fragments.MainVideosFragment
-import com.uzlov.dating.lavada.ui.fragments.VideoCaptureFragment
-import com.uzlov.dating.lavada.ui.fragments.profile.UploadVideoFragment
+import javax.inject.Inject
 
 class HostActivity : AppCompatActivity() {
+
+
+    @Inject
+    lateinit var preferenceRepository: PreferenceRepository
+
     private var _viewBinding: HostActivityBinding? = null
     private val viewBinding get() = _viewBinding!!
 
@@ -20,7 +22,9 @@ class HostActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         _viewBinding = HostActivityBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
-        openFragment()
+        if (savedInstanceState == null){
+            openFragment()
+        }
     }
 
     fun openFragment(){

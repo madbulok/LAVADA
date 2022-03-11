@@ -79,7 +79,7 @@ class PreviewVideoFragment : BaseFragment<FragmentPreviewVideoBinding>(FragmentP
                     userViewModel.addUser(user)
                     val localUser = preferenceRepository.readUser()
                     if (localUser != null) {
-                        preferenceRepository.updateUser(localUser.copy(isReady = true))
+                        preferenceRepository.updateUser(AuthorizedUser(localUser.uuid, localUser.datetime, localUser.name, true))
                     } else {
                         val localUserNew = AuthorizedUser(
                             uuid = user.uid,
