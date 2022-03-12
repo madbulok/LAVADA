@@ -7,14 +7,15 @@ import javax.inject.Inject
 
 class ChatUseCase @Inject constructor(private val chatRepository: IMessageDataSource, private val userRepository: IUsersRepository) {
 
-    fun createChat(selfId: String, companionId: String){
+    // return uid key created chat
+    fun createChat(selfId: String, companionId: String) : String? {
         userRepository.getUser(selfId).value?.let {
             // update links for chats user
-            it.chats[companionId] = selfId
+            it.chats.put(companionId, selfId)
             userRepository.putUser(it)
-
-            chatRepository.createChat(selfId, companionId)
+            return@let chatRepository.createChat(selfId, companionId)
         }
+        return null
     }
 
     suspend fun getChat(uid: String): Chat {

@@ -14,8 +14,7 @@ import com.uzlov.dating.lavada.domain.models.Chat
 import com.uzlov.dating.lavada.ui.adapters.PlayerViewAdapter
 import com.uzlov.dating.lavada.ui.adapters.UsersChatsAdapter
 import com.uzlov.dating.lavada.ui.adapters.UsersProfileStoriesAdapter
-import com.uzlov.dating.lavada.viemodels.ChatViewModel
-import com.uzlov.dating.lavada.viemodels.MessageViewModel
+import com.uzlov.dating.lavada.viemodels.MessageChatViewModel
 import javax.inject.Inject
 
 class ChatsFragment :
@@ -24,10 +23,26 @@ class ChatsFragment :
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
-    private lateinit var chatViewModel: ChatViewModel
+    private lateinit var messageChatViewModel: MessageChatViewModel
 
     @Inject
     lateinit var auth: FirebaseEmailAuthService
+
+    private var companionId: String? = null
+
+    companion object {
+        const val COMPANION_KEY = "companionId"
+        fun newInstance(companionId: String): ChatsFragment {
+            val fragment = ChatsFragment().apply {
+                arguments = bundleOf(COMPANION_KEY to companionId)
+            }
+            return fragment
+        }
+
+        fun openChat(uidChat: String) {
+
+        }
+    }
 
     private val openChatCallback by lazy {
         object : UsersChatsAdapter.OnChatClickListener {
@@ -48,6 +63,7 @@ class ChatsFragment :
             .commit()
     }
 
+
     private val storiesAdapter by lazy {
         UsersProfileStoriesAdapter()
     }
@@ -59,7 +75,10 @@ class ChatsFragment :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requireContext().appComponent.inject(this)
-        chatViewModel = viewModelFactory.create(ChatViewModel::class.java)
+        messageChatViewModel = viewModelFactory.create(MessageChatViewModel::class.java)
+        requireArguments().let {
+            companionId = it.getString(COMPANION_KEY, "") ?: ""
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -69,13 +88,23 @@ class ChatsFragment :
             chatRecyclerView.adapter = chatAdapter
         }
         initListeners()
+
         loadAllChats()
+        if (!companionId.isNullOrEmpty()){
+            loadChat(companionId!!)
+        }
+    }
+
+    private fun loadChat(companionId: String) {
+        auth.getUserUid()?.let {
+            messageChatViewModel.createChat(selfId = it, companionId = companionId)
+
+        }
     }
 
     private fun loadAllChats() {
         auth.getUserUid()?.let {
-            Log.e(javaClass.simpleName, "loadAllChats: for $it")
-            chatViewModel.observeChat(it)
+            messageChatViewModel.getChats(it)
                 .observe(viewLifecycleOwner, { result ->
                     renderUi(result)
                 })

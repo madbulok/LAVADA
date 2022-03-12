@@ -15,13 +15,8 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(MessageViewModel::class)
-    abstract fun provideMessageViewModel(messageViewModel: MessageViewModel) : ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(ChatViewModel::class)
-    abstract fun provideChatViewModel(chatViewModel: ChatViewModel) : ViewModel
+    @ViewModelKey(MessageChatViewModel::class)
+    abstract fun provideChatViewModel(messageChatViewModel: MessageChatViewModel) : ViewModel
 
     @Binds
     @IntoMap

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.uzlov.dating.lavada.R
@@ -12,6 +13,7 @@ import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
 import com.uzlov.dating.lavada.data.repository.PreferenceRepository
 import com.uzlov.dating.lavada.databinding.MainVideosFragmentBinding
+import com.uzlov.dating.lavada.domain.models.Chat
 import com.uzlov.dating.lavada.domain.models.User
 import com.uzlov.dating.lavada.domain.models.UserFilter
 import com.uzlov.dating.lavada.ui.SingleSnap
@@ -19,7 +21,7 @@ import com.uzlov.dating.lavada.ui.adapters.PlayerViewAdapter
 import com.uzlov.dating.lavada.ui.adapters.ProfileRecyclerAdapter
 import com.uzlov.dating.lavada.ui.fragments.dialogs.FragmentMatch
 import com.uzlov.dating.lavada.ui.fragments.profile.ProfileFragment
-import com.uzlov.dating.lavada.viemodels.ChatViewModel
+import com.uzlov.dating.lavada.viemodels.MessageChatViewModel
 import com.uzlov.dating.lavada.viemodels.UsersViewModel
 import com.uzlov.dating.lavada.viemodels.ViewModelFactory
 import kotlinx.coroutines.delay
@@ -39,8 +41,8 @@ class MainVideosFragment :
 
     private lateinit var model: UsersViewModel
 
-    private val chatViewModel: ChatViewModel by lazy {
-        factoryViewModel.create(ChatViewModel::class.java)
+    private val messageChatViewModel: MessageChatViewModel by lazy {
+        factoryViewModel.create(MessageChatViewModel::class.java)
     }
 
     private var self = User()
@@ -121,15 +123,31 @@ class MainVideosFragment :
 
                 override fun sendHeart(user: User) {
                     self.matches[user.uid] = false
+
                     val heartFragment = FragmentMatch.newInstance(user)
                     heartFragment.show(childFragmentManager, heartFragment.javaClass.simpleName)
                 }
 
                 override fun sendMessage(user: User) {
                     // check VIP
-                    firebaseEmailAuthService.getUserUid()?.let { uid->
+                    firebaseEmailAuthService.getUserUid()?.let { selfId ->
                         self.chats[user.uid] = self.uid
-                        chatViewModel.createChat(uid, user.uid)
+                        messageChatViewModel.createChat(selfId, user.uid)
+                            .observe(viewLifecycleOwner, {
+                                it?.let { uid->
+                                    val fragment = FragmentOpenChat().apply {
+                                        arguments =
+                                            bundleOf(FragmentOpenChat.CHAT_ID to uid)
+                                    }
+                                    parentFragmentManager.beginTransaction()
+                                        .add(R.id.container, fragment)
+                                        .hide(this@MainVideosFragment)
+                                        .show(fragment)
+                                        .addToBackStack("open chat")
+                                        .commit()
+
+                                }
+                            })
                     }
 
                 }
@@ -147,6 +165,7 @@ class MainVideosFragment :
     private val filterSearchPeopleFragment by lazy {
         FilterSearchPeopleFragment()
     }
+
 
     private fun setOnClickListener() {
         with(viewBinding) {

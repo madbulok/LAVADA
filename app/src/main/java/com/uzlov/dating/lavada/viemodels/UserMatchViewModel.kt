@@ -8,32 +8,20 @@ import com.uzlov.dating.lavada.data.data_sources.interfaces.IMessageDataSource
 import com.uzlov.dating.lavada.data.use_cases.ChatUseCase
 import com.uzlov.dating.lavada.domain.models.Chat
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class ChatViewModel @Inject constructor(var messagesRepository: IMessageDataSource, var useCase: ChatUseCase) : ViewModel() {
+class UserMatchViewModel @Inject constructor(var messagesRepository: IMessageDataSource, var useCase: ChatUseCase) : ViewModel() {
 
     private val chats = MutableLiveData<List<Chat>>()
-    private val chat = MutableLiveData<Chat>()
 
-    fun observeChat(userId: String) : LiveData<List<Chat>> {
+    // получить все чаты пользователя
+    fun getMatches(userId: String) : LiveData<List<Chat>> {
         viewModelScope.launch {
             val result = messagesRepository.getChats(userId)
             chats.postValue(result)
         }
         return chats
-    }
-
-    fun createChat(selfId: String, companionId: String){
-        viewModelScope.launch(Dispatchers.IO) {
-            useCase.createChat(selfId, companionId)
-        }
-    }
-
-    fun getChat(uid: String): LiveData<Chat>{
-        viewModelScope.launch(Dispatchers.IO) {
-            chat.postValue(useCase.getChat(uid))
-        }
-        return chat
     }
 }

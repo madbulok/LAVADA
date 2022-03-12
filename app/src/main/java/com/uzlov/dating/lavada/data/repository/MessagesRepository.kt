@@ -78,7 +78,7 @@ class MessagesRepository @Inject constructor(mDatabase: FirebaseDatabase) : IMes
         }
     }
 
-    override fun createChat(selfId: String, companionId: String) {
+    override fun createChat(selfId: String, companionId: String): String {
         val uid = UUID.randomUUID().toString()
         ref.child(uid).setValue(
             Chat(
@@ -87,6 +87,8 @@ class MessagesRepository @Inject constructor(mDatabase: FirebaseDatabase) : IMes
                 messages = arrayListOf()
             )
         )
+
+        return uid
     }
 
     override suspend fun getChat(uid: String) : Chat {
