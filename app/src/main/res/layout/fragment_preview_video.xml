@@ -1,33 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:src="http://schemas.android.com/tools">
+    xmlns:src="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-
-    <FrameLayout
-        android:id="@+id/frameLayout"
+    <com.google.android.exoplayer2.ui.PlayerView
+        android:id="@+id/item_video_exoplayer"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:background="@drawable/dialog_bg">
-
-        <com.google.android.exoplayer2.ui.PlayerView
-            android:id="@+id/item_video_exoplayer"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:resize_mode="fixed_width"
-            app:surface_type="texture_view"
-            app:use_controller="false"
-            app:show_shuffle_button="true"
-            app:layout_constraintBottom_toTopOf="@+id/btn_back"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
-    </FrameLayout>
+        app:layout_constraintTop_toTopOf="parent"
+        app:resize_mode="zoom"
+        app:surface_type="texture_view"
+        app:use_controller="false" />
 
 
     <com.uzlov.dating.lavada.ui.custom.UserAvatarImageView
@@ -35,9 +23,9 @@
         android:layout_width="44dp"
         android:layout_height="44dp"
         android:layout_marginBottom="24dp"
-        app:srcCompat="@drawable/test_avatar"
         app:layout_constraintBottom_toTopOf="@id/btn_back"
-        app:layout_constraintStart_toStartOf="@id/btn_back" />
+        app:layout_constraintStart_toStartOf="@id/btn_back"
+        app:srcCompat="@drawable/test_avatar" />
 
     <TextView
         android:id="@+id/tvNameProfile"
@@ -45,8 +33,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/default_margin_16"
         android:textColor="@color/Inverse_text"
-        app:layout_constraintTop_toTopOf="@+id/userAvatarImageView"
-        app:layout_constraintStart_toEndOf="@id/userAvatarImageView"/>
+        app:layout_constraintStart_toEndOf="@id/userAvatarImageView"
+        app:layout_constraintTop_toTopOf="@+id/userAvatarImageView" />
 
     <TextView
         android:id="@+id/tvLocationProfile"
@@ -55,7 +43,7 @@
         android:layout_marginStart="@dimen/default_margin_16"
         android:textColor="@color/Inverse_text"
         app:layout_constraintBottom_toBottomOf="@+id/userAvatarImageView"
-        app:layout_constraintStart_toEndOf="@id/userAvatarImageView"/>
+        app:layout_constraintStart_toEndOf="@id/userAvatarImageView" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/center_horizontal"
@@ -72,7 +60,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_back"
@@ -98,10 +86,10 @@
         android:layout_marginStart="4dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="12dp"
-        app:backgroundTint="@color/Brand_fill"
         android:text="Complete"
         android:textAllCaps="false"
         android:textColor="@color/Primary_text"
+        app:backgroundTint="@color/Brand_fill"
         app:cornerRadius="@dimen/default_margin_16"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
