@@ -2,11 +2,14 @@ package com.uzlov.dating.lavada.ui.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.camera.video.OutputResults
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.databinding.LoginActivityBinding
 import com.uzlov.dating.lavada.domain.models.User
 import com.uzlov.dating.lavada.ui.adapters.PlayerViewAdapter
+import com.uzlov.dating.lavada.ui.fragments.VideoCaptureFragment
 import com.uzlov.dating.lavada.ui.fragments.profile.AboutMyselfFragment
 import com.uzlov.dating.lavada.ui.fragments.profile.FilterLookingForFragment
 import com.uzlov.dating.lavada.ui.fragments.profile.PreviewVideoFragment
@@ -16,7 +19,7 @@ import com.uzlov.dating.lavada.ui.fragments.registration.LogInFragment
 import com.uzlov.dating.lavada.ui.fragments.registration.RegistrationFragment
 
 
-class LoginActivity: AppCompatActivity(){
+class LoginActivity : AppCompatActivity() {
     private var _viewBinding: LoginActivityBinding? = null
     private val viewBinding get() = _viewBinding!!
 
@@ -90,7 +93,7 @@ class LoginActivity: AppCompatActivity(){
 
     private lateinit var aboutMyselfFragment: AboutMyselfFragment
 
-    fun startFillDataFragment(user: User){
+    fun startFillDataFragment(user: User) {
         aboutMyselfFragment = AboutMyselfFragment.newInstance(user)
         supportFragmentManager.apply {
             beginTransaction()
@@ -100,7 +103,7 @@ class LoginActivity: AppCompatActivity(){
     }
 
 
-    fun startSettingsLookInForFragment(user: User){
+    fun startSettingsLookInForFragment(user: User) {
         supportFragmentManager.apply {
             beginTransaction()
                 .replace(R.id.container, FilterLookingForFragment.newInstance(user))
@@ -111,6 +114,7 @@ class LoginActivity: AppCompatActivity(){
 
     override fun onBackPressed() {
         super.onBackPressed()
+        supportFragmentManager.popBackStack()
         showBenefits()
     }
 
@@ -147,7 +151,7 @@ class LoginActivity: AppCompatActivity(){
     fun routeToMainScreen() {
         startActivity(
             Intent(
-            this, HostActivity::class.java
+                this, HostActivity::class.java
             )
         )
         clearFragments()
@@ -157,5 +161,29 @@ class LoginActivity: AppCompatActivity(){
     override fun onStop() {
         super.onStop()
         PlayerViewAdapter.releaseAllPlayers()
+    }
+
+
+    fun startCaptureVideoFragment(user: User) {
+
+        val videoCaptureCallback =
+            object : VideoCaptureFragment.VideoRecordingListener {
+                override fun start() {
+                    // need disable all transactions
+                }
+
+                override fun finish(result: OutputResults) {
+                    showPreviewVideo(result.outputUri.toString(), user)
+                }
+
+                override fun error(message: String) {
+                    Toast.makeText(this@LoginActivity, message, Toast.LENGTH_SHORT).show()
+                }
+            }
+
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fullScreen_container, VideoCaptureFragment(videoCaptureCallback))
+            .addToBackStack(("null"))
+            .commit()
     }
 }

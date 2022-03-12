@@ -7,7 +7,6 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
@@ -16,14 +15,12 @@ import com.abedelazizshe.lightcompressorlibrary.CompressionListener
 import com.abedelazizshe.lightcompressorlibrary.VideoCompressor
 import com.abedelazizshe.lightcompressorlibrary.VideoQuality
 import com.abedelazizshe.lightcompressorlibrary.config.Configuration
-import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.databinding.FragmentUploadVideoBinding
 import com.uzlov.dating.lavada.domain.models.User
-import com.uzlov.dating.lavada.storage.FirebaseStorageService
 import com.uzlov.dating.lavada.storage.URIPathHelper
 import com.uzlov.dating.lavada.ui.activities.LoginActivity
 import com.uzlov.dating.lavada.ui.fragments.BaseFragment
-import javax.inject.Inject
+import com.uzlov.dating.lavada.ui.fragments.dialogs.FragmentSelectSourceVideo
 
 class UploadVideoFragment :
     BaseFragment<FragmentUploadVideoBinding>(FragmentUploadVideoBinding::inflate) {
@@ -32,6 +29,18 @@ class UploadVideoFragment :
     lateinit var list: List<Uri>
     private var path: String? = null
     private var user: User = User()
+
+    private val selectVideoListener: FragmentSelectSourceVideo.OnSelectListener = object : FragmentSelectSourceVideo.OnSelectListener {
+        override fun fromCamera() {
+            (requireActivity() as LoginActivity).startCaptureVideoFragment(user)
+        }
+
+        override fun fromDevice() {
+            if (checkPermission()) {
+                openGalleryForVideo()
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,11 +53,11 @@ class UploadVideoFragment :
         super.onViewCreated(view, savedInstanceState)
 
         checkPermission()
+
         viewBinding.btnSelectVideo.setOnClickListener {
-            if (checkPermission()) {
-                openGalleryForVideo()
-            }
+            FragmentSelectSourceVideo(selectVideoListener).show(childFragmentManager, FragmentSelectSourceVideo::class.java.simpleName)
         }
+
         viewBinding.btnNext.setOnClickListener {
             path?.let {
                 (requireActivity() as LoginActivity).showPreviewVideo(path ?: "", user)
@@ -66,7 +75,7 @@ class UploadVideoFragment :
             if (data?.data != null) {
                 val uriPathHelper = URIPathHelper()
                 val videoFullPath =
-                    data.data?.let { context?.let { it1 -> uriPathHelper.getPath(it1, it) } }
+                    data.data?.let { uriPathHelper.getPath(requireContext(), it) }
                 list = listOf(data.data) as List<Uri>
                 if (videoFullPath != null) {
                     compressVideo()
