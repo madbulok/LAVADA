@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/dialog_bg"
+        android:backgroundTint="@color/Placeholder_text"
+        android:layout_margin="@dimen/default_margin_32"
+        tools:context=".ui.activities.HostActivity">
+
+        <TextView
+            android:id="@+id/labelAddVideo"
+            android:text="Add video"
+            android:gravity="center"
+            android:layout_height="45dp"
+            android:layout_width="match_parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:textColor="@color/Surface"/>
+        <TextView
+            android:id="@+id/addVideoFromRecord"
+            android:text="Record"
+            android:textSize="18sp"
+            android:textColor="@color/Surface"
+            android:layout_height="55dp"
+            android:layout_width="match_parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/labelAddVideo"
+            style="@style/DefaultButtons"/>
+        <TextView
+            android:id="@+id/addVideoFromGallery"
+            android:text="Download"
+            android:textColor="@color/Surface"
+            android:layout_height="55dp"
+            android:layout_width="match_parent"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/addVideoFromRecord"
+            style="@style/DefaultButtons"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/ivClose"
+        android:text="@string/cancel_label"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="@dimen/default_margin_32"
+        android:layout_height="55dp"
+        android:layout_width="match_parent"
+        style="@style/DefaultButtons"/>
+</androidx.appcompat.widget.LinearLayoutCompat>
+
