@@ -169,7 +169,6 @@ class MainVideosFragment :
                 PlayerViewAdapter.pauseCurrentPlayingVideo()
             }
             ivFilter.setOnClickListener {
-                // TODO: 03.03.2022 нужно на filterLookingForFragment навесить откуда пришел или решить переход как-то иначе
                 parentFragmentManager.beginTransaction()
                     .add(R.id.container, filterSearchPeopleFragment)
                     .hide(this@MainVideosFragment)
@@ -177,10 +176,7 @@ class MainVideosFragment :
                     .addToBackStack(null)
                     .commit()
                 PlayerViewAdapter.pauseCurrentPlayingVideo()
-  //              Toast.makeText(context, "Меняем фильтры поиска", Toast.LENGTH_SHORT).show()
             }
-
-
         }
     }
 

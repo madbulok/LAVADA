@@ -2,6 +2,8 @@ package com.uzlov.dating.lavada.data.repository
 
 import android.content.SharedPreferences
 import com.uzlov.dating.lavada.app.Constants
+import com.uzlov.dating.lavada.app.Constants.Companion.LOCAL_PREF_PREMIUM_VISIBLE
+import com.uzlov.dating.lavada.app.Constants.Companion.LOCAL_PREF_THEME
 import com.uzlov.dating.lavada.domain.models.AuthorizedUser
 import com.uzlov.dating.lavada.domain.models.NotificationsFilter
 import com.uzlov.dating.lavada.domain.models.UserFilter
@@ -84,4 +86,22 @@ class PreferenceRepository @Inject constructor(private var preferences: SharedPr
         )
     }
 
+    fun setTheme(theme: Boolean){
+        preferences.edit().apply{
+            putBoolean(LOCAL_PREF_THEME, theme)
+        }.apply()
+    }
+
+    fun readTheme(): Boolean{
+        return preferences.getBoolean(LOCAL_PREF_THEME, false)
+    }
+
+    fun setPremiumVisible(premium: Boolean){
+        preferences.edit().apply{
+            putBoolean(LOCAL_PREF_PREMIUM_VISIBLE, premium)
+        }.apply()
+    }
+    fun readPremiumVisible(): Boolean{
+        return preferences.getBoolean(LOCAL_PREF_PREMIUM_VISIBLE, false)
+    }
 }

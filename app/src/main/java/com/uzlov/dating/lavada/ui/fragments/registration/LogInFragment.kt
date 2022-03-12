@@ -59,6 +59,8 @@ class LogInFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
     }
 
     private fun addClickListeners() {
+        val userLocal = preferenceRepository.readUser()
+
         viewBinding.btnLogin.setOnClickListener {
             if (!viewBinding.tiEtEmail.text.isNullOrEmpty()) {
                 val email = viewBinding.tiEtEmail.text.toString()
@@ -67,15 +69,21 @@ class LogInFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
                     firebaseEmailAuthService.loginWithEmailAndPassword(email, password)
                         .addOnCompleteListener(requireActivity()) { task ->
                             if (task.isSuccessful) {
+                                val user = User(
+                                    uid = firebaseEmailAuthService.auth.currentUser?.uid ?: "",
+                                    email = firebaseEmailAuthService.auth.currentUser?.email)
+
                                 preferenceRepository.updateUser(
                                     AuthorizedUser(
                                         uuid = firebaseEmailAuthService.auth.currentUser?.uid ?: "",
                                         datetime = System.currentTimeMillis() / 1000,
                                         name = firebaseEmailAuthService.auth.currentUser?.email ?: "",
-                                        isReady = true
+                                        isReady = userLocal?.isReady ?: false
                                     )
                                 )
-                                (requireActivity() as LoginActivity).startHome()
+                                if(userLocal?.isReady == true){
+                                    (requireActivity() as LoginActivity).startHome()
+                                } else  (requireActivity() as LoginActivity).startFillDataFragment(user)
                             } else {
                                 Toast.makeText(requireContext(), task.exception?.localizedMessage ?: "Ошибка входа. Возможно неверные данные", Toast.LENGTH_SHORT).show()
                             }
@@ -108,6 +116,7 @@ class LogInFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
                                     uuid = firebaseEmailAuthService.auth.currentUser?.uid ?: "",
                                     datetime = System.currentTimeMillis() / 1000,
                                     name = firebaseEmailAuthService.auth.currentUser?.email ?: "",
+
                                 )
                             )
                             val user = User(
