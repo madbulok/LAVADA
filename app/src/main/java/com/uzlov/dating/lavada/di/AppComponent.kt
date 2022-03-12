@@ -45,4 +45,5 @@ interface AppComponent {
     fun inject(previewVideoFragment: PreviewVideoFragment)
     fun inject(filterSearchPeopleFragment: FilterSearchPeopleFragment)
     fun inject(notificationsFragment: NotificationsFragment)
+    fun inject(personalInfoFragment: PersonalInfoFragment)
 }

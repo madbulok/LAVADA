@@ -65,6 +65,10 @@ class UsersRemoteDataSourceImpl : IRemoteDataSource {
         return result
     }
 
+    override fun updateUser(id: String, field: String, value: Any) {
+        userReference.child(id).child(field).setValue(value)
+    }
+
     override fun removeUser(id: String) {
         userReference.child(id).removeValue()
     }

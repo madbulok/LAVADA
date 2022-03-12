@@ -11,4 +11,5 @@ interface  IRemoteDataSource {
     fun removeUser(id: String)
     fun putUser(user: User)
     fun getUsersWithUserID(id: String): LiveData<List<User>>
+    fun updateUser(id: String, field: String, value: Any)
 }

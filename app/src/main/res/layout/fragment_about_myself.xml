@@ -36,7 +36,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
         android:layout_marginStart="20dp"
-        android:text="About myself"
+        android:text="@string/about_myself"
         android:textSize="32sp"
         android:textStyle="bold"
         android:textColor="@color/Primary_text"
@@ -50,7 +50,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="We will recommend diets and exercises that suit you"
+        android:text="@string/recommend"
         android:textColor="@color/Primary_text"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="@+id/tv_about_myself"
@@ -75,7 +75,7 @@
             android:id="@+id/ti_et_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="name"
+            android:hint="@string/name"
             android:inputType="textEmailAddress" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -84,7 +84,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:text="sex"
+        android:text="@string/sex"
         android:textColor="@color/Secondary_text"
         app:layout_constraintEnd_toEndOf="@+id/tv_recommend"
         app:layout_constraintStart_toStartOf="@+id/tv_recommend"
@@ -100,19 +100,19 @@
 
         <RadioButton
             android:id="@+id/rbMan"
-            android:text="Man"
+            android:text="@string/man"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
         <RadioButton
             android:id="@+id/rvWoman"
-            android:text="Woman"
+            android:text="@string/woman"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
         <RadioButton
             android:id="@+id/rbAnother"
-            android:text="Другое"
+            android:text="@string/another"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
@@ -124,7 +124,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:text="age"
+        android:text="@string/age"
         android:textColor="@color/Secondary_text"
         app:layout_constraintEnd_toEndOf="@+id/tv_sex"
         app:layout_constraintStart_toStartOf="@+id/tv_sex"
@@ -171,14 +171,14 @@
             android:id="@+id/ti_et_location"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="location"
+            android:hint="@string/location"
             android:inputType="text" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/swEnableLocation"
         android:layout_width="0dp"
-        android:text="My location"
+        android:text="@string/my_location"
         android:drawableStart="@drawable/map_pin"
         app:drawableTint="@color/Secondary_text"
         android:drawablePadding="@dimen/default_margin_8"
@@ -204,7 +204,7 @@
         android:layout_marginBottom="20dp"
         app:cornerRadius="@dimen/default_margin_16"
         android:enabled="false"
-        android:text="Next"
+        android:text="@string/next"
         android:textAllCaps="false"
         android:textColor="@color/Primary_text"
         style="@style/Widget.MaterialComponents.Button.UnelevatedButton"

@@ -122,6 +122,24 @@
     <string name="show">Show</string>
     <string name="filter">Filter</string>
     <string name="reset">Reset</string>
+    <string name="edit_profile">Edit profile</string>
+    <string name="name">name</string>
     <string name="location">location</string>
+    <string name="my_location">My location</string>
+    <string name="facebook">Facebook</string>
+    <string name="instagram">Instagram</string>
+    <string name="add">add</string>
+    <string name="nly_seen_by_premium_users">Оnly seen by premium users</string>
+    <string name="social_network">Social network</string>
+    <string name="age">age</string>
+    <string name="man">Man</string>
+    <string name="woman">Woman</string>
+    <string name="another">Another</string>
+    <string name="about_myself">About myself</string>
+    <string name="sex">sex</string>
+    <string name="add_photo">add photo</string>
+    <string name="twitter">Twitter</string>
+    <string name="next">Next</string>
+    <string name="recommend">We will recommend diets and exercises that suit you</string>
 
 </resources>

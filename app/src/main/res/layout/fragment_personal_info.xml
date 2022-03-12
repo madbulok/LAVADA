@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/tbBackAction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="22dp"
+            android:layout_marginTop="18dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/chevron_left" />
+
+        <TextView
+            android:id="@+id/chatLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:gravity="center"
+            android:text="@string/edit_profile"
+            android:textColor="@color/Primary_text"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="@+id/tbBackAction"
+            app:layout_constraintTop_toTopOf="@+id/tbBackAction" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivProfile"
+            android:layout_width="@dimen/size_image_profile"
+            android:layout_height="@dimen/size_image_profile"
+            android:layout_marginStart="@dimen/default_margin_16"
+            android:layout_marginTop="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/chatLabel"
+            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent"
+            tools:background="@tools:sample/avatars" />
+
+
+        <ImageView
+            android:id="@+id/iv_edit_photo"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/edit_2"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/ivProfile"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/ivProfile" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_add_photo"
+            style="@style/DefaultButtons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:text="@string/add_photo"
+            app:layout_constraintBottom_toBottomOf="@id/ivProfile"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/ivProfile" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_name"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            app:boxCornerRadiusBottomEnd="@dimen/default_margin_16"
+            app:boxCornerRadiusBottomStart="@dimen/default_margin_16"
+            app:boxCornerRadiusTopEnd="@dimen/default_margin_16"
+            app:boxCornerRadiusTopStart="@dimen/default_margin_16"
+            app:layout_constraintTop_toBottomOf="@id/ivProfile">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/ti_et_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/name"
+                android:inputType="textEmailAddress" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_about_myself"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            app:boxCornerRadiusBottomEnd="@dimen/default_margin_16"
+            app:boxCornerRadiusBottomStart="@dimen/default_margin_16"
+            app:boxCornerRadiusTopEnd="@dimen/default_margin_16"
+            app:boxCornerRadiusTopStart="@dimen/default_margin_16"
+            app:layout_constraintTop_toBottomOf="@id/til_name">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/ti_et_about_myself"
+                android:layout_width="match_parent"
+                android:layout_height="320dp"
+                android:gravity="top"
+                android:hint="@string/about_myself"
+                android:inputType="textEmailAddress" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/tv_sex"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="@dimen/default_margin_16"
+            android:layout_marginEnd="24dp"
+            android:text="@string/sex"
+            android:textColor="@color/Secondary_text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/til_about_myself" />
+
+
+        <RadioGroup
+            android:id="@+id/radioGroup"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="@+id/tv_sex"
+            app:layout_constraintStart_toStartOf="@+id/tv_sex"
+            app:layout_constraintTop_toBottomOf="@id/tv_sex">
+
+            <RadioButton
+                android:id="@+id/rbMan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="@dimen/default_margin_32"
+                android:text="@string/man" />
+
+            <RadioButton
+                android:id="@+id/rvWoman"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="@dimen/default_margin_32"
+                android:text="@string/woman" />
+
+            <RadioButton
+                android:id="@+id/rbAnother"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/another" />
+
+        </RadioGroup>
+
+        <TextView
+            android:id="@+id/tv_age"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/age"
+            android:textColor="@color/Secondary_text"
+            app:layout_constraintEnd_toEndOf="@+id/tv_sex"
+            app:layout_constraintStart_toStartOf="@+id/tv_sex"
+            app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
+
+        <TextView
+            android:id="@+id/tv_age_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/Primary_text"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_age"
+            app:layout_constraintEnd_toEndOf="@+id/tv_sex"
+            app:layout_constraintTop_toTopOf="@+id/tv_age"
+            tools:text="25" />
+
+        <com.google.android.material.slider.Slider
+            android:id="@+id/sl_age"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:stepSize="1"
+            android:value="20"
+            android:valueFrom="18"
+            android:valueTo="100"
+            app:layout_constraintEnd_toEndOf="@+id/tv_age"
+            app:layout_constraintStart_toStartOf="@+id/tv_age"
+            app:layout_constraintTop_toBottomOf="@id/tv_age" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_location"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:enabled="false"
+            app:boxCornerRadiusBottomEnd="@dimen/default_margin_16"
+            app:boxCornerRadiusBottomStart="@dimen/default_margin_16"
+            app:boxCornerRadiusTopEnd="@dimen/default_margin_16"
+            app:boxCornerRadiusTopStart="@dimen/default_margin_16"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/sl_age">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/ti_et_location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/location"
+                android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/swEnableLocation"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="26dp"
+            android:checked="true"
+            android:drawableStart="@drawable/map_pin"
+            android:drawablePadding="@dimen/default_margin_8"
+            android:enabled="false"
+            android:text="@string/my_location"
+            app:drawableTint="@color/Secondary_text"
+            app:layout_constraintEnd_toEndOf="@+id/sl_age"
+            app:layout_constraintStart_toStartOf="@+id/sl_age"
+            app:layout_constraintTop_toBottomOf="@id/til_location" />
+
+        <TextView
+            android:id="@+id/tv_social"
+            style="@style/Large"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginEnd="24dp"
+            android:text="@string/social_network"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/swEnableLocation" />
+
+        <TextView
+            android:id="@+id/tv_social_desc"
+            style="@style/Large"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="@dimen/default_margin_16"
+            android:layout_marginEnd="24dp"
+            android:text="@string/nly_seen_by_premium_users"
+            android:textColor="@color/Secondary_text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_social" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tv_instagram"
+            style="@style/Regular"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="28dp"
+            android:layout_marginEnd="24dp"
+            android:drawableStart="@drawable/instagram"
+            android:drawablePadding="@dimen/default_margin_8"
+            android:text="@string/instagram"
+            app:layout_constraintTop_toBottomOf="@id/tv_social_desc" />
+
+        <com.google.android.material.button.MaterialButton
+            style="@style/DefaultButtons"
+            android:layout_width="65dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:text="@string/add"
+            app:layout_constraintBottom_toBottomOf="@id/tv_instagram"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_instagram" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tv_facebook"
+            style="@style/Regular"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginEnd="24dp"
+            android:drawableStart="@drawable/facebook"
+            android:drawablePadding="@dimen/default_margin_8"
+            android:text="@string/facebook"
+            app:layout_constraintTop_toBottomOf="@id/tv_instagram" />
+
+        <com.google.android.material.button.MaterialButton
+            style="@style/DefaultButtons"
+            android:layout_width="65dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:text="@string/add"
+            app:layout_constraintBottom_toBottomOf="@id/tv_facebook"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_facebook" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tv_twitter"
+            style="@style/Regular"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginEnd="24dp"
+            android:drawableStart="@drawable/twitter"
+            android:drawablePadding="@dimen/default_margin_8"
+            android:text="@string/twitter"
+            app:layout_constraintTop_toBottomOf="@id/tv_facebook" />
+
+        <com.google.android.material.button.MaterialButton
+            style="@style/DefaultButtons"
+            android:layout_width="65dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:text="@string/add"
+            app:layout_constraintBottom_toBottomOf="@id/tv_twitter"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_twitter" />
+
+        <TextView
+            android:id="@+id/btn_cancel"
+            style="@style/Regular"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="57dp"
+            android:gravity="center"
+            android:text="@string/cancel_label"
+            android:textColor="@color/Secondary_text"
+            app:layout_constraintTop_toBottomOf="@id/tv_twitter" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_save"
+            style="@style/DefaultButtons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="26dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="34dp"
+            android:text="@string/save"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btn_cancel" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>
