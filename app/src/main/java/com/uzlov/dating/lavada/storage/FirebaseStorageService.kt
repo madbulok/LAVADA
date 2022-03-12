@@ -1,8 +1,11 @@
 package com.uzlov.dating.lavada.storage
 
 
+import android.content.Context
 import android.net.Uri
 import android.util.Log
+import android.widget.ImageView
+import com.bumptech.glide.Glide
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.UploadTask
@@ -19,9 +22,18 @@ class FirebaseStorageService @Inject constructor(val storage: FirebaseStorage) :
         return Pair(videoRef.putFile(file), videoRef)
     }
 
-    override fun downloadVideo(videoPath: String) {
+    override fun uploadPhoto(photoPath: String): Pair<UploadTask, StorageReference> {
+        val file = Uri.fromFile(File(photoPath))
+        val photoRef = storageRef.child("photo/${file.lastPathSegment}")
+        return Pair(photoRef.putFile(file), photoRef)
+    }
+
+    override fun downloadVideo(videoPath: String, context: Context, imageView: ImageView) {
         storageRef.child(videoPath).downloadUrl.addOnSuccessListener {
-            Log.d("DOWNLOAD", "Success")
+            Glide.with(context)
+                .load(it.path)
+                .into(imageView)
+            Log.d("DOWNLOAD", it.path.toString())
         }.addOnFailureListener {
             Log.d("DOWNLOAD", "Error")
         }

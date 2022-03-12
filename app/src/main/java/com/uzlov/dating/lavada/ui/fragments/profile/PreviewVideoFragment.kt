@@ -24,7 +24,8 @@ import com.uzlov.dating.lavada.viemodels.ViewModelFactory
 import java.io.File
 import javax.inject.Inject
 
-class PreviewVideoFragment : BaseFragment<FragmentPreviewVideoBinding>(FragmentPreviewVideoBinding::inflate) {
+class PreviewVideoFragment :
+    BaseFragment<FragmentPreviewVideoBinding>(FragmentPreviewVideoBinding::inflate) {
 
     @Inject
     lateinit var firebaseStorageService: FirebaseStorageService
@@ -44,7 +45,8 @@ class PreviewVideoFragment : BaseFragment<FragmentPreviewVideoBinding>(FragmentP
         ExoPlayerFactory.newSimpleInstance(
             requireContext(),
             DefaultRenderersFactory(requireContext()),
-            DefaultTrackSelector(), DefaultLoadControl())
+            DefaultTrackSelector(), DefaultLoadControl()
+        )
     };
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,7 +64,7 @@ class PreviewVideoFragment : BaseFragment<FragmentPreviewVideoBinding>(FragmentP
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        with(viewBinding){
+        with(viewBinding) {
 
             tvLocationProfile.text = user.name
 
@@ -75,11 +77,20 @@ class PreviewVideoFragment : BaseFragment<FragmentPreviewVideoBinding>(FragmentP
                 val result = firebaseStorageService.uploadVideo(path)
                 startLoading()
                 result.first.addOnSuccessListener {
-                    user.url_video = result.second.toString()
-                    userViewModel.addUser(user)
+                    result.second.downloadUrl.addOnSuccessListener {
+                        user.url_video = it.toString()
+                        userViewModel.addUser(user)
+                    }
                     val localUser = preferenceRepository.readUser()
                     if (localUser != null) {
-                        preferenceRepository.updateUser(AuthorizedUser(localUser.uuid, localUser.datetime, localUser.name, true))
+                        preferenceRepository.updateUser(
+                            AuthorizedUser(
+                                localUser.uuid,
+                                localUser.datetime,
+                                localUser.name,
+                                true
+                            )
+                        )
                     } else {
                         val localUserNew = AuthorizedUser(
                             uuid = user.uid,
@@ -119,23 +130,24 @@ class PreviewVideoFragment : BaseFragment<FragmentPreviewVideoBinding>(FragmentP
         player.playWhenReady = true
     }
 
-    private fun startLoading(){
-        with(viewBinding){
+    private fun startLoading() {
+        with(viewBinding) {
             btnNext.isEnabled = false
             progressUploading.visibility = View.VISIBLE
             btnBack.isEnabled = false
         }
     }
-    private fun endLoading(){
-        with(viewBinding){
+
+    private fun endLoading() {
+        with(viewBinding) {
             btnNext.isEnabled = true
             progressUploading.visibility = View.INVISIBLE
             btnBack.isEnabled = true
         }
     }
 
-    private fun endWithErrorLoading(){
-        with(viewBinding){
+    private fun endWithErrorLoading() {
+        with(viewBinding) {
             btnNext.isEnabled = false
             progressUploading.visibility = View.INVISIBLE
             btnBack.isEnabled = true
@@ -147,6 +159,7 @@ class PreviewVideoFragment : BaseFragment<FragmentPreviewVideoBinding>(FragmentP
         player.stop(false)
         player.release()
     }
+
     companion object {
         fun newInstance(_path: String, user: User): PreviewVideoFragment {
             val args = bundleOf("user" to user, "path" to _path)

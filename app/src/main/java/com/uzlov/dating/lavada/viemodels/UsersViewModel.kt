@@ -16,6 +16,8 @@ class UsersViewModel @Inject constructor(private var usersUseCases: UserUseCases
 
     fun removeUser(id: String) = usersUseCases?.removeUsers(id)
 
+    fun updateUser(id: String, field: String, value: Any) = usersUseCases?.updateUser(id, field, value)
+
     fun sortUsers(
         data: List<User>,
         myLat: Double,

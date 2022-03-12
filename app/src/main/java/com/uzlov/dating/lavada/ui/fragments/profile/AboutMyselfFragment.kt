@@ -68,7 +68,7 @@ class AboutMyselfFragment :
 
     private fun initListeners() {
         with(viewBinding) {
-            radioGroup.setOnCheckedChangeListener { group, checkedId ->
+            radioGroup.setOnCheckedChangeListener { _, checkedId ->
                 when (checkedId) {
                     R.id.rbMan -> user.male = MALE.MAN
                     R.id.rvWoman -> user.male = MALE.WOMAN
@@ -81,7 +81,6 @@ class AboutMyselfFragment :
             }
             btnNext.setOnClickListener {
                 user.name = tiEtName.text.toString()
-                user.about = tiEtLocation.text.toString()
                 user.uid = firebaseEmailAuthService.getUserUid()!!
 
                 if (user.email.isNullOrBlank()) {
@@ -110,10 +109,18 @@ class AboutMyselfFragment :
                                     val l = locationRepository.requestLocation()
                                     startGeocoding(l)
                                 }
-                            } catch (e: RuntimeException){
-                                Toast.makeText(requireContext(), e.localizedMessage, Toast.LENGTH_SHORT).show()
-                            } catch (e: RuntimeExecutionException){
-                                Toast.makeText(requireContext(), "Ваше устройство не поддерживает Google Services", Toast.LENGTH_SHORT).show()
+                            } catch (e: RuntimeException) {
+                                Toast.makeText(
+                                    requireContext(),
+                                    e.localizedMessage,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            } catch (e: RuntimeExecutionException) {
+                                Toast.makeText(
+                                    requireContext(),
+                                    "Ваше устройство не поддерживает Google Services",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                         }
 

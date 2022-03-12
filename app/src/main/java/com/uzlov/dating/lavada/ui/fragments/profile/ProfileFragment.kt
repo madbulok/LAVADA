@@ -15,7 +15,7 @@ import com.uzlov.dating.lavada.viemodels.UsersViewModel
 import com.uzlov.dating.lavada.viemodels.ViewModelFactory
 import javax.inject.Inject
 
-class ProfileFragment: BaseFragment<FragmentProfileBinding>(FragmentProfileBinding::inflate) {
+class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding::inflate) {
 
     @Inject
     lateinit var firebaseEmailAuthService: FirebaseEmailAuthService
@@ -28,8 +28,8 @@ class ProfileFragment: BaseFragment<FragmentProfileBinding>(FragmentProfileBindi
         SettingsFragment()
     }
 
-    private val uploadVideoFragment by lazy {
-        UploadVideoFragment()
+    private val personalInfo by lazy {
+        PersonalInfoFragment()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,32 +42,35 @@ class ProfileFragment: BaseFragment<FragmentProfileBinding>(FragmentProfileBindi
 
         model = factoryViewModel.create(UsersViewModel::class.java)
 
-        //прочитать данные model.getUser(uid), uid - firebaseEmailAuthService.getUserUid()
         firebaseEmailAuthService.getUserUid()?.let {
             model.getUser(it)?.observe(this, { user ->
-                viewBinding.tvLocation.text = "location " + user?.lat + ", " + user?.lon
+                viewBinding.tvLocation.text = user?.location
                 viewBinding.tvName.text = user?.name + ", " + user?.age
                 user?.url_avatar?.let { it1 -> loadImage(it1, viewBinding.ivProfile) }
 
             })
         }
-        with(viewBinding){
-
-
+        with(viewBinding) {
+            ivEditProfile.setOnClickListener {
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.container, personalInfo)
+                    .addToBackStack(null)
+                    .commit()
+            }
             btnSettings.setOnClickListener {
                 parentFragmentManager.beginTransaction()
-//                    .add(R.id.container, settingsFragment)
-//                    .hide(this@com.uzlov.dating.lavada.ui.fragments.profile.ProfileFragment)
-//                    .show(settingsFragment)
                     .replace(R.id.container, settingsFragment)
                     .addToBackStack(null)
                     .commit()
             }
             btnChangeVideo.setOnClickListener {
-                Toast.makeText(context, "Переходим на фрагмент обновления видео", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    "Переходим на фрагмент обновления видео",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
-
     }
 
     private fun loadImage(image: String, container: ImageView) {

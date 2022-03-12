@@ -8,6 +8,7 @@ interface IUsersRepository {
     fun getUser(id: String): LiveData<User?>
     fun getUsersWithUserID(id: String): LiveData<List<User>>
     fun removeUser(id: String)
-    fun putUser(request: User)
+    fun putUser(user: User)
+    fun updateUser(id: String, field: String, value: Any)
 
 }
