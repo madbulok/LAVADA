@@ -4,9 +4,11 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.lifecycleScope
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.app.appComponent
+import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
 import com.uzlov.dating.lavada.data.repository.PreferenceRepository
 import com.uzlov.dating.lavada.ui.adapters.PlayerViewAdapter
 import kotlinx.coroutines.delay
@@ -21,6 +23,9 @@ class SplashActivity : AppCompatActivity() {
     @Inject
     lateinit var preferenceRepository: PreferenceRepository
 
+    @Inject
+    lateinit var firebaseEmailAuthService: FirebaseEmailAuthService
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.screen_splash_activity)
@@ -29,11 +34,23 @@ class SplashActivity : AppCompatActivity() {
         // get cached user
         val userLocal = preferenceRepository.readUser()
 
-        if (userLocal?.isReady == true){
-            lifecycleScope.launchWhenResumed {
-                delay(1000)
-                startActivity(Intent(this@SplashActivity, HostActivity::class.java))
-                finish()
+        if (preferenceRepository.readTheme()) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        } else AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+
+        if (!firebaseEmailAuthService.getUserUid().isNullOrEmpty()) {
+            if (userLocal?.isReady == true) {
+                lifecycleScope.launchWhenResumed {
+                    delay(1000)
+                    startActivity(Intent(this@SplashActivity, HostActivity::class.java))
+                    finish()
+                }
+            } else {
+                lifecycleScope.launchWhenResumed {
+                    delay(1000)
+                    startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
+                    finish()
+                }
             }
         } else {
             lifecycleScope.launchWhenResumed {

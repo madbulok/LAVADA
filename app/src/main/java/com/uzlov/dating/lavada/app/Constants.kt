@@ -30,6 +30,11 @@ class Constants {
         const val NOTIFICATION_FILER_GIFTS = "FILTER_GIFTS"
         const val NOTIFICATION_FILER_NEWS = "FILTER_NEWS"
 
+        //theme
+        const val LOCAL_PREF_THEME = "theme"
+
+        //premium
+        const val LOCAL_PREF_PREMIUM_VISIBLE = "PREMIUM_VISIBLE"
 
 
 

@@ -1,5 +1,6 @@
 package com.uzlov.dating.lavada.ui.fragments.settings
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -11,13 +12,19 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
+import com.uzlov.dating.lavada.data.repository.PreferenceRepository
 import com.uzlov.dating.lavada.databinding.FragmentSettingsBinding
+import com.uzlov.dating.lavada.ui.activities.HostActivity
+import com.uzlov.dating.lavada.ui.activities.LoginActivity
 import com.uzlov.dating.lavada.ui.fragments.BaseFragment
 import javax.inject.Inject
 
 class SettingsFragment : BaseFragment<FragmentSettingsBinding>(FragmentSettingsBinding::inflate) {
     @Inject
     lateinit var firebaseEmailAuthService: FirebaseEmailAuthService
+
+    @Inject
+    lateinit var preferenceRepository: PreferenceRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,29 +34,34 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(FragmentSettingsB
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initListeners()
+        with(viewBinding) {
+            swTheme.isChecked = preferenceRepository.readTheme()
+            swPremium.isChecked = preferenceRepository.readPremiumVisible()
+        }
+
     }
 
-    private fun initListeners(){
+    private fun initListeners() {
         with(viewBinding) {
             tbBackAction.setOnClickListener {
                 parentFragmentManager.popBackStack()
             }
             btnLogOut.setOnClickListener {
                 firebaseEmailAuthService.logout()
-                Toast.makeText(context, "Вы успешно вышли из аккаунта", Toast.LENGTH_SHORT).show()
-
-
+                startLogin()
             }
             btnDel.setOnClickListener {
                 showCustomAlertToDelAcc()
             }
             swTheme.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
+                    preferenceRepository.setTheme(isChecked)
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
                 } else {
+                    preferenceRepository.setTheme(isChecked)
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+
                 }
-                //не забыть запихать в sharedPreference
 
             }
             swPremium.setOnCheckedChangeListener { _, isChecked ->
@@ -90,6 +102,7 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(FragmentSettingsB
         btSendPass.setOnClickListener {
             if (firebaseEmailAuthService.auth.currentUser != null) {
                 firebaseEmailAuthService.delUser()
+                startLogin()
             }
             customDialog?.dismiss()
         }
@@ -113,6 +126,7 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(FragmentSettingsB
         btSendPass.setOnClickListener {
             Toast.makeText(context, "Покупаем премиум", Toast.LENGTH_SHORT).show()
             customDialog?.dismiss()
+
         }
     }
 
@@ -121,6 +135,11 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(FragmentSettingsB
             .replace(R.id.container, fragment)
             .addToBackStack(null)
             .commit()
+    }
+
+    private fun startLogin() {
+        startActivity(Intent(context, LoginActivity::class.java))
+        (requireActivity() as HostActivity).finish()
     }
 
     companion object {
