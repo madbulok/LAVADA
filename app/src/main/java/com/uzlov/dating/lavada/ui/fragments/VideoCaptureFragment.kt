@@ -23,11 +23,17 @@ import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import com.uzlov.dating.lavada.R
+import com.uzlov.dating.lavada.ui.activities.LoginActivity
 
-class VideoCaptureFragment : BaseFragment<FragmentVideoCaptureBinding>(FragmentVideoCaptureBinding::inflate){
+class VideoCaptureFragment(private var videoCaptureListener: VideoRecordingListener? = null) : BaseFragment<FragmentVideoCaptureBinding>(FragmentVideoCaptureBinding::inflate){
 
     private lateinit var cameraExecutor: ExecutorService
 
+    interface VideoRecordingListener {
+        fun start()
+        fun finish(result: OutputResults)
+        fun error(message: String)
+    }
 
     private var videoCapture: VideoCapture<Recorder>? = null
     private var recording: Recording? = null
@@ -111,19 +117,15 @@ class VideoCaptureFragment : BaseFragment<FragmentVideoCaptureBinding>(FragmentV
                             text = getString(R.string.stop_capture)
                             isEnabled = true
                         }
+                        videoCaptureListener?.start()
                     }
                     is VideoRecordEvent.Finalize -> {
                         if (!recordEvent.hasError()) {
-                            val msg = "Video capture succeeded: " +
-                                    "${recordEvent.outputResults.outputUri}"
-                            Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT)
-                                .show()
-                            Log.d(TAG, msg)
+                            videoCaptureListener?.finish(recordEvent.outputResults)
                         } else {
                             recording?.close()
                             recording = null
-                            Log.e(TAG, "Video capture ends with error: " +
-                                    "${recordEvent.error}")
+                            videoCaptureListener?.error(recordEvent.cause?.localizedMessage ?: "Video capture ends with unknown error")
                         }
                         viewBinding.videoCaptureButton.apply {
                             text = getString(R.string.start_capture)
@@ -152,18 +154,6 @@ class VideoCaptureFragment : BaseFragment<FragmentVideoCaptureBinding>(FragmentV
                 .setQualitySelector(QualitySelector.from(Quality.HIGHEST))
                 .build()
             videoCapture = VideoCapture.withOutput(recorder)
-
-            /*
-            imageCapture = ImageCapture.Builder().build()
-
-            val imageAnalyzer = ImageAnalysis.Builder()
-                .build()
-                .also {
-                    it.setAnalyzer(cameraExecutor, LuminosityAnalyzer { luma ->
-                        Log.d(TAG, "Average luminosity: $luma")
-                    })
-                }
-            */
 
             // Select back camera as a default
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA

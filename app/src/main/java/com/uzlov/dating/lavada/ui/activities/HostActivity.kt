@@ -11,7 +11,6 @@ import javax.inject.Inject
 
 class HostActivity : AppCompatActivity() {
 
-
     @Inject
     lateinit var preferenceRepository: PreferenceRepository
 

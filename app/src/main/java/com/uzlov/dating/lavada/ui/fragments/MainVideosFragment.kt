@@ -17,6 +17,7 @@ import com.uzlov.dating.lavada.domain.models.UserFilter
 import com.uzlov.dating.lavada.ui.SingleSnap
 import com.uzlov.dating.lavada.ui.adapters.PlayerViewAdapter
 import com.uzlov.dating.lavada.ui.adapters.ProfileRecyclerAdapter
+import com.uzlov.dating.lavada.ui.fragments.dialogs.FragmentMatch
 import com.uzlov.dating.lavada.ui.fragments.profile.ProfileFragment
 import com.uzlov.dating.lavada.viemodels.ChatViewModel
 import com.uzlov.dating.lavada.viemodels.UsersViewModel
