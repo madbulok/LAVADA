@@ -66,11 +66,11 @@ class FragmentOpenChat :
                 chatOpen = it.copy()
                 messagesAdapter.setMessages(it.messages ?: emptyList())
 
-                it.members?.firstOrNull { it != selfUid }?.let { uidCompanion->
-                    userViewModel.getUser(uidCompanion)?.observe(viewLifecycleOwner, { user->
-                        user?.let { it1 -> updateUiCompanion(it1) }
-                    })
-                }
+//                it.members?.firstOrNull { it != selfUid }?.let { uidCompanion->
+//                    userViewModel.getUser(uidCompanion)?.observe(viewLifecycleOwner, { user->
+//                        user?.let { it1 -> updateUiCompanion(it1) }
+//                    })
+//                }
             } else {
                 Toast.makeText(requireContext(), "response is null", Toast.LENGTH_SHORT).show()
             }
@@ -113,6 +113,7 @@ class FragmentOpenChat :
 
             tbBackAction.setOnClickListener {
                 parentFragmentManager.popBackStack()
+
             }
 
             btnInfo.setOnClickListener {

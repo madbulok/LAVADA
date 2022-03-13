@@ -1,6 +1,8 @@
 package com.uzlov.dating.lavada.ui.fragments
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
@@ -17,6 +19,7 @@ import com.uzlov.dating.lavada.domain.models.Chat
 import com.uzlov.dating.lavada.domain.models.User
 import com.uzlov.dating.lavada.domain.models.UserFilter
 import com.uzlov.dating.lavada.ui.SingleSnap
+import com.uzlov.dating.lavada.ui.activities.SingleChatActivity
 import com.uzlov.dating.lavada.ui.adapters.PlayerViewAdapter
 import com.uzlov.dating.lavada.ui.adapters.ProfileRecyclerAdapter
 import com.uzlov.dating.lavada.ui.fragments.dialogs.FragmentMatch
@@ -75,6 +78,7 @@ class MainVideosFragment :
         super.onCreate(savedInstanceState)
         requireContext().appComponent.inject(this)
         userFilter = preferenceRepository.readFilter()
+        retainInstance = true
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -83,18 +87,19 @@ class MainVideosFragment :
         model = factoryViewModel.create(UsersViewModel::class.java)
         model.getUsers()?.observe(this, { users ->
             firebaseEmailAuthService.getUserUid()?.let { it ->
-                model.getUser(it)?.observe(this, {
-                    it?.url_avatar?.let { it1 -> loadImage(it1, viewBinding.ivProfile) }
-                    self = it!!
-                    testData = users
-                    mAdapter.updateList(
-                        model.sortUsers(
-                            users, self.lat!!, self.lon!!,
-                            userFilter.sex, userFilter.ageStart, userFilter.ageEnd
-                        )
-                    )
+                lifecycleScope.launchWhenResumed {
+                        model.getUser(it)?.let {
+                            it.url_avatar?.let { it1 -> loadImage(it1, viewBinding.ivProfile) }
+                            self = it
+                            testData = users
+                            mAdapter.updateList(
+                                model.sortUsers(
+                                    users, self.lat!!, self.lon!!,
+                                    userFilter.sex, userFilter.ageStart, userFilter.ageEnd
+                                )
+                            )
+                        }
                 }
-                )
             }
         })
 
@@ -132,22 +137,8 @@ class MainVideosFragment :
                     // check VIP
                     firebaseEmailAuthService.getUserUid()?.let { selfId ->
                         self.chats[user.uid] = self.uid
-                        messageChatViewModel.createChat(selfId, user.uid)
-                            .observe(viewLifecycleOwner, {
-                                it?.let { uid->
-                                    val fragment = FragmentOpenChat().apply {
-                                        arguments =
-                                            bundleOf(FragmentOpenChat.CHAT_ID to uid)
-                                    }
-                                    parentFragmentManager.beginTransaction()
-                                        .add(R.id.container, fragment)
-                                        .hide(this@MainVideosFragment)
-                                        .show(fragment)
-                                        .addToBackStack("open chat")
-                                        .commit()
-
-                                }
-                            })
+                        PlayerViewAdapter.pauseCurrentPlayingVideo()
+                        openChatActivity(user.uid)
                     }
 
                 }
@@ -170,12 +161,7 @@ class MainVideosFragment :
     private fun setOnClickListener() {
         with(viewBinding) {
             ivMyMessage.setOnClickListener {
-                parentFragmentManager.beginTransaction()
-                    .add(R.id.container, chatsFragment)
-                    .hide(this@MainVideosFragment)
-                    .show(chatsFragment)
-                    .addToBackStack(null)
-                    .commit()
+                openChatFragment(null)
                 PlayerViewAdapter.pauseCurrentPlayingVideo()
             }
             ivProfile.setOnClickListener {
@@ -199,6 +185,21 @@ class MainVideosFragment :
         }
     }
 
+    private fun openChatActivity(companionId: String){
+        val intent = Intent(requireContext(), SingleChatActivity::class.java).apply {
+            putExtra(SingleChatActivity.COMPANION_ID, companionId)
+        }
+        startActivity(intent)
+    }
+
+    private fun openChatFragment(chatId: String?) {
+        val fragment = ChatsFragment.newInstance(companionId = "", chatId = chatId)
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.container, fragment)
+            .addToBackStack(null)
+            .commit()
+    }
+
     private fun loadImage(image: String, container: ImageView) {
         view?.let {
             Glide
@@ -209,9 +210,20 @@ class MainVideosFragment :
         }
     }
 
+    override fun onStop() {
+        super.onStop()
+        Log.e("TAG", "onStop: ")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.e("TAG", "onDestroy: ")
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         PlayerViewAdapter.releaseAllPlayers()
+        Log.e("TAG", "onDestroyView: ")
     }
 
     companion object {

@@ -14,4 +14,6 @@ interface IMessageDataSource {
     @ExperimentalCoroutinesApi
     suspend fun observeMessages(uidChat: String): Flow<Chat>
     suspend fun getChat(uid: String): Chat
+    suspend fun getChat(companionId: String, selfId: String): Chat
+    suspend fun hasChat(companionId: String, selfId: String) : Boolean
 }

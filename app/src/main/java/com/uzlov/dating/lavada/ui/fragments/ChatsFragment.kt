@@ -1,7 +1,6 @@
 package com.uzlov.dating.lavada.ui.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.core.os.bundleOf
@@ -29,32 +28,33 @@ class ChatsFragment :
     lateinit var auth: FirebaseEmailAuthService
 
     private var companionId: String? = null
+    private var chatId: String? = null
 
     companion object {
         const val COMPANION_KEY = "companionId"
-        fun newInstance(companionId: String): ChatsFragment {
+        const val CHAT_ID: String = "chat_id"
+        fun newInstance(companionId: String?, chatId: String?): ChatsFragment {
             val fragment = ChatsFragment().apply {
-                arguments = bundleOf(COMPANION_KEY to companionId)
+                arguments = bundleOf(
+                    COMPANION_KEY to companionId,
+                    CHAT_ID to chatId
+                )
             }
             return fragment
-        }
-
-        fun openChat(uidChat: String) {
-
         }
     }
 
     private val openChatCallback by lazy {
         object : UsersChatsAdapter.OnChatClickListener {
             override fun onClick(chat: Chat) {
-                openChatFragment(chat)
+                openChatFragment(chat.uuid)
             }
         }
     }
 
     val fragment = FragmentOpenChat()
-    private fun openChatFragment(chat: Chat) {
-        fragment.arguments = bundleOf(FragmentOpenChat.CHAT_ID to chat.uuid)
+    private fun openChatFragment(uuid: String) {
+        fragment.arguments = bundleOf(FragmentOpenChat.CHAT_ID to uuid)
         parentFragmentManager.beginTransaction()
             .add(R.id.container, fragment)
             .hide(this)
@@ -78,6 +78,7 @@ class ChatsFragment :
         messageChatViewModel = viewModelFactory.create(MessageChatViewModel::class.java)
         requireArguments().let {
             companionId = it.getString(COMPANION_KEY, "") ?: ""
+            chatId = it.getString(CHAT_ID, "") ?: ""
         }
     }
 
@@ -89,9 +90,17 @@ class ChatsFragment :
         }
         initListeners()
 
+        // загружаем все чаты
         loadAllChats()
+
+        // если передали ID собеседника то загружаем с ним чат
         if (!companionId.isNullOrEmpty()){
             loadChat(companionId!!)
+        }
+
+        // если передали ID чата то загружаем этот чат
+        if (!chatId.isNullOrEmpty()){
+            openChatFragment(chatId!!)
         }
     }
 

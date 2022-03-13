@@ -8,6 +8,7 @@ import com.uzlov.dating.lavada.data.data_sources.interfaces.IMessageDataSource
 import com.uzlov.dating.lavada.data.use_cases.ChatUseCase
 import com.uzlov.dating.lavada.domain.models.Chat
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -30,9 +31,10 @@ class MessageChatViewModel @Inject constructor(var messagesRepository: IMessageD
     // создать чат с конкретным пользователем
     fun createChat(selfId: String, companionId: String) : LiveData<String>{
         viewModelScope.launch(Dispatchers.IO) {
-            createdChat.postValue(useCase.createChat(selfId, companionId))
+            useCase.createChat(selfId, companionId)?.let { uid ->
+                createdChat.postValue(uid)
+            }
         }
-
         return createdChat
     }
 
@@ -44,6 +46,7 @@ class MessageChatViewModel @Inject constructor(var messagesRepository: IMessageD
     }
 
     // получать сообщения из конкретного чата
+    @ExperimentalCoroutinesApi
     fun retrieveMessages(uid: String) : LiveData<Chat> {
         viewModelScope.launch(Dispatchers.IO) {
             messagesRepository.observeMessages(uid)

@@ -10,7 +10,7 @@ class UsersViewModel @Inject constructor(private var usersUseCases: UserUseCases
 
     fun getUsers() = usersUseCases?.getUsers()
 
-    fun getUser(uid: String) = usersUseCases?.getUser(uid)
+    suspend fun getUser(uid: String) = usersUseCases?.getUser(uid)
 
     fun addUser(user: User) = usersUseCases?.putUser(user)
 
