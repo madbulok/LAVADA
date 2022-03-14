@@ -2,6 +2,7 @@ package com.uzlov.dating.lavada.di
 
 import com.uzlov.dating.lavada.ui.fragments.profile.ProfileFragment
 import com.uzlov.dating.lavada.di.modules.*
+import com.uzlov.dating.lavada.ui.activities.SingleChatActivity
 import com.uzlov.dating.lavada.ui.activities.SplashActivity
 import com.uzlov.dating.lavada.ui.fragments.ChatsFragment
 import com.uzlov.dating.lavada.ui.fragments.FilterSearchPeopleFragment
@@ -46,4 +47,5 @@ interface AppComponent {
     fun inject(filterSearchPeopleFragment: FilterSearchPeopleFragment)
     fun inject(notificationsFragment: NotificationsFragment)
     fun inject(personalInfoFragment: PersonalInfoFragment)
+    fun inject(singleChatActivity: SingleChatActivity)
 }

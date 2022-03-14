@@ -1,6 +1,7 @@
 package com.uzlov.dating.lavada.ui.activities
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.data.repository.PreferenceRepository
@@ -38,5 +39,12 @@ class HostActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         PlayerViewAdapter.pauseAllPlayers()
+        Log.e("TAG A", "onStop: ")
+    }
+
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.e("TAG A", "onDestroy: ")
     }
 }

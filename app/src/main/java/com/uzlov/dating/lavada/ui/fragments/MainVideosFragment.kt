@@ -1,9 +1,12 @@
 package com.uzlov.dating.lavada.ui.fragments
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.uzlov.dating.lavada.R
@@ -12,14 +15,16 @@ import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
 import com.uzlov.dating.lavada.data.repository.PreferenceRepository
 import com.uzlov.dating.lavada.databinding.MainVideosFragmentBinding
+import com.uzlov.dating.lavada.domain.models.Chat
 import com.uzlov.dating.lavada.domain.models.User
 import com.uzlov.dating.lavada.domain.models.UserFilter
 import com.uzlov.dating.lavada.ui.SingleSnap
+import com.uzlov.dating.lavada.ui.activities.SingleChatActivity
 import com.uzlov.dating.lavada.ui.adapters.PlayerViewAdapter
 import com.uzlov.dating.lavada.ui.adapters.ProfileRecyclerAdapter
 import com.uzlov.dating.lavada.ui.fragments.dialogs.FragmentMatch
 import com.uzlov.dating.lavada.ui.fragments.profile.ProfileFragment
-import com.uzlov.dating.lavada.viemodels.ChatViewModel
+import com.uzlov.dating.lavada.viemodels.MessageChatViewModel
 import com.uzlov.dating.lavada.viemodels.UsersViewModel
 import com.uzlov.dating.lavada.viemodels.ViewModelFactory
 import kotlinx.coroutines.delay
@@ -39,8 +44,8 @@ class MainVideosFragment :
 
     private lateinit var model: UsersViewModel
 
-    private val chatViewModel: ChatViewModel by lazy {
-        factoryViewModel.create(ChatViewModel::class.java)
+    private val messageChatViewModel: MessageChatViewModel by lazy {
+        factoryViewModel.create(MessageChatViewModel::class.java)
     }
 
     private var self = User()
@@ -73,6 +78,7 @@ class MainVideosFragment :
         super.onCreate(savedInstanceState)
         requireContext().appComponent.inject(this)
         userFilter = preferenceRepository.readFilter()
+        retainInstance = true
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -81,18 +87,19 @@ class MainVideosFragment :
         model = factoryViewModel.create(UsersViewModel::class.java)
         model.getUsers()?.observe(this, { users ->
             firebaseEmailAuthService.getUserUid()?.let { it ->
-                model.getUser(it)?.observe(this, {
-                    it?.url_avatar?.let { it1 -> loadImage(it1, viewBinding.ivProfile) }
-                    self = it!!
-                    testData = users
-                    mAdapter.updateList(
-                        model.sortUsers(
-                            users, self.lat!!, self.lon!!,
-                            userFilter.sex, userFilter.ageStart, userFilter.ageEnd
-                        )
-                    )
+                lifecycleScope.launchWhenResumed {
+                        model.getUser(it)?.let {
+                            it.url_avatar?.let { it1 -> loadImage(it1, viewBinding.ivProfile) }
+                            self = it
+                            testData = users
+                            mAdapter.updateList(
+                                model.sortUsers(
+                                    users, self.lat!!, self.lon!!,
+                                    userFilter.sex, userFilter.ageStart, userFilter.ageEnd
+                                )
+                            )
+                        }
                 }
-                )
             }
         })
 
@@ -121,15 +128,17 @@ class MainVideosFragment :
 
                 override fun sendHeart(user: User) {
                     self.matches[user.uid] = false
+
                     val heartFragment = FragmentMatch.newInstance(user)
                     heartFragment.show(childFragmentManager, heartFragment.javaClass.simpleName)
                 }
 
                 override fun sendMessage(user: User) {
                     // check VIP
-                    firebaseEmailAuthService.getUserUid()?.let { uid->
+                    firebaseEmailAuthService.getUserUid()?.let { selfId ->
                         self.chats[user.uid] = self.uid
-                        chatViewModel.createChat(uid, user.uid)
+                        PlayerViewAdapter.pauseCurrentPlayingVideo()
+                        openChatActivity(user.uid)
                     }
 
                 }
@@ -148,15 +157,11 @@ class MainVideosFragment :
         FilterSearchPeopleFragment()
     }
 
+
     private fun setOnClickListener() {
         with(viewBinding) {
             ivMyMessage.setOnClickListener {
-                parentFragmentManager.beginTransaction()
-                    .add(R.id.container, chatsFragment)
-                    .hide(this@MainVideosFragment)
-                    .show(chatsFragment)
-                    .addToBackStack(null)
-                    .commit()
+                openChatFragment(null)
                 PlayerViewAdapter.pauseCurrentPlayingVideo()
             }
             ivProfile.setOnClickListener {
@@ -180,6 +185,21 @@ class MainVideosFragment :
         }
     }
 
+    private fun openChatActivity(companionId: String){
+        val intent = Intent(requireContext(), SingleChatActivity::class.java).apply {
+            putExtra(SingleChatActivity.COMPANION_ID, companionId)
+        }
+        startActivity(intent)
+    }
+
+    private fun openChatFragment(chatId: String?) {
+        val fragment = ChatsFragment.newInstance(companionId = "", chatId = chatId)
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.container, fragment)
+            .addToBackStack(null)
+            .commit()
+    }
+
     private fun loadImage(image: String, container: ImageView) {
         view?.let {
             Glide
@@ -190,9 +210,20 @@ class MainVideosFragment :
         }
     }
 
+    override fun onStop() {
+        super.onStop()
+        Log.e("TAG", "onStop: ")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.e("TAG", "onDestroy: ")
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         PlayerViewAdapter.releaseAllPlayers()
+        Log.e("TAG", "onDestroyView: ")
     }
 
     companion object {

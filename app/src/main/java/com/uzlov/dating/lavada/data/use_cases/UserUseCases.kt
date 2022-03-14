@@ -8,7 +8,7 @@ class UserUseCases @Inject constructor(
     private var userRepository: IUsersRepository
 ) {
     fun getUsers() = userRepository.getUsers()
-    fun getUser(id: String) = userRepository.getUser(id)
+    suspend fun getUser(id: String) = userRepository.getUser(id)
     fun removeUsers(id: String) = userRepository.removeUser(id)
     fun putUser(user: User) = userRepository.putUser(user)
     fun updateUser(id: String, field: String, value: Any) = userRepository.updateUser(id, field, value)

@@ -62,8 +62,9 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
+        <activity android:name=".ui.activities.SingleChatActivity" />
 
-<!--        <activity android:name=".test_feauters.UzlovTestActivity"-->
+        <!--        <activity android:name=".test_feauters.UzlovTestActivity"-->
 <!--            android:exported="true">-->
 <!--            <intent-filter>-->
 <!--                <action android:name="android.intent.action.MAIN" />-->

@@ -6,6 +6,9 @@ import com.google.firebase.database.*
 import com.google.firebase.database.ktx.getValue
 import com.uzlov.dating.lavada.data.data_sources.interfaces.IRemoteDataSource
 import com.uzlov.dating.lavada.domain.models.User
+import java.lang.RuntimeException
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 class UsersRemoteDataSourceImpl : IRemoteDataSource {
 
@@ -34,11 +37,21 @@ class UsersRemoteDataSourceImpl : IRemoteDataSource {
         return allUsers
     }
 
-    override fun getUser(id: String): LiveData<User?> {
-        userReference.child(id).get().addOnSuccessListener {
-            user.value = it.getValue<User>()
+    override suspend fun getUser(id: String): User? {
+        return suspendCoroutine { continuation ->
+            userReference.child(id)
+                .get()
+                .addOnSuccessListener {
+                    try{
+                        continuation.resumeWith(Result.success(it.getValue<User>()))
+                    } catch (e: Exception){
+                        continuation.resumeWithException(e)
+                    }
+                }
+                .addOnFailureListener {
+                    continuation.resumeWithException(it)
+                }
         }
-        return user
     }
 
     override fun putUser(user: User) {

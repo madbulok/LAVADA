@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.app.appComponent
@@ -67,31 +68,32 @@ class PersonalInfoFragment :
         super.onViewCreated(view, savedInstanceState)
         model = factoryViewModel.create(UsersViewModel::class.java)
         firebaseEmailAuthService.getUserUid()?.let {
-            model.getUser(it)?.observe(this, { user ->
-                if (user != null) {
+            lifecycleScope.launchWhenResumed {
+                model.getUser(it)?.let { user ->
                     userThis = user
-                }
-                with(viewBinding) {
-                    if (user?.url_avatar.isNullOrEmpty()) {
-                        btnAddPhoto.visibility = View.VISIBLE
-                        ivEditPhoto.visibility = View.GONE
-                    } else {
-                        btnAddPhoto.visibility = View.GONE
-                        ivEditPhoto.visibility = View.VISIBLE
-                        loadImage(user?.url_avatar.toString(), viewBinding.ivProfile)
+                    with(viewBinding) {
+                        if (user.url_avatar.isNullOrEmpty()) {
+                            btnAddPhoto.visibility = View.VISIBLE
+                            ivEditPhoto.visibility = View.GONE
+                        } else {
+                            btnAddPhoto.visibility = View.GONE
+                            ivEditPhoto.visibility = View.VISIBLE
+                            loadImage(user.url_avatar.toString(), viewBinding.ivProfile)
+                        }
+                        tiEtName.setText(user.name)
+                        tiEtAboutMyself.setText(user.about)
+                        tiEtLocation.setText(user.location)
+                        when (user.male?.ordinal) {
+                            0 -> radioGroup.check(R.id.rbMan)
+                            1 -> radioGroup.check(R.id.rvWoman)
+                            2 -> radioGroup.check(R.id.rbAnother)
+                        }
+                        tvAgeValue.text = user.age?.toString()
+                        slAge.value = user.age?.toFloat() ?: 18F
                     }
-                    tiEtName.setText(user?.name)
-                    tiEtAboutMyself.setText(user?.about)
-                    tiEtLocation.setText(user?.location)
-                    when (user?.male?.ordinal) {
-                        0 -> radioGroup.check(R.id.rbMan)
-                        1 -> radioGroup.check(R.id.rvWoman)
-                        2 -> radioGroup.check(R.id.rbAnother)
-                    }
-                    tvAgeValue.text = user?.age?.toString()
-                    slAge.value = user?.age?.toFloat() ?: 18F
                 }
-            })
+            }
+
         }
         initListeners()
     }
@@ -129,7 +131,7 @@ class PersonalInfoFragment :
                 userThis.male?.let { it1 -> model.updateUser(userThis.uid, "male", it1) }
                 model.updateUser(userThis.uid, "name", tiEtName.text.toString())
                 model.updateUser(userThis.uid, "about", tiEtAboutMyself.text.toString())
-                if(urlImage.isNotEmpty()){
+                if (urlImage.isNotEmpty()) {
                     model.updateUser(userThis.uid, "url_avatar", urlImage)
                 }
                 parentFragmentManager.popBackStack()

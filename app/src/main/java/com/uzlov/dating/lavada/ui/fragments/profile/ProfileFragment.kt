@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.app.appComponent
@@ -43,12 +44,13 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
         model = factoryViewModel.create(UsersViewModel::class.java)
 
         firebaseEmailAuthService.getUserUid()?.let {
-            model.getUser(it)?.observe(this, { user ->
-                viewBinding.tvLocation.text = user?.location
-                viewBinding.tvName.text = user?.name + ", " + user?.age
-                user?.url_avatar?.let { it1 -> loadImage(it1, viewBinding.ivProfile) }
-
-            })
+            lifecycleScope.launchWhenResumed {
+                model.getUser(it)?.let { user ->
+                    viewBinding.tvLocation.text = user.location
+                    viewBinding.tvName.text = user.name + ", " + user.age
+                    user.url_avatar?.let { it1 -> loadImage(it1, viewBinding.ivProfile) }
+                }
+            }
         }
         with(viewBinding) {
             ivEditProfile.setOnClickListener {

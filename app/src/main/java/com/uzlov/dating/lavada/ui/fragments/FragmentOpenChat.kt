@@ -14,8 +14,7 @@ import com.uzlov.dating.lavada.domain.models.Chat
 import com.uzlov.dating.lavada.domain.models.ChatMessage
 import com.uzlov.dating.lavada.domain.models.User
 import com.uzlov.dating.lavada.ui.adapters.ChatMessageAdapter
-import com.uzlov.dating.lavada.viemodels.ChatViewModel
-import com.uzlov.dating.lavada.viemodels.MessageViewModel
+import com.uzlov.dating.lavada.viemodels.MessageChatViewModel
 import com.uzlov.dating.lavada.viemodels.UsersViewModel
 import javax.inject.Inject
 
@@ -28,9 +27,8 @@ class FragmentOpenChat :
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    private lateinit var messageViewModel: MessageViewModel
     private lateinit var userViewModel: UsersViewModel
-    private lateinit var chatViewModel: ChatViewModel
+    private lateinit var messageChatViewModel: MessageChatViewModel
 
     private lateinit var chatId: String
     private var chatOpen: Chat? = null
@@ -45,9 +43,8 @@ class FragmentOpenChat :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requireContext().appComponent.inject(this)
-        messageViewModel = viewModelFactory.create(MessageViewModel::class.java)
         userViewModel = viewModelFactory.create(UsersViewModel::class.java)
-        chatViewModel = viewModelFactory.create(ChatViewModel::class.java)
+        messageChatViewModel = viewModelFactory.create(MessageChatViewModel::class.java)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -64,16 +61,16 @@ class FragmentOpenChat :
 
 
     private fun loadMessagesHistory() {
-        messageViewModel.retrieveMessages(chatId).observe(viewLifecycleOwner, {
+        messageChatViewModel.retrieveMessages(chatId).observe(viewLifecycleOwner, {
             if (it != null) {
                 chatOpen = it.copy()
                 messagesAdapter.setMessages(it.messages ?: emptyList())
 
-                it.members?.firstOrNull { it != selfUid }?.let { uidCompanion->
-                    userViewModel.getUser(uidCompanion)?.observe(viewLifecycleOwner, { user->
-                        user?.let { it1 -> updateUiCompanion(it1) }
-                    })
-                }
+//                it.members?.firstOrNull { it != selfUid }?.let { uidCompanion->
+//                    userViewModel.getUser(uidCompanion)?.observe(viewLifecycleOwner, { user->
+//                        user?.let { it1 -> updateUiCompanion(it1) }
+//                    })
+//                }
             } else {
                 Toast.makeText(requireContext(), "response is null", Toast.LENGTH_SHORT).show()
             }
@@ -105,18 +102,18 @@ class FragmentOpenChat :
                                 mediaUrl = "link1"
                             )
                         )
-                        messageViewModel.sendMessage(
+                        messageChatViewModel.sendMessage(
                             uidChat = chatId,
                             chat = it
                         )
                     }
-
                     etMessage.setText("")
                 }
             }
 
             tbBackAction.setOnClickListener {
                 parentFragmentManager.popBackStack()
+
             }
 
             btnInfo.setOnClickListener {

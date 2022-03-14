@@ -56,9 +56,9 @@ class PlayerViewAdapter {
         }
 
         fun playIndexThenPausePreviousPlayer(index: Int){
-            if (playersMap.get(index)?.playWhenReady == false) {
+            if (playersMap[index]?.playWhenReady == false) {
                 pauseCurrentPlayingVideo()
-                playersMap.get(index)?.playWhenReady = true
+                playersMap[index]?.playWhenReady = true
                 currentPlayingVideo = Pair(index, playersMap.get(index)!!)
             }
 

@@ -12,9 +12,7 @@ class UserRemoteRepositoryImpl @Inject constructor(
     IUsersRepository {
     override fun getUsers(): LiveData<List<User>> = remoteDataSource.getUsers()
 
-    override fun getUser(id: String): LiveData<User?> = remoteDataSource.getUser(id)
-    override fun getUsersWithUserID(id: String): LiveData<List<User>> =
-        remoteDataSource.getUsersWithUserID(id)
+    override suspend fun getUser(id: String): User? = remoteDataSource.getUser(id)
 
     override fun removeUser(id: String) = remoteDataSource.removeUser(id)
 

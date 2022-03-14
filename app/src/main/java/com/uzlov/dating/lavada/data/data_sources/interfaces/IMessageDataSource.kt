@@ -9,8 +9,11 @@ interface IMessageDataSource {
     suspend fun sendMessage(uidChat: String, message: ChatMessage)
     suspend fun sendMessage(uidChat: String, message: Chat)
     suspend fun getChats(userId: String) : List<Chat>
-    fun createChat(selfId: String, companionId: String)
+    fun createChat(selfId: String, companionId: String) : String
+
     @ExperimentalCoroutinesApi
     suspend fun observeMessages(uidChat: String): Flow<Chat>
     suspend fun getChat(uid: String): Chat
+    suspend fun getChat(companionId: String, selfId: String): Chat
+    suspend fun hasChat(companionId: String, selfId: String) : Boolean
 }
