@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
 import androidx.lifecycle.lifecycleScope
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.app.appComponent
@@ -28,6 +29,7 @@ class PersonalInfoFragment :
     lateinit var list: List<Uri>
     private var userThis: User = User()
     private var urlImage: String = ""
+    var blackList: MutableList<String> = mutableListOf("WJfUC7k7EVZDtJdJYXDFn8DfAoD3", "67r4Wd1H9JblvgKhScAX3Y42aFX2", "NelQeaw9g4dBWT8oPuCiNrRdK0m2")
 
     @Inject
     lateinit var firebaseEmailAuthService: FirebaseEmailAuthService
@@ -156,10 +158,17 @@ class PersonalInfoFragment :
     }
 
     private fun loadImage(image: String, container: ImageView) {
+
+        val circularProgressDrawable = context?.let { CircularProgressDrawable(it) }
+        circularProgressDrawable!!.strokeWidth = 5f
+        circularProgressDrawable.centerRadius = 25f
+        circularProgressDrawable.start()
+
         view?.let {
             Glide
                 .with(it.context)
                 .load(image)
+                .placeholder(circularProgressDrawable)
                 .error(R.drawable.ic_default_user)
                 .into(container)
         }

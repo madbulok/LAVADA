@@ -95,7 +95,7 @@ class MainVideosFragment :
                             mAdapter.updateList(
                                 model.sortUsers(
                                     users, self.lat!!, self.lon!!,
-                                    userFilter.sex, userFilter.ageStart, userFilter.ageEnd
+                                    userFilter.sex, userFilter.ageStart, userFilter.ageEnd, self.black_list
                                 )
                             )
                         }
