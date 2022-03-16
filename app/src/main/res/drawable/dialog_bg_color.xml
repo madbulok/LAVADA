@@ -6,7 +6,7 @@
     android:insetRight="5dp"
     >
     <shape android:shape="rectangle">
-        <corners android:radius="25dp"/>
+        <corners android:radius="@dimen/default_corner_radius_16"/>
         <solid android:color="#F7F9FA"/>
     </shape>
 </inset>

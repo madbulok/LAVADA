@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="#E5BCEC">
 
     <ProgressBar
         android:id="@+id/pgContentLoading"
@@ -89,37 +90,63 @@
         tools:itemCount="10"
         tools:listitem="@layout/item_mesage_recieved" />
 
-    <com.google.android.material.textfield.TextInputLayout
+
+    <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/textInputLayout"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/default_margin_16"
+        app:startIconDrawable="@drawable/empty"
+        app:paddingStart="@dimen/default_margin_16"
+        android:minHeight="60dp"
+        android:maxHeight="300dp"
+        android:hint="@string/cancel_label"
+        android:drawableStart="@drawable/empty"
+        android:drawableEnd="@drawable/empty"
+        android:gravity="center_vertical"
+        android:drawablePadding="@dimen/default_corner_radius_16"
+        android:background="@drawable/dialog_bg_color"
         app:boxCornerRadiusBottomEnd="@dimen/default_margin_16"
         app:boxCornerRadiusBottomStart="@dimen/default_margin_16"
         app:boxCornerRadiusTopEnd="@dimen/default_margin_16"
         app:boxCornerRadiusTopStart="@dimen/default_margin_16"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/btnSend"
         app:layout_constraintStart_toStartOf="parent"
-        app:startIconDrawable="@drawable/image">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etMessage"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </com.google.android.material.textfield.TextInputLayout>
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="@tools:sample/lorem"/>
 
 
-    <com.google.android.material.button.MaterialButton
+    <ImageView
         android:id="@+id/btnSend"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:cornerRadius="@dimen/default_margin_16"
-        app:icon="@drawable/arrow_right"
-        app:iconGravity="textStart"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:srcCompat="@drawable/ic_buttons_send"
+        android:layout_marginEnd="4dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/textInputLayout"
-        app:layout_constraintEnd_toEndOf="@+id/btnInfo"
-        app:layout_constraintTop_toTopOf="@+id/textInputLayout" />
+        app:layout_constraintEnd_toEndOf="@+id/textInputLayout"
+        app:layout_constraintTop_toTopOf="@+id/textInputLayout"/>
+
+    <ImageView
+        android:id="@+id/btnGift"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        app:srcCompat="@drawable/gift"
+        app:tint="@color/Secondary_text"
+        android:layout_marginEnd="@dimen/default_margin_16"
+        app:layout_constraintBottom_toBottomOf="@+id/textInputLayout"
+        app:layout_constraintEnd_toEndOf="@+id/textInputLayout"
+        app:layout_constraintTop_toTopOf="@+id/textInputLayout"/>
+
+ <ImageView
+        android:id="@+id/btnAttachFile"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        app:srcCompat="@drawable/image"
+        app:tint="@color/Secondary_text"
+        android:layout_marginStart="@dimen/default_margin_16"
+        app:layout_constraintBottom_toBottomOf="@+id/textInputLayout"
+        app:layout_constraintStart_toStartOf="@id/textInputLayout"
+        app:layout_constraintTop_toTopOf="@+id/textInputLayout"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

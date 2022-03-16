@@ -210,20 +210,19 @@ class MainVideosFragment :
         }
     }
 
-    override fun onStop() {
-        super.onStop()
-        Log.e("TAG", "onStop: ")
+    override fun onResume() {
+        super.onResume()
+        PlayerViewAdapter.playCurrentPlayingVideo()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.e("TAG", "onDestroy: ")
+    override fun onPause() {
+        super.onPause()
+        PlayerViewAdapter.pauseCurrentPlayingVideo()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         PlayerViewAdapter.releaseAllPlayers()
-        Log.e("TAG", "onDestroyView: ")
     }
 
     companion object {
