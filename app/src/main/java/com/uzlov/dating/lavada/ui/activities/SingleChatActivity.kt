@@ -7,14 +7,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
-import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
 import com.uzlov.dating.lavada.databinding.FragmentSingleChatBinding
 import com.uzlov.dating.lavada.domain.models.Chat
+import com.uzlov.dating.lavada.domain.models.ChatMessage
 import com.uzlov.dating.lavada.domain.models.User
 import com.uzlov.dating.lavada.ui.adapters.ChatMessageAdapter
-import com.uzlov.dating.lavada.ui.adapters.PlayerViewAdapter
 import com.uzlov.dating.lavada.viemodels.MessageChatViewModel
 import com.uzlov.dating.lavada.viemodels.UsersViewModel
 import javax.inject.Inject
@@ -51,7 +50,7 @@ class SingleChatActivity : AppCompatActivity() {
         companionId = intent?.getStringExtra(COMPANION_ID) ?: ""
 
         // dagger init
-        applicationContext.appComponent.inject(this)
+        appComponent.inject(this)
 
         userViewModel = viewModelFactory.create(UsersViewModel::class.java)
         messageChatViewModel = viewModelFactory.create(MessageChatViewModel::class.java)
@@ -107,6 +106,27 @@ class SingleChatActivity : AppCompatActivity() {
         viewBinding.lvMessages.adapter = messagesAdapter
         viewBinding.tbBackAction.setOnClickListener {
             finish()
+        }
+
+        viewBinding.btnSend.setOnClickListener {
+            if (!chatId.isNullOrEmpty() && viewBinding.etMessage.text?.length ?: 0 > 0) {
+
+                chatOpen.let {
+                    it.messages?.add(
+                        ChatMessage(
+                            message = viewBinding.etMessage.text.toString(),
+                            sender = selfUid,
+                            viewed = false,
+                            mediaUrl = ""
+                        )
+                    )
+                    messageChatViewModel.sendMessage(
+                        uidChat = chatId,
+                        chat = it
+                    )
+                }
+                viewBinding.etMessage.setText("")
+            }
         }
     }
 
