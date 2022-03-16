@@ -91,12 +91,12 @@ class FragmentOpenChat :
     private fun setOnClickListeners() {
         with(viewBinding) {
             btnSend.setOnClickListener {
-                if (!chatId.isNullOrEmpty() && etMessage.text?.length ?: 0 > 0) {
+                if (!chatId.isNullOrEmpty() && textInputLayout.text?.length ?: 0 > 0) {
 
                     chatOpen?.let {
                         it.messages?.add(
                             ChatMessage(
-                                message = etMessage.text.toString(),
+                                message = textInputLayout.text.toString(),
                                 sender = selfUid,
                                 viewed = false,
                                 mediaUrl = "link1"
@@ -107,7 +107,7 @@ class FragmentOpenChat :
                             chat = it
                         )
                     }
-                    etMessage.setText("")
+                    textInputLayout.setText("")
                 }
             }
 
