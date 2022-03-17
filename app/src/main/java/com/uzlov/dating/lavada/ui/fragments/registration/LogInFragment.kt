@@ -81,9 +81,7 @@ class LogInFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
                                     lifecycleScope.launchWhenResumed {
                                         model.getUserSuspend(it)?.let { result ->
                                             result.let {
-                                                if (it != null) {
-                                                    self = it
-                                                }
+                                                self = it
                                                 val user = User(
                                                     uid = firebaseEmailAuthService.auth.currentUser?.uid
                                                         ?: "",
@@ -153,17 +151,43 @@ class LogInFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
 
                                     )
                             )
-                            val user = User(
-                                uid = firebaseEmailAuthService.auth.currentUser?.uid ?: "",
-                                email = firebaseEmailAuthService.auth.currentUser?.email
-                            )
-
                             firebaseEmailAuthService.loginWithGoogleAccount()
                                 .addOnCompleteListener(requireActivity()) { _task ->
                                     if (_task.isSuccessful) {
-                                        (requireActivity() as LoginActivity).startFillDataFragment(
-                                            user
-                                        )
+                                        firebaseEmailAuthService.getUserUid()?.let { it ->
+                                            lifecycleScope.launchWhenResumed {
+                                                model.getUserSuspend(it)?.let { result ->
+                                                    result.let { it1 ->
+                                                        self = it1
+                                                        val user = User(
+                                                            uid = firebaseEmailAuthService.auth.currentUser?.uid
+                                                                ?: "",
+                                                            email = firebaseEmailAuthService.auth.currentUser?.email
+                                                        )
+
+                                                        self.ready?.let { result1 ->
+                                                            AuthorizedUser(
+                                                                uuid = firebaseEmailAuthService.auth.currentUser?.uid
+                                                                    ?: "",
+                                                                datetime = System.currentTimeMillis() / 1000,
+                                                                name = firebaseEmailAuthService.auth.currentUser?.email
+                                                                    ?: "",
+                                                                isReady = result1
+                                                            ).let { it2 ->
+                                                                preferenceRepository.updateUser(
+                                                                    it2
+                                                                )
+                                                            }
+                                                        }
+                                                        if (self.ready == true) {
+                                                            (requireActivity() as LoginActivity).startHome()
+                                                        } else (requireActivity() as LoginActivity).startFillDataFragment(
+                                                            user
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                        }
                                     } else {
                                         Log.w(TAG, "createUserWithGoogle:failure", _task.exception)
                                     }
