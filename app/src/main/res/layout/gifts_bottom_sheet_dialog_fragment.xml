@@ -49,6 +49,21 @@
         app:layout_constraintTop_toTopOf="@id/tv_gifts" />
 
     <TextView
+        android:id="@+id/tv_need_more_coins"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        style="@style/Regular"
+        android:textColor="@color/Inverse_text"
+        android:text="Top up your account to buy a gift"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="@dimen/default_margin_16"
+        android:gravity="center"
+        android:background="@drawable/background_need_more_coins"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/btn_top_up"/>
+
+    <TextView
         android:id="@+id/tv_group1"
         style="@style/Title3"
         android:layout_width="match_parent"
@@ -60,7 +75,7 @@
         android:text="Group 1"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/btn_top_up" />
+        app:layout_constraintTop_toBottomOf="@id/tv_need_more_coins" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_group1"

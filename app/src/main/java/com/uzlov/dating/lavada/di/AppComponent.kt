@@ -4,10 +4,7 @@ import com.uzlov.dating.lavada.ui.fragments.profile.ProfileFragment
 import com.uzlov.dating.lavada.di.modules.*
 import com.uzlov.dating.lavada.ui.activities.SingleChatActivity
 import com.uzlov.dating.lavada.ui.activities.SplashActivity
-import com.uzlov.dating.lavada.ui.fragments.ChatsFragment
-import com.uzlov.dating.lavada.ui.fragments.FilterSearchPeopleFragment
-import com.uzlov.dating.lavada.ui.fragments.FragmentOpenChat
-import com.uzlov.dating.lavada.ui.fragments.MainVideosFragment
+import com.uzlov.dating.lavada.ui.fragments.*
 import com.uzlov.dating.lavada.ui.fragments.profile.*
 import com.uzlov.dating.lavada.ui.fragments.registration.LogInFragment
 import com.uzlov.dating.lavada.ui.fragments.registration.RegistrationFragment
@@ -50,4 +47,5 @@ interface AppComponent {
     fun inject(personalInfoFragment: PersonalInfoFragment)
     fun inject(singleChatActivity: SingleChatActivity)
     fun inject(blackListFragment: BlackListFragment)
+    fun inject(giftsBottomSheetDialogFragment: GiftsBottomSheetDialogFragment)
 }
