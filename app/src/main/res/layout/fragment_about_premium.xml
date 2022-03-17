@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/imageView2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="@id/subContent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:lottie_autoPlay="true"
+        app:lottie_cacheComposition="true"
+        app:lottie_imageAssetsFolder="images/"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/lott_2340_1080"
+        app:lottie_renderMode="hardware" />
+
+    <ImageView
+        android:id="@+id/tbBackAction"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="22dp"
+        android:layout_marginTop="18dp"
+        android:src="@drawable/chevron_left"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_shop_label"
+        style="@style/Regular"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/default_margin_8"
+        android:text="Shop"
+        app:layout_constraintBottom_toBottomOf="@id/tbBackAction"
+        app:layout_constraintStart_toEndOf="@id/tbBackAction"
+        app:layout_constraintTop_toTopOf="@id/tbBackAction" />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/subContent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.6"
+        app:layout_constraintTop_toTopOf="@id/container" />
+
+
+    <FrameLayout
+        android:id="@+id/fl_background"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_background"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/background_welcome_layout">
+
+            <TextView
+                android:id="@+id/tv_title_premium"
+                style="@style/Title2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="@dimen/default_margin_32"
+                android:text="Premium"
+                android:textStyle="bold"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_desc_prem_one"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="40dp"
+                android:layout_marginEnd="20dp"
+                android:drawableStart="@drawable/ic_coin"
+                android:drawablePadding="10dp"
+                android:text="Ежедневное начисление коинов"
+                app:layout_constraintTop_toBottomOf="@id/tv_title_premium" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_desc_prem_two"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="40dp"
+                android:layout_marginEnd="20dp"
+                android:drawableStart="@drawable/heart_for_settings"
+                android:drawablePadding="10dp"
+                android:text="Просмотр тех, кто тебя лайкнул"
+                app:layout_constraintTop_toBottomOf="@id/tv_desc_prem_one" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_desc_prem_three"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="40dp"
+                android:layout_marginEnd="20dp"
+                android:drawableStart="@drawable/chevron_up"
+                android:drawablePadding="10dp"
+                android:text="Анкета выше других в ленте"
+                app:layout_constraintTop_toBottomOf="@id/tv_desc_prem_two" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_desc_prem_four"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="40dp"
+                android:layout_marginEnd="20dp"
+                android:drawableStart="@drawable/message_circle"
+                android:drawablePadding="10dp"
+                android:text="Писать можно первым, не дожидаясь взаимки"
+                app:layout_constraintTop_toBottomOf="@id/tv_desc_prem_three" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_desc_prem_five"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="40dp"
+                android:layout_marginEnd="20dp"
+                android:drawableStart="@drawable/smile"
+                android:drawablePadding="10dp"
+                android:text="Золотая рамка аватарки"
+                app:layout_constraintTop_toBottomOf="@id/tv_desc_prem_four" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_desc_prem_six"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="40dp"
+                android:layout_marginEnd="20dp"
+                android:drawableStart="@drawable/tiktok"
+                android:drawablePadding="10dp"
+                android:text="Просмотр соц сетей людей, не дожидаясь взаимки"
+                app:layout_constraintTop_toBottomOf="@id/tv_desc_prem_five" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_buy_premium"
+                style="@style/DefaultButtons"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="36dp"
+                android:text="Buy premium"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_desc_prem_six"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

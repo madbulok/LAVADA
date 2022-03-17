@@ -79,33 +79,37 @@ class LogInFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
                             if (task.isSuccessful) {
                                 firebaseEmailAuthService.getUserUid()?.let { it ->
                                     lifecycleScope.launchWhenResumed {
-                                        model.getUser(it)?.let {
-                                            self = it
-                                            val user = User(
-                                                uid = firebaseEmailAuthService.auth.currentUser?.uid
-                                                    ?: "",
-                                                email = firebaseEmailAuthService.auth.currentUser?.email
-                                            )
-
-                                            self.ready?.let { it1 ->
-                                                AuthorizedUser(
-                                                    uuid = firebaseEmailAuthService.auth.currentUser?.uid
-                                                        ?: "",
-                                                    datetime = System.currentTimeMillis() / 1000,
-                                                    name = firebaseEmailAuthService.auth.currentUser?.email
-                                                        ?: "",
-                                                    isReady = it1
-                                                ).let { it2 ->
-                                                    preferenceRepository.updateUser(
-                                                        it2
-                                                    )
+                                        model.getUserSuspend(it)?.let { result ->
+                                            result.let {
+                                                if (it != null) {
+                                                    self = it
                                                 }
+                                                val user = User(
+                                                    uid = firebaseEmailAuthService.auth.currentUser?.uid
+                                                        ?: "",
+                                                    email = firebaseEmailAuthService.auth.currentUser?.email
+                                                )
+
+                                                self.ready?.let { it1 ->
+                                                    AuthorizedUser(
+                                                        uuid = firebaseEmailAuthService.auth.currentUser?.uid
+                                                            ?: "",
+                                                        datetime = System.currentTimeMillis() / 1000,
+                                                        name = firebaseEmailAuthService.auth.currentUser?.email
+                                                            ?: "",
+                                                        isReady = it1
+                                                    ).let { it2 ->
+                                                        preferenceRepository.updateUser(
+                                                            it2
+                                                        )
+                                                    }
+                                                }
+                                                if (self.ready == true) {
+                                                    (requireActivity() as LoginActivity).startHome()
+                                                } else (requireActivity() as LoginActivity).startFillDataFragment(
+                                                    user
+                                                )
                                             }
-                                            if (self.ready == true) {
-                                                (requireActivity() as LoginActivity).startHome()
-                                            } else (requireActivity() as LoginActivity).startFillDataFragment(
-                                                user
-                                            )
                                         }
                                     }
                                 }

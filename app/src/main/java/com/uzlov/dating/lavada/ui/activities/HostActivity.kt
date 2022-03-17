@@ -8,6 +8,7 @@ import com.uzlov.dating.lavada.data.repository.PreferenceRepository
 import com.uzlov.dating.lavada.databinding.HostActivityBinding
 import com.uzlov.dating.lavada.ui.adapters.PlayerViewAdapter
 import com.uzlov.dating.lavada.ui.fragments.MainVideosFragment
+import com.uzlov.dating.lavada.ui.fragments.ShopFragment
 import javax.inject.Inject
 
 class HostActivity : AppCompatActivity() {
@@ -34,7 +35,26 @@ class HostActivity : AppCompatActivity() {
                 .commit()
         }
     }
-
     fun rollbackFragment() = supportFragmentManager.popBackStack()
 
+    fun startShopFragment() {
+        supportFragmentManager.apply {
+            beginTransaction()
+                .replace(R.id.container, ShopFragment.newInstance())
+                .addToBackStack("null")
+                .commit()
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        PlayerViewAdapter.pauseAllPlayers()
+        Log.e("TAG A", "onStop: ")
+    }
+
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.e("TAG A", "onDestroy: ")
+    }
 }
