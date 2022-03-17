@@ -79,6 +79,7 @@ class PreviewVideoFragment :
                 result.first.addOnSuccessListener {
                     result.second.downloadUrl.addOnSuccessListener {
                         user.url_video = it.toString()
+                        user.ready = true
                         userViewModel.addUser(user)
                     }
                     val localUser = preferenceRepository.readUser()
