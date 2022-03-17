@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/tbBackAction"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="22dp"
+        android:layout_marginTop="18dp"
+        android:src="@drawable/chevron_left"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_shop_label"
+        style="@style/Regular"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Shop"
+        app:layout_constraintBottom_toBottomOf="@id/tbBackAction"
+        app:layout_constraintTop_toTopOf="@id/tbBackAction" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="60dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/tv_balance"
+                style="@style/Title3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+
+                android:layout_marginEnd="20dp"
+                android:text="Coins balance"
+                android:textStyle="bold"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/btn_coins"
+                style="@style/Title3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:drawableEnd="@drawable/ic_coin"
+                android:drawablePadding="@dimen/default_margin_8"
+                android:text="1233"
+                app:layout_constraintBottom_toBottomOf="@id/tv_balance"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/tv_balance" />
+
+            <TextView
+                android:id="@+id/tv_about_coins"
+                style="@style/Regular"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="@dimen/default_margin_8"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="@dimen/default_margin_8"
+                android:text="About coins"
+                app:layout_constraintTop_toBottomOf="@id/tv_balance" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_buy_coins"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:elevation="8dp"
+                app:cardCornerRadius="@dimen/default_margin_16"
+                app:layout_constraintTop_toBottomOf="@id/tv_about_coins">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="@dimen/default_margin_16">
+
+                    <TextView
+                        android:id="@+id/tv_premium_label"
+                        style="@style/Large"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Premium"
+                        android:textStyle="bold"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tv_about_premium_label"
+                        style="@style/Large"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/default_margin_16"
+                        android:gravity="end"
+                        android:text="About"
+                        android:textColor="@color/Link_text"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tv_label_time_one"
+                        style="@style/Large"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="1 month"
+                        android:textStyle="bold"
+                        app:layout_constraintTop_toTopOf="@id/btn_price_one" />
+
+                    <TextView
+                        android:id="@+id/tv_desc_time_one"
+                        style="@style/Regular"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="+10 coins every day"
+                        app:layout_constraintBottom_toBottomOf="@id/btn_price_one" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_price_one"
+                        style="@style/DefaultButtons"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_marginTop="25dp"
+                        android:layout_marginEnd="@dimen/default_margin_16"
+                        android:text="590 ₽"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tv_premium_label" />
+
+                    <TextView
+                        android:id="@+id/tv_label_time_two"
+                        style="@style/Large"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="6 month"
+                        android:textStyle="bold"
+                        app:layout_constraintTop_toTopOf="@id/btn_price_two" />
+
+                    <TextView
+                        android:id="@+id/tv_desc_time_two"
+                        style="@style/Regular"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="+100 coins every day"
+                        app:layout_constraintBottom_toBottomOf="@id/btn_price_two" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_price_two"
+                        style="@style/DefaultButtons"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_marginTop="25dp"
+                        android:layout_marginEnd="@dimen/default_margin_16"
+                        android:text="3590 ₽"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/btn_price_one" />
+
+                    <TextView
+                        android:id="@+id/tv_label_time_three"
+                        style="@style/Large"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="6 month"
+                        android:textStyle="bold"
+                        app:layout_constraintTop_toTopOf="@id/btn_price_three" />
+
+                    <TextView
+                        android:id="@+id/tv_desc_time_three"
+                        style="@style/Regular"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="+100 coins every day"
+                        app:layout_constraintBottom_toBottomOf="@id/btn_price_three" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_price_three"
+                        style="@style/DefaultButtons"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_marginTop="25dp"
+                        android:layout_marginEnd="@dimen/default_margin_16"
+                        android:text="3590 ₽"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/btn_price_two" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_super_box"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:elevation="8dp"
+                app:cardCornerRadius="@dimen/default_margin_16"
+                app:layout_constraintTop_toBottomOf="@id/card_buy_coins">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="@dimen/default_margin_16">
+
+                    <TextView
+                        android:id="@+id/tv_super_box"
+                        style="@style/Large"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Super coins box"
+                        android:textStyle="bold"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/quantity"
+                        style="@style/Title3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/default_margin_16"
+                        android:text="5000"
+                        android:textStyle="bold"
+                        app:layout_constraintTop_toBottomOf="@id/tv_super_box" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_price_super_box"
+                        style="@style/DefaultButtons"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_marginTop="25dp"
+                        android:layout_marginEnd="@dimen/default_margin_16"
+                        android:text="590 ₽"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/quantity" />
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/iv_scb"
+                        android:layout_width="116dp"
+                        android:layout_height="116dp"
+                        android:backgroundTint="@color/Disable_text"
+                        android:elevation="0dp"
+                        app:cardCornerRadius="@dimen/default_margin_16"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:id="@+id/tv_coin_box"
+                style="@style/Large"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="@dimen/default_margin_8"
+                android:text="About coins"
+                android:textStyle="bold"
+                app:layout_constraintTop_toBottomOf="@id/card_super_box" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_coin_box"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="@dimen/default_margin_16"
+                android:layout_marginEnd="20dp"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintTop_toBottomOf="@id/tv_coin_box"
+                tools:listitem="@layout/card_buy_coin" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_buy_coins"
+        style="@style/DefaultButtons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="34dp"
+        android:text="Buy coins"
+        app:layout_constraintBottom_toBottomOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
