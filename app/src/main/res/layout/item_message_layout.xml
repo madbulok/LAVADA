@@ -24,6 +24,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="6dp"
+        android:layout_marginEnd="@dimen/default_margin_16"
         android:layout_marginTop="4dp"
         android:textColor="@color/Primary_text"
         app:layout_constraintEnd_toStartOf="@+id/tvDateTimeLastMessage"
@@ -31,26 +32,16 @@
         app:layout_constraintTop_toTopOf="@+id/imageProfile"
         tools:text="@tools:sample/first_names" />
 
-    <TextView
-        android:id="@+id/tvMessage"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:textColor="@color/Primary_text"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/chip"
-        app:layout_constraintStart_toStartOf="@+id/tvProfileName"
-        app:layout_constraintTop_toBottomOf="@+id/tvProfileName"
-        tools:text="Photos from holiday" />
 
     <TextView
         android:id="@+id/tvSubMessageName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="7dp"
         android:textColor="@color/Secondary_text"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/chip"
+        app:layout_constraintEnd_toEndOf="@+id/tvProfileName"
         app:layout_constraintStart_toStartOf="@+id/tvProfileName"
-        app:layout_constraintTop_toBottomOf="@+id/tvMessage"
+        app:layout_constraintTop_toBottomOf="@+id/tvProfileName"
         tools:text="Good morning! Hope you are good.." />
 
     <TextView
@@ -68,12 +59,12 @@
     <com.google.android.material.chip.Chip
         android:id="@+id/chip"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:backgroundTint="@color/Brand_fill"
         app:layout_constraintBottom_toBottomOf="@+id/tvSubMessageName"
         app:layout_constraintEnd_toEndOf="@+id/tvDateTimeLastMessage"
-        app:layout_constraintTop_toBottomOf="@+id/tvProfileName"
-        tools:text="123"/>
+        app:layout_constraintTop_toBottomOf="@+id/tvDateTimeLastMessage"
+        tools:text="123" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
