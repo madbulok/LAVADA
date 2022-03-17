@@ -11,3 +11,5 @@ data class Chat(
     var members: MutableList<String> = mutableListOf(),
     var messages: MutableList<ChatMessage> = mutableListOf()
 ) : Parcelable
+
+

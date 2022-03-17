@@ -88,7 +88,7 @@ class MainVideosFragment :
         model.getUsers()?.observe(this, { users ->
             firebaseEmailAuthService.getUserUid()?.let { it ->
                 lifecycleScope.launchWhenResumed {
-                        model.getUser(it)?.let {
+                        model.getUserSuspend(it)?.let {
                             it.url_avatar?.let { it1 -> loadImage(it1, viewBinding.ivProfile) }
                             self = it
                             testData = users
@@ -108,7 +108,6 @@ class MainVideosFragment :
             rvVideosUsers.setHasFixedSize(true)
             rvVideosUsers.addOnScrollListener(scrollListener)
             snapHelper.attachToRecyclerView(rvVideosUsers)
-
 
             // double click send love
             mAdapter.setOnItemClickListener(object : ProfileRecyclerAdapter.OnItemClickListener {

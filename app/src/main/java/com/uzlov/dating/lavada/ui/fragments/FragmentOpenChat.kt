@@ -1,13 +1,17 @@
 package com.uzlov.dating.lavada.ui.fragments
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.app.appComponent
+import com.uzlov.dating.lavada.app.getCompanionUid
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
 import com.uzlov.dating.lavada.databinding.FragmentSingleChatBinding
 import com.uzlov.dating.lavada.domain.models.Chat
@@ -16,6 +20,7 @@ import com.uzlov.dating.lavada.domain.models.User
 import com.uzlov.dating.lavada.ui.adapters.ChatMessageAdapter
 import com.uzlov.dating.lavada.viemodels.MessageChatViewModel
 import com.uzlov.dating.lavada.viemodels.UsersViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class FragmentOpenChat :
@@ -64,13 +69,13 @@ class FragmentOpenChat :
         messageChatViewModel.retrieveMessages(chatId).observe(viewLifecycleOwner, {
             if (it != null) {
                 chatOpen = it.copy()
-                messagesAdapter.setMessages(it.messages ?: emptyList())
+                messagesAdapter.setMessages(it.messages)
+                val companionUid = it.getCompanionUid(selfUid)
 
-//                it.members?.firstOrNull { it != selfUid }?.let { uidCompanion->
-//                    userViewModel.getUser(uidCompanion)?.observe(viewLifecycleOwner, { user->
-//                        user?.let { it1 -> updateUiCompanion(it1) }
-//                    })
-//                }
+                userViewModel.getUser(companionUid).observe(viewLifecycleOwner, { user->
+                    user?.let { it -> updateUiCompanion(it) }
+                })
+
             } else {
                 Toast.makeText(requireContext(), "response is null", Toast.LENGTH_SHORT).show()
             }
@@ -94,7 +99,7 @@ class FragmentOpenChat :
                 if (!chatId.isNullOrEmpty() && textInputLayout.text?.length ?: 0 > 0) {
 
                     chatOpen?.let {
-                        it.messages?.add(
+                        it.messages.add(
                             ChatMessage(
                                 message = textInputLayout.text.toString(),
                                 sender = selfUid,
@@ -119,6 +124,31 @@ class FragmentOpenChat :
             btnInfo.setOnClickListener {
 
             }
+
+            textInputLayout.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int,
+                ) {}
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+                override fun afterTextChanged(s: Editable?) {
+                    setStateSend(s?.isEmpty() ?: true)
+                }
+            })
+        }
+    }
+
+    private fun setStateSend(isGiftState: Boolean){
+        if (isGiftState){
+            viewBinding.btnSend.visibility = View.GONE
+            viewBinding.btnGift.visibility = View.VISIBLE
+        } else {
+            viewBinding.btnSend.visibility = View.VISIBLE
+            viewBinding.btnGift.visibility = View.GONE
         }
     }
 

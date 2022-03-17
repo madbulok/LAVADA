@@ -77,14 +77,9 @@ class SingleChatActivity : AppCompatActivity() {
     }
 
     private fun initCompanion() {
-        lifecycleScope.launchWhenResumed {
-            val user = userViewModel.getUser(companionId)
-            if (user == null){
-                Toast.makeText(this@SingleChatActivity, "User null", Toast.LENGTH_SHORT).show()
-            } else {
-                updateUiCompanion(user)
-            }
-        }
+            userViewModel.getUser(companionId).observe(this, {
+                it?.let { it1 -> updateUiCompanion(it1) }
+            })
     }
 
     private fun initChat() {

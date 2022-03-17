@@ -68,31 +68,34 @@ class PersonalInfoFragment :
         super.onViewCreated(view, savedInstanceState)
         model = factoryViewModel.create(UsersViewModel::class.java)
         firebaseEmailAuthService.getUserUid()?.let {
-            lifecycleScope.launchWhenResumed {
-                model.getUser(it)?.let { user ->
-                    userThis = user
-                    with(viewBinding) {
-                        if (user.url_avatar.isNullOrEmpty()) {
-                            btnAddPhoto.visibility = View.VISIBLE
-                            ivEditPhoto.visibility = View.GONE
-                        } else {
-                            btnAddPhoto.visibility = View.GONE
-                            ivEditPhoto.visibility = View.VISIBLE
-                            loadImage(user.url_avatar.toString(), viewBinding.ivProfile)
+
+                model.getUser(it).observe(viewLifecycleOwner, { result ->
+                    result?.let { user ->
+                        userThis = user
+                        with(viewBinding) {
+                            if (user.url_avatar.isNullOrEmpty()) {
+                                btnAddPhoto.visibility = View.VISIBLE
+                                ivEditPhoto.visibility = View.GONE
+                            } else {
+                                btnAddPhoto.visibility = View.GONE
+                                ivEditPhoto.visibility = View.VISIBLE
+                                loadImage(user.url_avatar.toString(), viewBinding.ivProfile)
+                            }
+                            tiEtName.setText(user.name)
+                            tiEtAboutMyself.setText(user.about)
+                            tiEtLocation.setText(user.location)
+                            when (user.male?.ordinal) {
+                                0 -> radioGroup.check(R.id.rbMan)
+                                1 -> radioGroup.check(R.id.rvWoman)
+                                2 -> radioGroup.check(R.id.rbAnother)
+                            }
+                            tvAgeValue.text = user.age?.toString()
+                            slAge.value = user.age?.toFloat() ?: 18F
                         }
-                        tiEtName.setText(user.name)
-                        tiEtAboutMyself.setText(user.about)
-                        tiEtLocation.setText(user.location)
-                        when (user.male?.ordinal) {
-                            0 -> radioGroup.check(R.id.rbMan)
-                            1 -> radioGroup.check(R.id.rvWoman)
-                            2 -> radioGroup.check(R.id.rbAnother)
-                        }
-                        tvAgeValue.text = user.age?.toString()
-                        slAge.value = user.age?.toFloat() ?: 18F
                     }
-                }
-            }
+
+                })
+
 
         }
         initListeners()
