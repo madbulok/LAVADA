@@ -1,8 +1,8 @@
 package com.uzlov.dating.lavada.ui.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModelProvider
 import com.uzlov.dating.lavada.R
@@ -10,6 +10,7 @@ import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
 import com.uzlov.dating.lavada.databinding.FragmentChatsLayoutBinding
 import com.uzlov.dating.lavada.domain.models.Chat
+import com.uzlov.dating.lavada.domain.models.MappedChat
 import com.uzlov.dating.lavada.ui.adapters.PlayerViewAdapter
 import com.uzlov.dating.lavada.ui.adapters.UsersChatsAdapter
 import com.uzlov.dating.lavada.ui.adapters.UsersProfileStoriesAdapter
@@ -113,19 +114,26 @@ class ChatsFragment :
 
     private fun loadAllChats() {
         auth.getUserUid()?.let {
-            messageChatViewModel.getChats(it)
+            messageChatViewModel.getChats(it, auth.getUserUid() ?: "")
                 .observe(viewLifecycleOwner, { result ->
                     renderUi(result)
+                    Log.e("TAG", "loadAllChats: $result")
                 })
         }
     }
 
-    private fun renderUi(chats: List<Chat>?) {
-        if (!chats.isNullOrEmpty()) {
+//   mapper [chat1(userTom, self), chat2(userArtem, self)]    --->    [ userTom(chat1), userArtem(chat2).....user_K(chat_N) ]
+//   Map<CompanionUID, Chat>
+    private fun mapResult(result: List<Chat>): Map<String, Chat> {
+        return result.associateBy { chat -> chat.members.first { it != auth.getUserUid() } }
+    }
+
+    private fun renderUi(chats: List<MappedChat>) {
+//        if (!chats.isNullOrEmpty()) {
             chatAdapter.setChats(chats)
-        } else {
-            Toast.makeText(requireContext(), "Чатов пока нет!", Toast.LENGTH_SHORT).show()
-        }
+//        } else {
+//            Toast.makeText(requireContext(), "Чатов пока нет!", Toast.LENGTH_SHORT).show()
+//        }
     }
 
     private fun initListeners() {

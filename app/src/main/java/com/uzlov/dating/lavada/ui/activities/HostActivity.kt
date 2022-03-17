@@ -34,17 +34,7 @@ class HostActivity : AppCompatActivity() {
                 .commit()
         }
     }
+
     fun rollbackFragment() = supportFragmentManager.popBackStack()
 
-    override fun onStop() {
-        super.onStop()
-        PlayerViewAdapter.pauseAllPlayers()
-        Log.e("TAG A", "onStop: ")
-    }
-
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.e("TAG A", "onDestroy: ")
-    }
 }

@@ -65,12 +65,12 @@ class MessagesRepository @Inject constructor(mDatabase: FirebaseDatabase) : IMes
             ref.get()
                 .addOnCompleteListener { task->
                     try {
-                        val countChats = task.result.children.map { value ->
-                            value.getValue(Chat::class.java) ?: Chat()
-                        }.count {
-                            it.members?.containsAll(listOf(companionId, selfId)) == true // because null safety =)
+                        val chats = task.result.children.map { value ->
+                            value.getValue(Chat::class.java)!!
+                        }.filter {
+                            it.members.contains(companionId) && it.members.contains(selfId) // because null safety =)
                         }
-                        continuation.resumeWith(Result.success(countChats == 1))
+                        continuation.resumeWith(Result.success(chats.isNotEmpty()))
                     } catch (e: Exception){
                         continuation.resumeWithException(e)
                     }

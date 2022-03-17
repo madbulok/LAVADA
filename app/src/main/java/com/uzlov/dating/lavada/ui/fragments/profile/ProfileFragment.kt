@@ -44,13 +44,12 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
         model = factoryViewModel.create(UsersViewModel::class.java)
 
         firebaseEmailAuthService.getUserUid()?.let {
-            lifecycleScope.launchWhenResumed {
-                model.getUser(it)?.let { user ->
+            model.getUser(it).observe(this, {
+                it?.let { user ->
                     viewBinding.tvLocation.text = user.location
                     viewBinding.tvName.text = user.name + ", " + user.age
-                    user.url_avatar?.let { it1 -> loadImage(it1, viewBinding.ivProfile) }
-                }
-            }
+                    user.url_avatar?.let { it1 -> loadImage(it1, viewBinding.ivProfile) }}
+            })
         }
         with(viewBinding) {
             ivEditProfile.setOnClickListener {

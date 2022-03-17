@@ -85,13 +85,29 @@ class MainVideosFragment :
         super.onViewCreated(view, savedInstanceState)
 
         model = factoryViewModel.create(UsersViewModel::class.java)
-        loadData()
+        model.getUsers()?.observe(this, { users ->
+            firebaseEmailAuthService.getUserUid()?.let { it ->
+                lifecycleScope.launchWhenResumed {
+                        model.getUserSuspend(it)?.let {
+                            it.url_avatar?.let { it1 -> loadImage(it1, viewBinding.ivProfile) }
+                            self = it
+                            testData = users
+                            mAdapter.updateList(
+                                model.sortUsers(
+                                    users, self.lat!!, self.lon!!,
+                                    userFilter.sex, userFilter.ageStart, userFilter.ageEnd
+                                )
+                            )
+                        }
+                }
+            }
+        })
+        
         with(viewBinding) {
             rvVideosUsers.adapter = mAdapter
             rvVideosUsers.setHasFixedSize(true)
             rvVideosUsers.addOnScrollListener(scrollListener)
             snapHelper.attachToRecyclerView(rvVideosUsers)
-
 
             // double click send love
             mAdapter.setOnItemClickListener(object : ProfileRecyclerAdapter.OnItemClickListener {
@@ -198,46 +214,23 @@ class MainVideosFragment :
         }
     }
 
-    private fun loadData() {
-        model.getUsers()?.observe(this@MainVideosFragment, { users ->
-            firebaseEmailAuthService.getUserUid()?.let { it ->
-                lifecycleScope.launchWhenResumed {
-                    model.getUser(it)?.let {
-                        it.url_avatar?.let { it1 -> loadImage(it1, viewBinding.ivProfile) }
-                        self = it
-                        testData = users
-                        mAdapter.updateList(
-                            model.sortUsers(
-                                users,
-                                self.lat!!,
-                                self.lon!!,
-                                userFilter.sex,
-                                userFilter.ageStart,
-                                userFilter.ageEnd,
-                                self.black_list
-                            )
-                        )
-                    }
-                }
-            }
-        })
-
-    }
-
     override fun onStop() {
         super.onStop()
         Log.e("TAG", "onStop: ")
+
+    override fun onResume() {
+        super.onResume()
+        PlayerViewAdapter.playCurrentPlayingVideo()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.e("TAG", "onDestroy: ")
+    override fun onPause() {
+        super.onPause()
+        PlayerViewAdapter.pauseCurrentPlayingVideo()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         PlayerViewAdapter.releaseAllPlayers()
-        Log.e("TAG", "onDestroyView: ")
     }
 
     companion object {

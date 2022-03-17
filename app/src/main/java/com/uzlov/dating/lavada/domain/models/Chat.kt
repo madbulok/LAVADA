@@ -8,6 +8,8 @@ import kotlin.collections.ArrayList
 @Parcelize
 data class Chat(
     var uuid: String = UUID.randomUUID().toString(),
-    var members: MutableList<String>? = null,
-    var messages: MutableList<ChatMessage>? = mutableListOf<ChatMessage>()
+    var members: MutableList<String> = mutableListOf(),
+    var messages: MutableList<ChatMessage> = mutableListOf()
 ) : Parcelable
+
+
