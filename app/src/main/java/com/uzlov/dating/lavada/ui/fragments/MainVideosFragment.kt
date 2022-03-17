@@ -8,8 +8,6 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
@@ -95,8 +93,7 @@ class MainVideosFragment :
                             mAdapter.updateList(
                                 model.sortUsers(
                                     users, self.lat!!, self.lon!!,
-                                    userFilter.sex, userFilter.ageStart, userFilter.ageEnd
-                                )
+                                    userFilter.sex, userFilter.ageStart, userFilter.ageEnd, self.black_list)
                             )
                         }
                 }
@@ -217,6 +214,8 @@ class MainVideosFragment :
     override fun onStop() {
         super.onStop()
         Log.e("TAG", "onStop: ")
+
+    }
 
     override fun onResume() {
         super.onResume()

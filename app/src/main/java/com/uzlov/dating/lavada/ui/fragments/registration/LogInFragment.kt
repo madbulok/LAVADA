@@ -78,9 +78,11 @@ class LogInFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
                         .addOnCompleteListener(requireActivity()) { task ->
                             if (task.isSuccessful) {
                                 firebaseEmailAuthService.getUserUid()?.let { it ->
-                                    lifecycleScope.launchWhenResumed {
-                                        model.getUser(it)?.let {
-                                            self = it
+                                        model.getUser(it).observe(viewLifecycleOwner, { result ->
+                                    result.let {
+                                            if (it != null) {
+                                                self = it
+                                            }
                                             val user = User(
                                                 uid = firebaseEmailAuthService.auth.currentUser?.uid
                                                     ?: "",
@@ -107,7 +109,7 @@ class LogInFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
                                                 user
                                             )
                                         }
-                                    }
+                                    })
                                 }
                             } else {
                                 Toast.makeText(

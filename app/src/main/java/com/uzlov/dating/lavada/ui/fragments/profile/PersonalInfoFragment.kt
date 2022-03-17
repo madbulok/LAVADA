@@ -29,7 +29,7 @@ class PersonalInfoFragment :
     lateinit var list: List<Uri>
     private var userThis: User = User()
     private var urlImage: String = ""
-    var blackList: MutableList<String> = mutableListOf("WJfUC7k7EVZDtJdJYXDFn8DfAoD3", "67r4Wd1H9JblvgKhScAX3Y42aFX2", "NelQeaw9g4dBWT8oPuCiNrRdK0m2")
+    // var blackList: MutableList<String> = mutableListOf("WJfUC7k7EVZDtJdJYXDFn8DfAoD3", "67r4Wd1H9JblvgKhScAX3Y42aFX2", "NelQeaw9g4dBWT8oPuCiNrRdK0m2")
 
     @Inject
     lateinit var firebaseEmailAuthService: FirebaseEmailAuthService
@@ -70,8 +70,8 @@ class PersonalInfoFragment :
         super.onViewCreated(view, savedInstanceState)
         model = factoryViewModel.create(UsersViewModel::class.java)
         firebaseEmailAuthService.getUserUid()?.let {
-
-                model.getUser(it).observe(viewLifecycleOwner, { result ->
+            lifecycleScope.launchWhenResumed {
+                model.getUserSuspend(it)?.let { result ->
                     result?.let { user ->
                         userThis = user
                         with(viewBinding) {
@@ -96,8 +96,8 @@ class PersonalInfoFragment :
                         }
                     }
 
-                })
-
+                }
+            }
 
         }
         initListeners()

@@ -36,20 +36,20 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requireContext().appComponent.inject(this)
+        model = factoryViewModel.create(UsersViewModel::class.java)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        model = factoryViewModel.create(UsersViewModel::class.java)
-
-        firebaseEmailAuthService.getUserUid()?.let {
-            model.getUser(it).observe(this, {
-                it?.let { user ->
-                    viewBinding.tvLocation.text = user.location
-                    viewBinding.tvName.text = user.name + ", " + user.age
-                    user.url_avatar?.let { it1 -> loadImage(it1, viewBinding.ivProfile) }}
-            })
+        firebaseEmailAuthService.getUserUid()?.let { it ->
+            lifecycleScope.launchWhenResumed {
+                model.getUserSuspend(it)?.let { result ->
+                    viewBinding.tvLocation.text = result.location
+                    viewBinding.tvName.text = result.name + ", " + result.age
+                    result.url_avatar?.let { it1 -> loadImage(it1, viewBinding.ivProfile) }
+                }
+            }
         }
         with(viewBinding) {
             ivEditProfile.setOnClickListener {
