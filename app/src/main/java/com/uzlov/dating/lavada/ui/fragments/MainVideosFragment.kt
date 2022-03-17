@@ -6,22 +6,22 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.uzlov.dating.lavada.R
-import com.uzlov.dating.lavada.ui.adapters.RecyclerViewScrollListener
 import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
 import com.uzlov.dating.lavada.data.repository.PreferenceRepository
 import com.uzlov.dating.lavada.databinding.MainVideosFragmentBinding
-import com.uzlov.dating.lavada.domain.models.Chat
 import com.uzlov.dating.lavada.domain.models.User
 import com.uzlov.dating.lavada.domain.models.UserFilter
 import com.uzlov.dating.lavada.ui.SingleSnap
 import com.uzlov.dating.lavada.ui.activities.SingleChatActivity
 import com.uzlov.dating.lavada.ui.adapters.PlayerViewAdapter
 import com.uzlov.dating.lavada.ui.adapters.ProfileRecyclerAdapter
+import com.uzlov.dating.lavada.ui.adapters.RecyclerViewScrollListener
 import com.uzlov.dating.lavada.ui.fragments.dialogs.FragmentMatch
 import com.uzlov.dating.lavada.ui.fragments.profile.ProfileFragment
 import com.uzlov.dating.lavada.viemodels.MessageChatViewModel
@@ -102,7 +102,7 @@ class MainVideosFragment :
                 }
             }
         })
-
+        
         with(viewBinding) {
             rvVideosUsers.adapter = mAdapter
             rvVideosUsers.setHasFixedSize(true)
@@ -116,12 +116,13 @@ class MainVideosFragment :
                         .show()
                     lifecycleScope.launchWhenResumed {
                         delay(500)
-
                     }
                 }
             })
             mAdapter.setOnActionClickListener(object : ProfileRecyclerAdapter.OnActionListener {
                 override fun sendGift(user: User) {
+                    val giftFragment = GiftsBottomSheetDialogFragment()
+                    giftFragment.show(childFragmentManager, giftFragment.javaClass.simpleName)
 
                 }
 
@@ -181,10 +182,14 @@ class MainVideosFragment :
                     .commit()
                 PlayerViewAdapter.pauseCurrentPlayingVideo()
             }
+            refreshDataLayout.setOnRefreshListener {
+                //здесь нужно обновить плеер еще
+                refreshDataLayout.isRefreshing = false
+            }
         }
     }
 
-    private fun openChatActivity(companionId: String){
+    private fun openChatActivity(companionId: String) {
         val intent = Intent(requireContext(), SingleChatActivity::class.java).apply {
             putExtra(SingleChatActivity.COMPANION_ID, companionId)
         }
@@ -208,6 +213,10 @@ class MainVideosFragment :
                 .into(container)
         }
     }
+
+    override fun onStop() {
+        super.onStop()
+        Log.e("TAG", "onStop: ")
 
     override fun onResume() {
         super.onResume()

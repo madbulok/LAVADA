@@ -39,7 +39,8 @@ class UsersViewModel @Inject constructor(private var usersUseCases: UserUseCases
         myLon: Double,
         prefMALE: Int,
         prefAgeStart: Int,
-        prefAgeEnd: Int
+        prefAgeEnd: Int,
+        blockedUID: List<String>
     ): List<User> {
         val myData = data.toMutableList()
         val iterator = myData.iterator()
@@ -51,7 +52,7 @@ class UsersViewModel @Inject constructor(private var usersUseCases: UserUseCases
             if (item.dist == 0.0 || item.dist!!.isNaN()
                 || item.male!!.ordinal != prefMALE
                 || item.age!! !in prefAgeStart..prefAgeEnd
-                || item.url_video!!.isNullOrEmpty()
+                || item.url_video!!.isNullOrEmpty() || blockedUID.contains(item.uid)
             ) {
                 iterator.remove()
             }
@@ -59,6 +60,19 @@ class UsersViewModel @Inject constructor(private var usersUseCases: UserUseCases
         return myData.sortedBy { it.dist }
     }
 
-
-
+    fun blockedUsers(
+        data: List<User>,
+        blockedUID: List<String>
+    ): List<User> {
+        val myBlackList = mutableListOf<User>()
+        val myData = data.toMutableList()
+        val iterator = myData.iterator()
+        while (iterator.hasNext()) {
+            val item = iterator.next()
+            if (blockedUID.contains(item.uid)){
+                myBlackList.add(item)
+            }
+        }
+        return myBlackList
+    }
 }

@@ -26,6 +26,8 @@ import com.uzlov.dating.lavada.domain.models.AuthorizedUser
 import com.uzlov.dating.lavada.domain.models.User
 import com.uzlov.dating.lavada.ui.activities.LoginActivity
 import com.uzlov.dating.lavada.ui.fragments.BaseFragment
+import com.uzlov.dating.lavada.viemodels.UsersViewModel
+import com.uzlov.dating.lavada.viemodels.ViewModelFactory
 import java.util.regex.Pattern
 import javax.inject.Inject
 
@@ -37,15 +39,23 @@ class LogInFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
     @Inject
     lateinit var preferenceRepository: PreferenceRepository
 
+    @Inject
+    lateinit var factoryViewModel: ViewModelFactory
+
+    private lateinit var model: UsersViewModel
+    private var self = User()
+
     private val googleSignInClient: GoogleSignInClient by lazy {
-        GoogleSignIn.getClient(requireContext(),
-            firebaseEmailAuthService.getGSO(requireContext()))
+        GoogleSignIn.getClient(
+            requireContext(),
+            firebaseEmailAuthService.getGSO(requireContext())
+        )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         requireContext().appComponent.inject(this)
-
+        model = factoryViewModel.create(UsersViewModel::class.java)
         viewBinding.tilPassword.isEndIconVisible = false
         addTextChangedListener()
         addClickListeners()
@@ -59,8 +69,6 @@ class LogInFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
     }
 
     private fun addClickListeners() {
-        val userLocal = preferenceRepository.readUser()
-
         viewBinding.btnLogin.setOnClickListener {
             if (!viewBinding.tiEtEmail.text.isNullOrEmpty()) {
                 val email = viewBinding.tiEtEmail.text.toString()
@@ -69,23 +77,45 @@ class LogInFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
                     firebaseEmailAuthService.loginWithEmailAndPassword(email, password)
                         .addOnCompleteListener(requireActivity()) { task ->
                             if (task.isSuccessful) {
-                                val user = User(
-                                    uid = firebaseEmailAuthService.auth.currentUser?.uid ?: "",
-                                    email = firebaseEmailAuthService.auth.currentUser?.email)
+                                firebaseEmailAuthService.getUserUid()?.let { it ->
+                                    lifecycleScope.launchWhenResumed {
+                                        model.getUser(it)?.let {
+                                            self = it
+                                            val user = User(
+                                                uid = firebaseEmailAuthService.auth.currentUser?.uid
+                                                    ?: "",
+                                                email = firebaseEmailAuthService.auth.currentUser?.email
+                                            )
 
-                                preferenceRepository.updateUser(
-                                    AuthorizedUser(
-                                        uuid = firebaseEmailAuthService.auth.currentUser?.uid ?: "",
-                                        datetime = System.currentTimeMillis() / 1000,
-                                        name = firebaseEmailAuthService.auth.currentUser?.email ?: "",
-                                        isReady = userLocal?.isReady ?: false
-                                    )
-                                )
-                                if(userLocal?.isReady == true){
-                                    (requireActivity() as LoginActivity).startHome()
-                                } else  (requireActivity() as LoginActivity).startFillDataFragment(user)
+                                            self.ready?.let { it1 ->
+                                                AuthorizedUser(
+                                                    uuid = firebaseEmailAuthService.auth.currentUser?.uid
+                                                        ?: "",
+                                                    datetime = System.currentTimeMillis() / 1000,
+                                                    name = firebaseEmailAuthService.auth.currentUser?.email
+                                                        ?: "",
+                                                    isReady = it1
+                                                ).let { it2 ->
+                                                    preferenceRepository.updateUser(
+                                                        it2
+                                                    )
+                                                }
+                                            }
+                                            if (self.ready == true) {
+                                                (requireActivity() as LoginActivity).startHome()
+                                            } else (requireActivity() as LoginActivity).startFillDataFragment(
+                                                user
+                                            )
+                                        }
+                                    }
+                                }
                             } else {
-                                Toast.makeText(requireContext(), task.exception?.localizedMessage ?: "Ошибка входа. Возможно неверные данные", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    requireContext(),
+                                    task.exception?.localizedMessage
+                                        ?: "Ошибка входа. Возможно неверные данные",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                         }
                 }
@@ -117,17 +147,19 @@ class LogInFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
                                     datetime = System.currentTimeMillis() / 1000,
                                     name = firebaseEmailAuthService.auth.currentUser?.email ?: "",
 
-                                )
+                                    )
                             )
                             val user = User(
                                 uid = firebaseEmailAuthService.auth.currentUser?.uid ?: "",
-                                email = firebaseEmailAuthService.auth.currentUser?.email)
+                                email = firebaseEmailAuthService.auth.currentUser?.email
+                            )
 
                             firebaseEmailAuthService.loginWithGoogleAccount()
                                 .addOnCompleteListener(requireActivity()) { _task ->
                                     if (_task.isSuccessful) {
                                         (requireActivity() as LoginActivity).startFillDataFragment(
-                                            user)
+                                            user
+                                        )
                                     } else {
                                         Log.w(TAG, "createUserWithGoogle:failure", _task.exception)
                                     }

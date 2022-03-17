@@ -2,22 +2,22 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/default_margin_16"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/imageProfile"
-        android:layout_width="44dp"
-        android:layout_height="44dp"
-        app:strokeColor="@color/Premium_fill"
-        app:strokeWidth="4dp"
-        android:layout_marginStart="22dp"
-        style="@style/ShapeAppearanceOverlay.App.CornerSize50Percent"
+        android:layout_width="@dimen/size_image_profile"
+        android:layout_height="@dimen/size_image_profile"
+        android:layout_marginStart="@dimen/default_margin_16"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="@dimen/default_margin_16"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:background="@drawable/tools_test_image_rounded"
-        />
+        tools:background="@tools:sample/avatars" />
+
 
     <TextView
         android:id="@+id/tvProfileName"

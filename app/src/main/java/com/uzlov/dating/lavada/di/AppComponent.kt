@@ -11,6 +11,7 @@ import com.uzlov.dating.lavada.ui.fragments.MainVideosFragment
 import com.uzlov.dating.lavada.ui.fragments.profile.*
 import com.uzlov.dating.lavada.ui.fragments.registration.LogInFragment
 import com.uzlov.dating.lavada.ui.fragments.registration.RegistrationFragment
+import com.uzlov.dating.lavada.ui.fragments.settings.BlackListFragment
 import com.uzlov.dating.lavada.ui.fragments.settings.NotificationsFragment
 import com.uzlov.dating.lavada.ui.fragments.settings.SettingsFragment
 import com.uzlov.dating.lavada.ui.fragments.settings.UpdatePasswordFragment
@@ -48,4 +49,5 @@ interface AppComponent {
     fun inject(notificationsFragment: NotificationsFragment)
     fun inject(personalInfoFragment: PersonalInfoFragment)
     fun inject(singleChatActivity: SingleChatActivity)
+    fun inject(blackListFragment: BlackListFragment)
 }
