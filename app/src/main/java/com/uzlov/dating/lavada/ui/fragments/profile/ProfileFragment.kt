@@ -11,6 +11,8 @@ import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
 import com.uzlov.dating.lavada.databinding.FragmentProfileBinding
 import com.uzlov.dating.lavada.ui.fragments.BaseFragment
+import com.uzlov.dating.lavada.ui.fragments.ShopFragment
+import com.uzlov.dating.lavada.ui.fragments.dialogs.FragmentBuyPremium
 import com.uzlov.dating.lavada.ui.fragments.settings.SettingsFragment
 import com.uzlov.dating.lavada.viemodels.UsersViewModel
 import com.uzlov.dating.lavada.viemodels.ViewModelFactory
@@ -31,6 +33,9 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
 
     private val personalInfo by lazy {
         PersonalInfoFragment()
+    }
+    private val shop by lazy {
+        ShopFragment()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,6 +75,16 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
                     "Переходим на фрагмент обновления видео",
                     Toast.LENGTH_SHORT
                 ).show()
+            }
+            btnTopUp.setOnClickListener {
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.container, shop)
+                    .addToBackStack(null)
+                    .commit()
+            }
+            clPremium.setOnClickListener {
+                val buyPremiumFragment = FragmentBuyPremium()
+                buyPremiumFragment.show(childFragmentManager, buyPremiumFragment.javaClass.simpleName)
             }
         }
     }

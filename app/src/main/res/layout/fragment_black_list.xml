@@ -28,6 +28,18 @@
         app:layout_constraintTop_toTopOf="@+id/tbBackAction"
         app:layout_constraintBottom_toBottomOf="@+id/tbBackAction"/>
 
+    <TextView
+        android:id="@+id/tv_empty_black_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        style="@style/Title3"
+        android:textStyle="bold"
+        android:textColor="@color/Placeholder_text"
+        android:layout_marginTop="148dp"
+        android:text="@string/your_block_people_will_be_here"
+        app:layout_constraintTop_toBottomOf="@+id/chatLabel"
+        android:visibility="gone"/>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/blackListRecyclerView"
         android:layout_width="0dp"

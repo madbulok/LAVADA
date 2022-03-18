@@ -5,6 +5,7 @@ import com.uzlov.dating.lavada.di.modules.*
 import com.uzlov.dating.lavada.ui.activities.SingleChatActivity
 import com.uzlov.dating.lavada.ui.activities.SplashActivity
 import com.uzlov.dating.lavada.ui.fragments.*
+import com.uzlov.dating.lavada.ui.fragments.dialogs.GiftsBottomSheetDialogFragment
 import com.uzlov.dating.lavada.ui.fragments.profile.*
 import com.uzlov.dating.lavada.ui.fragments.registration.LogInFragment
 import com.uzlov.dating.lavada.ui.fragments.registration.RegistrationFragment

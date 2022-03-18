@@ -1,11 +1,15 @@
 package com.uzlov.dating.lavada.ui.fragments.profile
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
@@ -55,8 +59,13 @@ class PersonalInfoFragment :
                     data.data?.let { context?.let { it1 -> uriPathHelper.getPath(it1, it) } }
                 if (imageFullPath != null) {
                     val result = firebaseStorageService.uploadPhoto(imageFullPath)
+                    result.first.addOnFailureListener {
+                        Log.d("SUCCESS_ FIRST", it.toString())
+                    }
                     result.first.addOnSuccessListener {
+                        Log.d("SUCCESS_ FIRST", "ок")
                         result.second.downloadUrl.addOnSuccessListener {
+                            Log.d("SUCCESS_ SECOND", "ок")
                             urlImage = it.toString()
                             loadImage(urlImage, viewBinding.ivProfile)
                         }
@@ -69,6 +78,7 @@ class PersonalInfoFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         model = factoryViewModel.create(UsersViewModel::class.java)
+        checkPermission()
         firebaseEmailAuthService.getUserUid()?.let {
             lifecycleScope.launchWhenResumed {
                 model.getUserSuspend(it)?.let { result ->
@@ -95,12 +105,26 @@ class PersonalInfoFragment :
                             slAge.value = user.age?.toFloat() ?: 18F
                         }
                     }
-
                 }
             }
 
         }
         initListeners()
+    }
+
+    private fun checkPermission(): Boolean {
+        val permission = ActivityCompat.checkSelfPermission(
+            requireActivity(),
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        )
+        return if (permission != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                PERMISSIONS_STORAGE,
+                REQUEST_EXTERNAL_STORAGE
+            )
+            false
+        } else true
     }
 
     private fun initListeners() {
@@ -109,11 +133,14 @@ class PersonalInfoFragment :
                 parentFragmentManager.popBackStack()
             }
             btnAddPhoto.setOnClickListener {
-                selectImageInAlbum()
-
+                if (checkPermission()) {
+                    selectImageInAlbum()
+                }
             }
             ivEditPhoto.setOnClickListener {
-                selectImageInAlbum()
+                if (checkPermission()) {
+                    selectImageInAlbum()
+                }
             }
             slAge.addOnChangeListener { _, value, _ ->
                 tvAgeValue.text = value.toInt().toString()
@@ -158,6 +185,11 @@ class PersonalInfoFragment :
     companion object {
         private const val REQUEST_TAKE_PHOTO = 0
         private const val REQUEST_SELECT_IMAGE_IN_ALBUM = 1
+        const val REQUEST_EXTERNAL_STORAGE = 1
+        private val PERMISSIONS_STORAGE = arrayOf(
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        )
     }
 
     private fun loadImage(image: String, container: ImageView) {

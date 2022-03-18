@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.databinding.FragmentShopBinding
+import com.uzlov.dating.lavada.ui.fragments.dialogs.FragmentBuyCoins
 
 class ShopFragment: BaseFragment<FragmentShopBinding>(FragmentShopBinding::inflate) {
 
@@ -19,6 +20,10 @@ class ShopFragment: BaseFragment<FragmentShopBinding>(FragmentShopBinding::infla
         }
         viewBinding.tbBackAction.setOnClickListener {
             parentFragmentManager.popBackStack()
+        }
+        viewBinding.btnBuyCoins.setOnClickListener {
+            val buyCoinsFragment = FragmentBuyCoins()
+            buyCoinsFragment.show(childFragmentManager, buyCoinsFragment.javaClass.simpleName)
         }
     }
     companion object{

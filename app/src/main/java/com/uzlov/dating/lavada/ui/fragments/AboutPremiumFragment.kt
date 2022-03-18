@@ -2,8 +2,8 @@ package com.uzlov.dating.lavada.ui.fragments
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import com.uzlov.dating.lavada.databinding.FragmentAboutPremiumBinding
+import com.uzlov.dating.lavada.ui.fragments.dialogs.FragmentBuyPremium
 
 class AboutPremiumFragment: BaseFragment<FragmentAboutPremiumBinding>(FragmentAboutPremiumBinding::inflate) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -12,7 +12,8 @@ class AboutPremiumFragment: BaseFragment<FragmentAboutPremiumBinding>(FragmentAb
             parentFragmentManager.popBackStack()
         }
         viewBinding.btnBuyPremium.setOnClickListener {
-            Toast.makeText(context, "Покупаем премиум", Toast.LENGTH_SHORT).show()
+            val buyPremiumFragment = FragmentBuyPremium()
+            buyPremiumFragment.show(childFragmentManager, buyPremiumFragment.javaClass.simpleName)
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.uzlov.dating.lavada.ui.fragments
+package com.uzlov.dating.lavada.ui.fragments.dialogs
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -25,8 +25,8 @@ class GiftsBottomSheetDialogFragment : BottomSheetDialogFragment() {
     lateinit var factoryViewModel: ViewModelFactory
     private lateinit var model: UsersViewModel
 
-    private var _viewBinding: GiftsBottomSheetDialogFragmentBinding? = null
-    private val viewBinding get() = _viewBinding!!
+    private var viewBinding: GiftsBottomSheetDialogFragmentBinding? = null
+
 
     companion object {
 
@@ -50,7 +50,7 @@ class GiftsBottomSheetDialogFragment : BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ) = GiftsBottomSheetDialogFragmentBinding.inflate(layoutInflater, container, false).also {
-        _viewBinding = it
+        viewBinding = it
     }.root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -66,23 +66,28 @@ class GiftsBottomSheetDialogFragment : BottomSheetDialogFragment() {
         firebaseEmailAuthService.getUserUid()?.let { it ->
             lifecycleScope.launchWhenResumed {
                 model.getUserSuspend(it)?.let { result ->
-                    viewBinding.btnCoins.text = result.balance.toString()
+                    viewBinding?.btnCoins?.text = result.balance.toString()
                     //подставить тут актуальную минимальную цену или вообще тягать ее из цен на подарки
                     if (result.balance < 100){
-                        viewBinding.btnCoins.setTextColor(resources.getColor(R.color.Error))
-                        viewBinding.tvNeedMoreCoins.visibility = View.VISIBLE
+                        viewBinding?.btnCoins?.setTextColor(resources.getColor(R.color.Error))
+                        viewBinding?.tvNeedMoreCoins?.visibility = View.VISIBLE
                     } else {
-                        viewBinding.btnCoins.setTextColor(resources.getColor(R.color.Primary_text))
-                        viewBinding.tvNeedMoreCoins.visibility = View.GONE
+                        viewBinding?.btnCoins?.setTextColor(resources.getColor(R.color.Primary_text))
+                        viewBinding?.tvNeedMoreCoins?.visibility = View.GONE
                     }
                 }
             }
         }
-        with(viewBinding) {
-            btnTopUp.setOnClickListener {
+
+            viewBinding?.btnTopUp?.setOnClickListener {
                 (requireActivity() as HostActivity).startShopFragment()
-            }
+
 
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        viewBinding = null
     }
 }
