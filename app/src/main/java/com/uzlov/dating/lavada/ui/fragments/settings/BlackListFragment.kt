@@ -80,10 +80,11 @@ class BlackListFragment :
     private fun renderUi(users: List<User>?) {
         if (!users.isNullOrEmpty()) {
             blackListAdapter.setBlackList(users)
+            viewBinding.blackListRecyclerView.visibility = View.VISIBLE
+            viewBinding.tvEmptyBlackList.visibility = View.GONE
         } else {
             viewBinding.blackListRecyclerView.visibility = View.GONE
-            Toast.makeText(requireContext(), "В списке ЧС пока никого нет!", Toast.LENGTH_SHORT)
-                .show()
+            viewBinding.tvEmptyBlackList.visibility = View.VISIBLE
         }
     }
 
