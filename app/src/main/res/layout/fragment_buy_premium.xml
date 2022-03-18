@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="@dimen/default_margin_8"
+        android:background="@drawable/dialog_bg"
+        android:backgroundTint="@color/Placeholder_text"
+        tools:context=".ui.activities.HostActivity">
+
+        <TextView
+            android:id="@+id/labelBuyPremiumAccount"
+            style="@style/Regular"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:gravity="center"
+            android:text="Buy premium account"
+            android:textColor="@color/Surface"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/buy_one_month"
+            style="@style/Regular"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:gravity="start|center"
+            android:paddingStart="@dimen/default_margin_16"
+            android:text="1 month"
+            android:textColor="@color/Surface"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/labelBuyPremiumAccount" />
+
+        <TextView
+            android:id="@+id/buy_one_month_price"
+            style="@style/DefaultButtons"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:gravity="end|center"
+            android:paddingEnd="@dimen/default_margin_16"
+            android:text="590 ₽"
+            android:textColor="@color/Surface"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/labelBuyPremiumAccount" />
+
+        <TextView
+            android:id="@+id/buy_six_month"
+            style="@style/Regular"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:gravity="start|center"
+            android:paddingStart="@dimen/default_margin_16"
+            android:text="6 months"
+            android:textColor="@color/Surface"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/buy_one_month" />
+
+        <TextView
+            android:id="@+id/buy_six_month_price"
+            style="@style/DefaultButtons"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:gravity="end|center"
+            android:paddingEnd="@dimen/default_margin_16"
+            android:text="3 590 ₽"
+            android:textColor="@color/Surface"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/buy_one_month" />
+
+        <TextView
+            android:id="@+id/buy_one_year"
+            style="@style/Regular"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:gravity="start|center"
+            android:paddingStart="@dimen/default_margin_16"
+            android:text="1 year"
+            android:textColor="@color/Surface"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/buy_six_month" />
+
+        <TextView
+            android:id="@+id/buy_one_year_price"
+            style="@style/DefaultButtons"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:gravity="end|center"
+            android:paddingEnd="@dimen/default_margin_16"
+            android:text="5 990 ₽"
+            android:textColor="@color/Surface"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/buy_six_month" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/ivClose"
+        style="@style/DefaultButtons"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="@dimen/default_margin_32"
+        android:text="@string/cancel_label" />
+</androidx.appcompat.widget.LinearLayoutCompat>
+

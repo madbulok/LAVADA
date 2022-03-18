@@ -21,6 +21,7 @@ import com.uzlov.dating.lavada.ui.adapters.PlayerViewAdapter
 import com.uzlov.dating.lavada.ui.adapters.ProfileRecyclerAdapter
 import com.uzlov.dating.lavada.ui.adapters.RecyclerViewScrollListener
 import com.uzlov.dating.lavada.ui.fragments.dialogs.FragmentMatch
+import com.uzlov.dating.lavada.ui.fragments.dialogs.GiftsBottomSheetDialogFragment
 import com.uzlov.dating.lavada.ui.fragments.profile.ProfileFragment
 import com.uzlov.dating.lavada.viemodels.MessageChatViewModel
 import com.uzlov.dating.lavada.viemodels.UsersViewModel
