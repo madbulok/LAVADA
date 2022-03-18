@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="#E5BCEC">
+    android:background="@drawable/background_opened_chat_recent">
 
     <ProgressBar
         android:id="@+id/pgContentLoading"
@@ -80,7 +80,9 @@
         android:id="@+id/lvMessages"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_margin="@dimen/default_margin_16"
+        android:layout_marginStart="@dimen/default_margin_16"
+        android:layout_marginEnd="@dimen/default_margin_16"
+        android:layout_marginTop="@dimen/default_margin_16"
         android:orientation="vertical"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toTopOf="@+id/textInputLayout"
