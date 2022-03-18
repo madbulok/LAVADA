@@ -41,15 +41,14 @@ class FragmentOpenChat :
         firebaseEmailAuthService.getUserUid() ?: ""
     }
 
-    private val messagesAdapter by lazy {
-        ChatMessageAdapter(self = "Artem2")
-    }
+    private lateinit var messagesAdapter: ChatMessageAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requireContext().appComponent.inject(this)
         userViewModel = viewModelFactory.create(UsersViewModel::class.java)
         messageChatViewModel = viewModelFactory.create(MessageChatViewModel::class.java)
+        messagesAdapter = ChatMessageAdapter(self = firebaseEmailAuthService.getUserUid() ?: "")
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
