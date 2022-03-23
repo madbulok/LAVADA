@@ -9,6 +9,7 @@ import com.uzlov.dating.lavada.databinding.HostActivityBinding
 import com.uzlov.dating.lavada.ui.adapters.PlayerViewAdapter
 import com.uzlov.dating.lavada.ui.fragments.MainVideosFragment
 import com.uzlov.dating.lavada.ui.fragments.ShopFragment
+import com.uzlov.dating.lavada.ui.fragments.profile.PreviewVideoFragment
 import javax.inject.Inject
 
 class HostActivity : AppCompatActivity() {
@@ -41,6 +42,15 @@ class HostActivity : AppCompatActivity() {
         supportFragmentManager.apply {
             beginTransaction()
                 .replace(R.id.container, ShopFragment.newInstance())
+                .addToBackStack("null")
+                .commit()
+        }
+    }
+
+    fun showPreviewVideo(_path: String, request: Int) {
+        supportFragmentManager.apply {
+            beginTransaction()
+                .replace(R.id.container, PreviewVideoFragment.newInstance(_path, request))
                 .addToBackStack("null")
                 .commit()
         }

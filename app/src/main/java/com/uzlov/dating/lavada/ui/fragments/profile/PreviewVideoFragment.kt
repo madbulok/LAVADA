@@ -3,7 +3,9 @@ package com.uzlov.dating.lavada.ui.fragments.profile
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.core.os.bundleOf
+import androidx.lifecycle.lifecycleScope
 import com.google.android.exoplayer2.DefaultLoadControl
 import com.google.android.exoplayer2.DefaultRenderersFactory
 import com.google.android.exoplayer2.ExoPlayerFactory
@@ -12,11 +14,13 @@ import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.uzlov.dating.lavada.app.appComponent
+import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
 import com.uzlov.dating.lavada.data.repository.PreferenceRepository
 import com.uzlov.dating.lavada.databinding.FragmentPreviewVideoBinding
 import com.uzlov.dating.lavada.domain.models.AuthorizedUser
 import com.uzlov.dating.lavada.domain.models.User
 import com.uzlov.dating.lavada.storage.FirebaseStorageService
+import com.uzlov.dating.lavada.ui.activities.HostActivity
 import com.uzlov.dating.lavada.ui.activities.LoginActivity
 import com.uzlov.dating.lavada.ui.fragments.BaseFragment
 import com.uzlov.dating.lavada.viemodels.UsersViewModel
@@ -31,6 +35,9 @@ class PreviewVideoFragment :
     lateinit var firebaseStorageService: FirebaseStorageService
 
     @Inject
+    lateinit var firebaseEmailAuthService: FirebaseEmailAuthService
+
+    @Inject
     lateinit var preferenceRepository: PreferenceRepository
 
     @Inject
@@ -39,7 +46,9 @@ class PreviewVideoFragment :
     lateinit var userViewModel: UsersViewModel
 
     private var user: User = User()
+    private var self: User = User()
     private var path: String = "" // local path
+    private var request: Int = 0
 
     private val player by lazy {
         ExoPlayerFactory.newSimpleInstance(
@@ -60,6 +69,9 @@ class PreviewVideoFragment :
         requireArguments().getString("path")?.let {
             path = it
         }
+        requireArguments().getInt("request")?.let {
+            request = it
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -69,44 +81,80 @@ class PreviewVideoFragment :
             tvLocationProfile.text = user.name
 
             btnBack.setOnClickListener {
-                (requireActivity() as LoginActivity).rollbackFragment()
+                if (request == 1) {
+                    (requireActivity() as HostActivity).rollbackFragment()
+                } else {
+                    (requireActivity() as LoginActivity).rollbackFragment()
+                }
             }
 
             btnNext.setOnClickListener {
+                if (request == 1) {
+                    firebaseEmailAuthService.getUserUid()?.let { it ->
+                        lifecycleScope.launchWhenResumed {
+                            userViewModel.getUserSuspend(it)?.let { resultSelf ->
+                                self = resultSelf
+                                val result = firebaseStorageService.uploadVideo(path)
+                                startLoading()
+                                result.first.addOnSuccessListener {
+                                    result.second.downloadUrl.addOnSuccessListener {
+                                        userViewModel.updateUser(
+                                            self.uid,
+                                            "url_video",
+                                            it.toString()
+                                        )
+                                    }
+                                    Toast.makeText(
+                                        context,
+                                        "Ваше видео успешно обновлено",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                    (requireActivity() as HostActivity).rollbackFragment()
+                                    endLoading()
 
-                val result = firebaseStorageService.uploadVideo(path)
-                startLoading()
-                result.first.addOnSuccessListener {
-                    result.second.downloadUrl.addOnSuccessListener {
-                        user.url_video = it.toString()
-                        user.ready = true
-                        userViewModel.addUser(user)
+                                }.addOnFailureListener {
+                                    it.printStackTrace()
+                                    endWithErrorLoading()
+                                }
+                            }
+                        }
                     }
-                    val localUser = preferenceRepository.readUser()
-                    if (localUser != null) {
-                        preferenceRepository.updateUser(
-                            AuthorizedUser(
-                                localUser.uuid,
-                                localUser.datetime,
-                                localUser.name,
-                                true
+
+                } else {
+                    val result = firebaseStorageService.uploadVideo(path)
+                    startLoading()
+                    result.first.addOnSuccessListener {
+                        result.second.downloadUrl.addOnSuccessListener {
+                            user.url_video = it.toString()
+                            user.ready = true
+                            userViewModel.addUser(user)
+                        }
+                        val localUser = preferenceRepository.readUser()
+                        if (localUser != null) {
+                            preferenceRepository.updateUser(
+                                AuthorizedUser(
+                                    localUser.uuid,
+                                    localUser.datetime,
+                                    localUser.name,
+                                    true
+                                )
                             )
-                        )
-                    } else {
-                        val localUserNew = AuthorizedUser(
-                            uuid = user.uid,
-                            datetime = System.currentTimeMillis() / 1000,
-                            name = user.name ?: "No name",
-                            isReady = true
-                        )
-                        preferenceRepository.updateUser(localUserNew)
-                    }
+                        } else {
+                            val localUserNew = AuthorizedUser(
+                                uuid = user.uid,
+                                datetime = System.currentTimeMillis() / 1000,
+                                name = user.name ?: "No name",
+                                isReady = true
+                            )
+                            preferenceRepository.updateUser(localUserNew)
+                        }
 
-                    endLoading()
-                    (requireActivity() as LoginActivity).routeToMainScreen()
-                }.addOnFailureListener {
-                    it.printStackTrace()
-                    endWithErrorLoading()
+                        endLoading()
+                        (requireActivity() as LoginActivity).routeToMainScreen()
+                    }.addOnFailureListener {
+                        it.printStackTrace()
+                        endWithErrorLoading()
+                    }
                 }
             }
             viewBinding.itemVideoExoplayer.player = player
@@ -164,6 +212,13 @@ class PreviewVideoFragment :
     companion object {
         fun newInstance(_path: String, user: User): PreviewVideoFragment {
             val args = bundleOf("user" to user, "path" to _path)
+            val fragment = PreviewVideoFragment()
+            fragment.arguments = args
+            return fragment
+        }
+
+        fun newInstance(_path: String, request: Int): PreviewVideoFragment {
+            val args = bundleOf("request" to request, "path" to _path)
             val fragment = PreviewVideoFragment()
             fragment.arguments = args
             return fragment
