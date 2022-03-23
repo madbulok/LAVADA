@@ -79,6 +79,9 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(FragmentSettingsB
             btnNotifications.setOnClickListener {
                 updateUI(NotificationsFragment.newInstance())
             }
+            btnHelp.setOnClickListener {
+                updateUI(HelpFragment.newInstance())
+            }
         }
     }
 
