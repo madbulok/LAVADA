@@ -73,7 +73,7 @@
             android:layout_marginTop="27dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/ivHeartTo"
-            app:srcCompat="@drawable/message_circle"
+            app:srcCompat="@drawable/message_selector"
             app:tint="@color/Surface" />
 
 
@@ -84,7 +84,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/center_vertical"
             app:layout_constraintEnd_toEndOf="@+id/ivMessageTo"
             app:layout_constraintTop_toTopOf="@+id/center_vertical"
-            app:srcCompat="@drawable/heart"
+            app:srcCompat="@drawable/heart_selector"
             app:tint="@color/Surface" />
 
         <ImageView
@@ -94,7 +94,7 @@
             android:layout_marginBottom="27dp"
             app:layout_constraintBottom_toTopOf="@+id/ivHeartTo"
             app:layout_constraintEnd_toEndOf="@+id/ivHeartTo"
-            app:srcCompat="@drawable/gift"
+            app:srcCompat="@drawable/gift_selector"
             app:tint="@color/Surface" />
 
         <!--    bottom random profile bar-->
