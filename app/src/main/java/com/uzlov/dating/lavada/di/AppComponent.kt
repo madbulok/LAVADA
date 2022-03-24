@@ -50,6 +50,5 @@ interface AppComponent {
     fun inject(singleChatActivity: SingleChatActivity)
     fun inject(blackListFragment: BlackListFragment)
     fun inject(giftsBottomSheetDialogFragment: GiftsBottomSheetDialogFragment)
-    fun inject(fragmentBuyCoins: FragmentBuyCoins)
     fun inject(shopFragment: ShopFragment)
 }
