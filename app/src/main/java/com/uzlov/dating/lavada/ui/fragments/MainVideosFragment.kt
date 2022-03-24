@@ -82,24 +82,9 @@ class MainVideosFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         model = factoryViewModel.create(UsersViewModel::class.java)
-        model.getUsers()?.observe(this, { users ->
-            firebaseEmailAuthService.getUserUid()?.let { it ->
-                lifecycleScope.launchWhenResumed {
-                        model.getUserSuspend(it)?.let {
-                            it.url_avatar?.let { it1 -> loadImage(it1, viewBinding.ivProfile) }
-                            self = it
-                            testData = users
-                            mAdapter.updateList(
-                                model.sortUsers(
-                                    users, self.lat!!, self.lon!!,
-                                    userFilter.sex, userFilter.ageStart, userFilter.ageEnd, self.black_list)
-                            )
-                        }
-                }
-            }
-        })
+        updateData()
+
         
         with(viewBinding) {
             rvVideosUsers.adapter = mAdapter
@@ -145,6 +130,24 @@ class MainVideosFragment :
         setOnClickListener()
     }
 
+    private fun updateData(){
+        model.getUsers()?.observe(this, { users ->
+            firebaseEmailAuthService.getUserUid()?.let { it ->
+                lifecycleScope.launchWhenResumed {
+                    model.getUserSuspend(it)?.let {
+                        it.url_avatar?.let { it1 -> loadImage(it1, viewBinding.ivProfile) }
+                        self = it
+                        testData = users
+                        mAdapter.updateList(
+                            model.sortUsers(
+                                users, self.lat!!, self.lon!!,
+                                userFilter.sex, userFilter.ageStart, userFilter.ageEnd, self.black_list)
+                        )
+                    }
+                }
+            }
+        })
+    }
     private val chatsFragment by lazy {
         ChatsFragment()
     }
@@ -181,6 +184,7 @@ class MainVideosFragment :
                 PlayerViewAdapter.pauseCurrentPlayingVideo()
             }
             refreshDataLayout.setOnRefreshListener {
+                updateData()
                 //здесь нужно обновить плеер еще
                 refreshDataLayout.isRefreshing = false
             }
