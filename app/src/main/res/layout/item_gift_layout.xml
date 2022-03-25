@@ -5,6 +5,7 @@
     android:layout_height="96dp">
 
     <ImageView
+        android:id="@+id/iv_gift"
         android:layout_width="60dp"
         android:layout_height="60dp"
         app:layout_constraintTop_toTopOf="parent"
@@ -12,7 +13,7 @@
         app:layout_constraintStart_toStartOf="parent"
         android:src="@drawable/test_gift"/>
     <TextView
-        android:id="@+id/btn_coins"
+        android:id="@+id/btn_cost"
         style="@style/Regular"
         android:gravity="center"
         android:layout_marginStart="@dimen/default_margin_8"
