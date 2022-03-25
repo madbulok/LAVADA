@@ -48,6 +48,7 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(FragmentSettingsB
             }
             btnLogOut.setOnClickListener {
                 firebaseEmailAuthService.logout()
+                preferenceRepository.clearUser()
                 startLogin()
             }
             btnDel.setOnClickListener {
@@ -105,6 +106,8 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(FragmentSettingsB
         btSendPass.setOnClickListener {
             if (firebaseEmailAuthService.auth.currentUser != null) {
                 firebaseEmailAuthService.delUser()
+                preferenceRepository.clearUser()
+                //вероятно тут еще и из базы удалять все нужно будет
                 startLogin()
             }
             customDialog?.dismiss()
