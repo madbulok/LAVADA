@@ -1,7 +1,12 @@
 package com.uzlov.dating.lavada.ui.activities
 
+import android.app.Activity
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.WindowManager
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.data.repository.PreferenceRepository
@@ -27,8 +32,19 @@ class HostActivity : AppCompatActivity() {
         if (savedInstanceState == null){
             openFragment()
         }
+        setWindowFlag(this, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, false)
+        window.statusBarColor = Color.TRANSPARENT
     }
-
+    private fun setWindowFlag(activity: Activity, bits: Int, on: Boolean) {
+        val win = activity.window
+        val winParams = win.attributes
+        if (on) {
+            winParams.flags = winParams.flags or bits
+        } else {
+            winParams.flags = winParams.flags and bits.inv()
+        }
+        win.attributes = winParams
+    }
     fun openFragment(){
         supportFragmentManager.apply {
             beginTransaction()
