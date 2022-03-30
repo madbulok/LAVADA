@@ -6,6 +6,7 @@ import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.view.View
 import android.widget.TextView
+import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.domain.models.Chat
 
 fun Context.dpTpPx(dp:Int): Float {
@@ -20,7 +21,7 @@ fun TextView.insertLink(vararg links: Pair<String, View.OnClickListener>) {
         val clickableSpan = object : ClickableSpan() {
             override fun updateDrawState(textPaint: TextPaint) {
                 // use this to change the link color
-                textPaint.color = textPaint.linkColor
+                textPaint.color = resources.getColor(R.color.Link_text)
                 // toggle below value to enable/disable
                 // the underline shown below the clickable text
                 textPaint.isUnderlineText = true
