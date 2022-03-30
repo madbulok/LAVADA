@@ -8,7 +8,9 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.view.View
+import android.widget.Button
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
@@ -17,6 +19,7 @@ import com.abedelazizshe.lightcompressorlibrary.VideoCompressor
 import com.abedelazizshe.lightcompressorlibrary.VideoQuality
 import com.abedelazizshe.lightcompressorlibrary.config.Configuration
 import com.bumptech.glide.Glide
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
@@ -116,6 +119,35 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
                 val buyPremiumFragment = FragmentBuyPremium()
                 buyPremiumFragment.show(childFragmentManager, buyPremiumFragment.javaClass.simpleName)
             }
+            flCard.setOnClickListener {
+                showCustomAlertToByPremium()
+            }
+
+        }
+    }
+
+    private fun showCustomAlertToByPremium() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_custom_layout, null)
+        val customDialog = context?.let {
+            MaterialAlertDialogBuilder(it, R.style.MaterialAlertDialog_rounded)
+                .setView(dialogView)
+                .show()
+        }
+        dialogView.findViewById<TextView>(R.id.description).text =
+            getString(R.string.go_to_the_store_to_buy_premium)
+
+        dialogView.findViewById<TextView>(R.id.header).text =
+            getString(R.string.only_available_to_premium_accounts)
+
+        val btSendPass = dialogView.findViewById<Button>(R.id.btnSendPasswordCustomDialog)
+        btSendPass.text = getString(R.string.go_to_shop)
+        btSendPass.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.container, ShopFragment())
+                .addToBackStack(null)
+                .commit()
+            customDialog?.dismiss()
+
         }
     }
 
