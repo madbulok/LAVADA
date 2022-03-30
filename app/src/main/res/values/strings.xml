@@ -85,7 +85,7 @@
     <string name="chats_label">Chats</string>
     <string name="cancel_label">Cancel</string>
     <string name="welcome">Welcome</string>
-    <string name="log_in_to_your_account">Log in to your account</string>
+    <string name="log_in_to_your_account">Sing in</string>
     <string name="log_in_btn_label">Log in</string>
     <string name="forgot_password">Forgot password?</string>
     <string name="hint_password">password</string>
