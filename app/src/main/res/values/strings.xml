@@ -148,4 +148,7 @@
     <string name="only_available_to_premium_accounts">Only available to premium accounts</string>
     <string name="go_to_the_store_to_buy_premium">Go to the store to buy premium</string>
     <string name="go_to_shop">Go to shop</string>
+    <string name="location_and_dist">%1$s, %2$s км от вас"</string>
+    <string name="name_and_age">%1$s, %2$s"</string>
+
 </resources>
