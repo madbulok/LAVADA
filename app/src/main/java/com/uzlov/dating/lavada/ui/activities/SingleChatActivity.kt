@@ -4,10 +4,11 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.View
+import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -23,7 +24,6 @@ import com.uzlov.dating.lavada.ui.adapters.ChatMessageAdapter
 import com.uzlov.dating.lavada.viemodels.MessageChatViewModel
 import com.uzlov.dating.lavada.viemodels.UsersViewModel
 import javax.inject.Inject
-import android.view.MotionEvent
 
 import android.view.View.OnTouchListener
 import com.uzlov.dating.lavada.storage.URIPathHelper
@@ -73,6 +73,7 @@ class SingleChatActivity : AppCompatActivity() {
         initView()
         initChat()
         initCompanion()
+        setFullscreen()
 
     }
 
@@ -232,6 +233,29 @@ class SingleChatActivity : AppCompatActivity() {
                 val filePath = data.data?.let { uriPathHelper.getPath(this, it) }
 
             }
+        }
+    }
+
+    private fun setFullscreen() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            window.attributes.layoutInDisplayCutoutMode =
+                WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            window.setDecorFitsSystemWindows(false)
+            window.insetsController?.apply {
+                hide(WindowInsets.Type.statusBars() or WindowInsets.Type.navigationBars())
+                systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            }
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            @Suppress("DEPRECATION")
+            window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_FULLSCREEN
+                    or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    or View.SYSTEM_UI_FLAG_IMMERSIVE
+                    or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION)
         }
     }
 
