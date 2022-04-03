@@ -39,7 +39,7 @@ jobs:
         run: ./gradlew test
   
   Build_Apk:
-    if: startWith(github.head_ref. 'uzlov/') == true
+    if: startsWith(github.head_ref. 'uzlov/') == true
     name: Build release artifacts
     runs-on: ubuntu-latest
     steps:
