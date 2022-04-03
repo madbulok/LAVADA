@@ -136,7 +136,7 @@
         android:layout_margin="20dp"
         android:layout_marginBottom="46dp"
         android:enabled="false"
-        android:text="@string/log_in_btn_label"
+        android:text="@string/log_in_to_your_account"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/tv_sing_in_another"
         app:layout_constraintStart_toStartOf="@+id/tv_sing_in_another" />

@@ -131,13 +131,13 @@ class RegistrationFragment :
 
             tvPolicy.setOnClickListener {
                 parentFragmentManager.beginTransaction()
-                    .replace(R.id.container, TermOfUseFragment())
+                    .replace(R.id.fullScreen_container, TermOfUseFragment())
                     .addToBackStack(null)
                     .commit()
             }
             tvTermOfUse.setOnClickListener {
                 parentFragmentManager.beginTransaction()
-                    .replace(R.id.container, PrivatePolicyFragment())
+                    .replace(R.id.fullScreen_container, PrivatePolicyFragment())
                     .addToBackStack(null)
                     .commit()
             }

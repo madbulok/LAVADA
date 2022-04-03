@@ -1,13 +1,17 @@
 package com.uzlov.dating.lavada.ui.fragments
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
@@ -82,24 +86,9 @@ class MainVideosFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         model = factoryViewModel.create(UsersViewModel::class.java)
-        model.getUsers()?.observe(this, { users ->
-            firebaseEmailAuthService.getUserUid()?.let { it ->
-                lifecycleScope.launchWhenResumed {
-                        model.getUserSuspend(it)?.let {
-                            it.url_avatar?.let { it1 -> loadImage(it1, viewBinding.ivProfile) }
-                            self = it
-                            testData = users
-                            mAdapter.updateList(
-                                model.sortUsers(
-                                    users, self.lat!!, self.lon!!,
-                                    userFilter.sex, userFilter.ageStart, userFilter.ageEnd, self.black_list)
-                            )
-                        }
-                }
-            }
-        })
+        updateData()
+
         
         with(viewBinding) {
             rvVideosUsers.adapter = mAdapter
@@ -132,19 +121,95 @@ class MainVideosFragment :
                 }
 
                 override fun sendMessage(user: User) {
-                    // check VIP
+                    //check likes?
+                    if (self.premium == true){
+
                     firebaseEmailAuthService.getUserUid()?.let { selfId ->
                         self.chats[user.uid] = self.uid
                         PlayerViewAdapter.pauseCurrentPlayingVideo()
                         openChatActivity(user.uid)
                     }
+                    } else {
+                        showCustomAlertOnlyPremium()
+                    }
 
+                }
+
+                override fun complain(user: User) {
+                    showCustomAlertToComplain()
                 }
             })
         }
         setOnClickListener()
     }
 
+    private fun showCustomAlertToComplain() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_custom_layout, null)
+        val customDialog =
+            context?.let {
+                MaterialAlertDialogBuilder(it, R.style.MaterialAlertDialog_rounded)
+                    .setView(dialogView)
+                    .show()
+            }
+        val btDismiss = dialogView.findViewById<TextView>(R.id.btDismissCustomDialog)
+        btDismiss.text = getString(R.string.no)
+        btDismiss.setOnClickListener {
+            customDialog?.dismiss()
+        }
+        dialogView.findViewById<TextView>(R.id.header).text =
+            getString(R.string.this_video_contains_inappropriate_content)
+        dialogView.findViewById<TextView>(R.id.description).visibility = View.INVISIBLE
+        val btSendPass = dialogView.findViewById<Button>(R.id.btnSendPasswordCustomDialog)
+        btSendPass.text = getString(R.string.yes)
+        btSendPass.setOnClickListener {
+            Toast.makeText(context, "Жалуемся", Toast.LENGTH_SHORT).show()
+            customDialog?.dismiss()
+        }
+    }
+
+    private fun showCustomAlertOnlyPremium() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_custom_layout, null)
+        val customDialog = context?.let {
+            MaterialAlertDialogBuilder(it, R.style.MaterialAlertDialog_rounded)
+                .setView(dialogView)
+                .show()
+        }
+        dialogView.findViewById<TextView>(R.id.description).text =
+            getString(R.string.go_to_the_store_to_buy_premium)
+
+        dialogView.findViewById<TextView>(R.id.header).text =
+            getString(R.string.only_available_to_premium_accounts)
+
+        val btSendPass = dialogView.findViewById<Button>(R.id.btnSendPasswordCustomDialog)
+        btSendPass.text = getString(R.string.go_to_shop)
+        btSendPass.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.container, ShopFragment())
+                .addToBackStack(null)
+                .commit()
+            customDialog?.dismiss()
+
+        }
+    }
+
+    private fun updateData(){
+        model.getUsers()?.observe(this, { users ->
+            firebaseEmailAuthService.getUserUid()?.let { it ->
+                lifecycleScope.launchWhenResumed {
+                    model.getUserSuspend(it)?.let {
+                        it.url_avatar?.let { it1 -> loadImage(it1, viewBinding.ivProfile) }
+                        self = it
+                        testData = users
+                        mAdapter.updateList(
+                            model.sortUsers(
+                                users, self.lat!!, self.lon!!,
+                                userFilter.sex, userFilter.ageStart, userFilter.ageEnd, self.black_list)
+                        )
+                    }
+                }
+            }
+        })
+    }
     private val chatsFragment by lazy {
         ChatsFragment()
     }
@@ -181,6 +246,7 @@ class MainVideosFragment :
                 PlayerViewAdapter.pauseCurrentPlayingVideo()
             }
             refreshDataLayout.setOnRefreshListener {
+                updateData()
                 //здесь нужно обновить плеер еще
                 refreshDataLayout.isRefreshing = false
             }

@@ -51,6 +51,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:text="@string/recommend"
+        android:gravity="center"
         android:textColor="@color/Primary_text"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="@+id/tv_about_myself"

@@ -25,6 +25,7 @@ class ProfileRecyclerAdapter(
         fun sendGift(user: User)
         fun sendHeart(user: User)
         fun sendMessage(user: User)
+        fun complain(user: User)
     }
 
     fun updateList(modelList: List<User>) {
@@ -128,6 +129,9 @@ class ProfileRecyclerAdapter(
             }
             binding.ivMessageTo.setOnClickListener {
                 actionListener?.sendMessage(model)
+            }
+            binding.ivComplain.setOnClickListener {
+                actionListener?.complain(model)
             }
 
             binding.apply {

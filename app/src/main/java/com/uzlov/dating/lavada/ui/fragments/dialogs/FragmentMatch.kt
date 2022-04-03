@@ -10,6 +10,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.databinding.FragmentMatchBottomLayoutBinding
 import com.uzlov.dating.lavada.domain.models.User
+import kotlin.math.roundToInt
 
 
 class FragmentMatch : BottomSheetDialogFragment() {
@@ -52,9 +53,9 @@ class FragmentMatch : BottomSheetDialogFragment() {
             dismiss()
         }
         viewBinding?.let {
-
-            it.tvNameProfile.text = "${user?.name} ${user?.age}"
-            it.tvLocationProfile.text = user?.location
+            it.tvNameProfile.text = String.format(resources.getString(R.string.name_and_age), user?.name, user?.age.toString())
+            it.tvLocationProfile.text =
+                String.format(resources.getString(R.string.location_and_dist), user?.location, user?.dist?.roundToInt().toString())
             Glide.with(requireContext())
                 .load(user?.url_avatar ?: "")
                 .into(it.ivRandomProfile)

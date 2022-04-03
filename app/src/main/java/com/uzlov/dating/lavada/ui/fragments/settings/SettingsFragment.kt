@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -17,6 +16,7 @@ import com.uzlov.dating.lavada.databinding.FragmentSettingsBinding
 import com.uzlov.dating.lavada.ui.activities.HostActivity
 import com.uzlov.dating.lavada.ui.activities.LoginActivity
 import com.uzlov.dating.lavada.ui.fragments.BaseFragment
+import com.uzlov.dating.lavada.ui.fragments.ShopFragment
 import javax.inject.Inject
 
 class SettingsFragment : BaseFragment<FragmentSettingsBinding>(FragmentSettingsBinding::inflate) {
@@ -48,6 +48,7 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(FragmentSettingsB
             }
             btnLogOut.setOnClickListener {
                 firebaseEmailAuthService.logout()
+                preferenceRepository.clearUser()
                 startLogin()
             }
             btnDel.setOnClickListener {
@@ -79,6 +80,9 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(FragmentSettingsB
             btnNotifications.setOnClickListener {
                 updateUI(NotificationsFragment.newInstance())
             }
+            btnHelp.setOnClickListener {
+                updateUI(HelpFragment.newInstance())
+            }
         }
     }
 
@@ -102,6 +106,8 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(FragmentSettingsB
         btSendPass.setOnClickListener {
             if (firebaseEmailAuthService.auth.currentUser != null) {
                 firebaseEmailAuthService.delUser()
+                preferenceRepository.clearUser()
+                //вероятно тут еще и из базы удалять все нужно будет
                 startLogin()
             }
             customDialog?.dismiss()
@@ -115,16 +121,19 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(FragmentSettingsB
                 .setView(dialogView)
                 .show()
         }
-        dialogView.findViewById<TextView>(R.id.btDismissCustomDialog).visibility = View.GONE
-        dialogView.findViewById<TextView>(R.id.description).visibility = View.GONE
+        dialogView.findViewById<TextView>(R.id.description).text =
+            getString(R.string.go_to_the_store_to_buy_premium)
 
         dialogView.findViewById<TextView>(R.id.header).text =
-            getString(R.string.only_for_premium_header)
+            getString(R.string.only_available_to_premium_accounts)
 
         val btSendPass = dialogView.findViewById<Button>(R.id.btnSendPasswordCustomDialog)
-        btSendPass.text = getString(R.string.buy_premium)
+        btSendPass.text = getString(R.string.go_to_shop)
         btSendPass.setOnClickListener {
-            Toast.makeText(context, "Покупаем премиум", Toast.LENGTH_SHORT).show()
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.container, ShopFragment())
+                .addToBackStack(null)
+                .commit()
             customDialog?.dismiss()
 
         }

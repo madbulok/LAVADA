@@ -9,8 +9,11 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.databinding.FragmentBuyCoinsBinding
 
-class FragmentBuyCoins (private var listener: OnSelectListener? = null) : BottomSheetDialogFragment() {
-    private var viewBinding: FragmentBuyCoinsBinding?= null
+class FragmentBuyCoins(private var listener: OnSelectListener? = null) :
+    BottomSheetDialogFragment() {
+    private var viewBinding: FragmentBuyCoinsBinding? = null
+
+
 
     companion object {
         fun newInstance(): FragmentSelectSourceVideo {
@@ -18,7 +21,7 @@ class FragmentBuyCoins (private var listener: OnSelectListener? = null) : Bottom
         }
     }
 
-    interface OnSelectListener{
+    interface OnSelectListener {
         fun coins300()
         fun coins500()
         fun coins1500()
@@ -48,22 +51,18 @@ class FragmentBuyCoins (private var listener: OnSelectListener? = null) : Bottom
         }
         viewBinding?.buy300CoinsPrice?.setOnClickListener {
             listener?.coins300()
-            Toast.makeText(context, "Покупаем 300 монет", Toast.LENGTH_SHORT).show()
             dismiss()
         }
         viewBinding?.buy500CoinsPrice?.setOnClickListener {
             listener?.coins500()
-            Toast.makeText(context, "Покупаем 500 монет", Toast.LENGTH_SHORT).show()
             dismiss()
         }
         viewBinding?.buy1500CoinsPrice?.setOnClickListener {
             listener?.coins1500()
-            Toast.makeText(context, "Покупаем 1500 монет", Toast.LENGTH_SHORT).show()
             dismiss()
         }
         viewBinding?.buy3500CoinsPrice?.setOnClickListener {
             listener?.coins3500()
-            Toast.makeText(context, "Покупаем 3500 монет", Toast.LENGTH_SHORT).show()
             dismiss()
         }
     }

@@ -85,7 +85,7 @@
     <string name="chats_label">Chats</string>
     <string name="cancel_label">Cancel</string>
     <string name="welcome">Welcome</string>
-    <string name="log_in_to_your_account">Log in to your account</string>
+    <string name="log_in_to_your_account">Sing in</string>
     <string name="log_in_btn_label">Log in</string>
     <string name="forgot_password">Forgot password?</string>
     <string name="hint_password">password</string>
@@ -142,5 +142,13 @@
     <string name="next">Next</string>
     <string name="recommend">We will recommend diets and exercises that suit you</string>
     <string name="your_block_people_will_be_here">Your block people \nwill be here</string>
+    <string name="this_video_contains_inappropriate_content">This video contains inappropriate content?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="only_available_to_premium_accounts">Only available to premium accounts</string>
+    <string name="go_to_the_store_to_buy_premium">Go to the store to buy premium</string>
+    <string name="go_to_shop">Go to shop</string>
+    <string name="location_and_dist">%1$s, %2$s км от вас"</string>
+    <string name="name_and_age">%1$s, %2$s"</string>
 
 </resources>

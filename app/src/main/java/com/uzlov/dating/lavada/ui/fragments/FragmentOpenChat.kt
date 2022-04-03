@@ -20,8 +20,8 @@ import com.uzlov.dating.lavada.domain.models.User
 import com.uzlov.dating.lavada.ui.adapters.ChatMessageAdapter
 import com.uzlov.dating.lavada.viemodels.MessageChatViewModel
 import com.uzlov.dating.lavada.viemodels.UsersViewModel
-import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
 class FragmentOpenChat :
     BaseFragment<FragmentSingleChatBinding>(FragmentSingleChatBinding::inflate) {
@@ -70,10 +70,11 @@ class FragmentOpenChat :
                 chatOpen = it.copy()
                 messagesAdapter.setMessages(it.messages)
                 val companionUid = it.getCompanionUid(selfUid)
-
-                userViewModel.getUser(companionUid).observe(viewLifecycleOwner, { user->
-                    user?.let { it -> updateUiCompanion(it) }
-                })
+                lifecycleScope.launchWhenResumed {
+                    userViewModel.getUserSuspend(companionUid)?.let { user ->
+                       updateUiCompanion(user)
+                    }
+                }
 
             } else {
                 Toast.makeText(requireContext(), "response is null", Toast.LENGTH_SHORT).show()
@@ -84,7 +85,7 @@ class FragmentOpenChat :
     private fun updateUiCompanion(user: User){
         with(viewBinding){
             tvProfileName.text = user.name
-            tvSubMessageName.text = user.location
+            tvSubMessageName.text = String.format(resources.getString(R.string.location_and_dist), user.location, user.dist?.roundToInt().toString())
             Glide.with(requireContext())
                 .load(user.url_avatar)
                 .error(resources.getDrawable(R.drawable.test_avatar))
@@ -155,7 +156,7 @@ class FragmentOpenChat :
         const val CHAT_ID: String = "chat_id"
         fun newInstance(chatId: String): FragmentOpenChat {
             val fragment = FragmentOpenChat()
-            fragment.arguments = bundleOf(FragmentOpenChat.CHAT_ID to chatId)
+            fragment.arguments = bundleOf(CHAT_ID to chatId)
             return fragment
         }
     }

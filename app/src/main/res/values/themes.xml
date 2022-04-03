@@ -11,11 +11,13 @@
         <item name="colorSecondaryVariant">@color/Brand_hover</item>
         <item name="colorOnSecondary">@color/Brand_hover</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <item name="android:statusBarColor" tools:targetApi="l">@color/transparent</item>
         <!-- Customize your theme here. -->
         <item name="android:buttonStyle">@style/DefaultButtons</item>
         <item name="font">@font/inter</item>
+
     </style>
+
 
     <style name="ShapeAppearanceOverlay.App.CornerSize50Percent" parent="">
         <item name="cornerSize">50%</item>
