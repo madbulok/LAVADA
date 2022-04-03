@@ -52,7 +52,7 @@ jobs:
         with: {java-version: 1.8}
       - name: Building APK file after test
         run: 
-          ./gradkew test
+          ./gradlew test
           ./gradlew assembleRelease
           ./gradlew bundleRelease
       - name: Upload APK
