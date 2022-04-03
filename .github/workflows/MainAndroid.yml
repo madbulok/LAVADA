@@ -37,4 +37,23 @@ jobs:
         with: {java-version: 1.8}
       - name: Init tests
         run: ./gradlew test
+  
+  Build_Apk:
+    if: startWith(github.head_ref. 'uzlov/') == true
+    name: Build release artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: action/checckout@v2
+      - uses: action/setup-java@v1
+        with: {java-version: 1.8}
+      - name: Building APK file after test
+        run: 
+          ./gradkew test
+          ./gradlew assembleRelease
+          ./gradlew bundleRelease
+      - name: Upload APK
+        uses: action/upload-artifact@v2
+        with:
+          name: app-release.apk
+          path: app/build/outputs/apk/release/app-release-unsigned.apk
     
