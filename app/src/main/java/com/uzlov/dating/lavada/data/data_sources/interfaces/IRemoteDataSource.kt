@@ -2,6 +2,7 @@ package com.uzlov.dating.lavada.data.data_sources.interfaces
 
 import androidx.lifecycle.LiveData
 import com.uzlov.dating.lavada.domain.models.User
+import com.uzlov.dating.lavada.service.MatchesService
 
 interface  IRemoteDataSource {
 
@@ -11,4 +12,8 @@ interface  IRemoteDataSource {
     fun putUser(user: User)
     fun getUsersWithUserID(id: String): LiveData<List<User>>
     fun updateUser(id: String, field: String, value: Any)
+    fun observeMatches(
+        uid: String,
+        matchesCallback: MatchesService.MatchesStateListener
+    )
 }

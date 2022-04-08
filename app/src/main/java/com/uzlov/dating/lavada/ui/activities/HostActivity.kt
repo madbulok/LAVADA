@@ -1,7 +1,7 @@
 package com.uzlov.dating.lavada.ui.activities
 
-import android.app.Activity
-import android.graphics.Color
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -9,16 +9,19 @@ import android.view.View
 import android.view.WindowInsets
 import android.view.WindowInsetsController
 import android.view.WindowManager
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.data.repository.PreferenceRepository
 import com.uzlov.dating.lavada.databinding.HostActivityBinding
+import com.uzlov.dating.lavada.service.BootLoaderService
+import com.uzlov.dating.lavada.service.MatchesService
+import com.uzlov.dating.lavada.service.NewMessageService
 import com.uzlov.dating.lavada.ui.adapters.PlayerViewAdapter
 import com.uzlov.dating.lavada.ui.fragments.MainVideosFragment
 import com.uzlov.dating.lavada.ui.fragments.ShopFragment
 import com.uzlov.dating.lavada.ui.fragments.profile.PreviewVideoFragment
 import javax.inject.Inject
+
 
 class HostActivity : AppCompatActivity() {
 
@@ -27,6 +30,8 @@ class HostActivity : AppCompatActivity() {
 
     private var _viewBinding: HostActivityBinding? = null
     private val viewBinding get() = _viewBinding!!
+
+    private val br = BootLoaderService()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +44,13 @@ class HostActivity : AppCompatActivity() {
         пока поставила фулскрин
         setWindowFlag(this, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, false) */
         setFullscreen()
+        startService(Intent(baseContext, MatchesService::class.java))
+        startService(Intent(baseContext, NewMessageService::class.java))
+        val filter = IntentFilter()
+        filter.addAction(Intent.ACTION_BOOT_COMPLETED)
+        this.registerReceiver(br, filter)
     }
+
     /*
     private fun setWindowFlag(activity: Activity, bits: Int, on: Boolean) {
         val win = activity.window
@@ -51,6 +62,7 @@ class HostActivity : AppCompatActivity() {
         }
         win.attributes = winParams
     }*/
+
 
     private fun setFullscreen() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -64,7 +76,7 @@ class HostActivity : AppCompatActivity() {
                 hide(WindowInsets.Type.statusBars() or WindowInsets.Type.navigationBars())
                 systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             }
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        } else
             @Suppress("DEPRECATION")
             window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_FULLSCREEN
                     or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
@@ -72,7 +84,6 @@ class HostActivity : AppCompatActivity() {
                     or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                     or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                     or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION)
-        }
     }
 
     fun openFragment() {

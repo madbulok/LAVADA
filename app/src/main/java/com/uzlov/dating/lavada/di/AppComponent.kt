@@ -1,11 +1,11 @@
 package com.uzlov.dating.lavada.di
 
-import com.uzlov.dating.lavada.ui.fragments.profile.ProfileFragment
 import com.uzlov.dating.lavada.di.modules.*
+import com.uzlov.dating.lavada.service.MatchesService
+import com.uzlov.dating.lavada.service.NewMessageService
 import com.uzlov.dating.lavada.ui.activities.SingleChatActivity
 import com.uzlov.dating.lavada.ui.activities.SplashActivity
 import com.uzlov.dating.lavada.ui.fragments.*
-import com.uzlov.dating.lavada.ui.fragments.dialogs.FragmentBuyCoins
 import com.uzlov.dating.lavada.ui.fragments.dialogs.GiftsBottomSheetDialogFragment
 import com.uzlov.dating.lavada.ui.fragments.profile.*
 import com.uzlov.dating.lavada.ui.fragments.registration.LogInFragment
@@ -51,4 +51,6 @@ interface AppComponent {
     fun inject(blackListFragment: BlackListFragment)
     fun inject(giftsBottomSheetDialogFragment: GiftsBottomSheetDialogFragment)
     fun inject(shopFragment: ShopFragment)
+    fun inject(matchesService: MatchesService)
+    fun inject(messageService: NewMessageService)
 }
