@@ -1,28 +1,35 @@
 package com.uzlov.dating.lavada.viemodels
 
 import android.util.Log
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.uzlov.dating.lavada.app.getCompanionUid
 import com.uzlov.dating.lavada.data.data_sources.IUsersRepository
 import com.uzlov.dating.lavada.data.data_sources.interfaces.IMessageDataSource
-import com.uzlov.dating.lavada.data.repository.UserRemoteRepositoryImpl
 import com.uzlov.dating.lavada.data.use_cases.ChatUseCase
 import com.uzlov.dating.lavada.domain.models.Chat
 import com.uzlov.dating.lavada.domain.models.MappedChat
+import com.uzlov.dating.lavada.service.NewMessageService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class MessageChatViewModel @Inject constructor(var messagesRepository: IMessageDataSource, var useCase: ChatUseCase, var userRemoteRepositoryImpl: IUsersRepository) : ViewModel() {
+class MessageChatViewModel @Inject constructor(
+    var messagesRepository: IMessageDataSource,
+    var useCase: ChatUseCase,
+    var userRemoteRepositoryImpl: IUsersRepository
+) : ViewModel() {
 
     private val chats = MutableLiveData<List<Chat>>()
     private val chatMessages = MutableLiveData<Chat>()
     private val createdChat = MutableLiveData<String>() // store uid created chat
 
     // получить все чаты пользователя
-    fun getChats(userId: String) : LiveData<List<Chat>> {
+    fun getChats(userId: String): LiveData<List<Chat>> {
         viewModelScope.launch(Dispatchers.IO) {
             val result = messagesRepository.getChats(userId)
             chats.postValue(result)
@@ -31,7 +38,8 @@ class MessageChatViewModel @Inject constructor(var messagesRepository: IMessageD
     }
 
     private val mappedResult = MutableLiveData<List<MappedChat>>()
-    fun getChats(userId: String, selfId: String) : LiveData<List<MappedChat>> {
+
+    fun getChats(userId: String, selfId: String): LiveData<List<MappedChat>> {
         viewModelScope.launch(Dispatchers.IO) {
             val result = messagesRepository.getChats(userId)
             val mapped = result.map { chat->
@@ -70,5 +78,14 @@ class MessageChatViewModel @Inject constructor(var messagesRepository: IMessageD
                 }
         }
         return chatMessages
+    }
+
+    fun observeMessage(
+        uid: String,
+        messageCallback: NewMessageService.NewMessageStateListener
+    ) {
+        useCase.observeNewMessage(
+            uid, messageCallback
+        )
     }
 }

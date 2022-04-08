@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.uzlov.dating.lavada.data.use_cases.UserUseCases
 import com.uzlov.dating.lavada.domain.logic.distance
 import com.uzlov.dating.lavada.domain.models.User
+import com.uzlov.dating.lavada.service.MatchesService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -75,4 +76,9 @@ class UsersViewModel @Inject constructor(private var usersUseCases: UserUseCases
         }
         return myBlackList
     }
+
+    fun observeMatches(
+        phone: String,
+        matchesCallback: MatchesService.MatchesStateListener,
+    ) = usersUseCases?.observeMatches(phone, matchesCallback)
 }
