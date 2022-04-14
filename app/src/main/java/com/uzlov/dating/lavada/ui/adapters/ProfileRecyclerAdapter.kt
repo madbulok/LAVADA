@@ -109,13 +109,11 @@ class ProfileRecyclerAdapter(
                     )
                 }
             })
-                .let {
-                    Glide
-                        .with(binding.root)
-                        .load(model.url_avatar)
-                        .error(R.drawable.ic_default_user)
-                        .into(binding.ivRandomProfile)
-                }
+           Glide.with(binding.root)
+                .load(model.url_avatar)
+                .error(R.drawable.ic_default_user)
+                .into(binding.ivRandomProfile)
+
             //было бы неплохо уточнить, какие именно цифры показываем
             binding.tvNameProfile. text = model.name + ", " + model.age
             binding.tvLocationProfile.text = "В " + model.dist?.roundToInt().toString() + " км от вас"
@@ -140,7 +138,6 @@ class ProfileRecyclerAdapter(
                 index = adapterPosition
                 executePendingBindings()
             }
-            Log.e("TAG", "onBind: ${model.url_video}")
         }
     }
 
