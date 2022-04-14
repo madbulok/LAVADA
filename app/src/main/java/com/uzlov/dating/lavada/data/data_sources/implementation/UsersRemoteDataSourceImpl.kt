@@ -1,14 +1,25 @@
 package com.uzlov.dating.lavada.data.data_sources.implementation
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.google.firebase.database.*
+import com.google.android.gms.common.api.Api
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.getValue
 import com.uzlov.dating.lavada.data.data_sources.interfaces.IRemoteDataSource
+import com.uzlov.dating.lavada.domain.models.RemoteUser
 import com.uzlov.dating.lavada.domain.models.User
-import java.lang.RuntimeException
+import com.uzlov.dating.lavada.retrofit.RemoteDataSource
+import com.uzlov.dating.lavada.service.MatchesService
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
+
 
 class UsersRemoteDataSourceImpl : IRemoteDataSource {
 
@@ -42,9 +53,9 @@ class UsersRemoteDataSourceImpl : IRemoteDataSource {
             userReference.child(id)
                 .get()
                 .addOnSuccessListener {
-                    try{
+                    try {
                         continuation.resumeWith(Result.success(it.getValue<User>()))
-                    } catch (e: Exception){
+                    } catch (e: Exception) {
                         continuation.resumeWithException(e)
                     }
                 }
@@ -82,9 +93,50 @@ class UsersRemoteDataSourceImpl : IRemoteDataSource {
         userReference.child(id).child(field).setValue(value)
     }
 
+    override fun observeMatches(uid: String, matchesCallback: MatchesService.MatchesStateListener) {
+
+        /* тестовое что-то чтобы проверить работоспособность */
+        userReference.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val lis = snapshot.children.map {
+                    it.getValue<User>()!!
+                }
+                for (list in lis) {
+                    if (list.matches[uid] == true) {
+                        matchesCallback.mutualMatch(list)
+                    }
+                    if (list.matches[uid] == false ){
+                        matchesCallback.match(list)
+                    }
+                }
+
+                allUsers.value = lis
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                error.toException().printStackTrace()
+            }
+        })
+    }
+
+    override suspend fun getRemoteUsers() {
+        RemoteDataSource().getData()
+//        getData().enqueue(object : Callback<List<RemoteUser>?> {
+//            override fun onResponse(
+//                call: Call<List<RemoteUser>?>,
+//                response: Response<List<RemoteUser>?>
+//
+//            ) {
+//                Log.d("CORRECT", response.body().toString())
+//            }
+//
+//            override fun onFailure(call: Call<List<RemoteUser>?>, t: Throwable) {
+//                Log.d("NO_CORRECT", "fail((((((((((")
+//            }
+//        })
+    }
+
     override fun removeUser(id: String) {
         userReference.child(id).removeValue()
     }
-
-
 }

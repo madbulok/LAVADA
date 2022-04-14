@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import com.uzlov.dating.lavada.data.data_sources.interfaces.IRemoteDataSource
 import com.uzlov.dating.lavada.domain.models.User
 import com.uzlov.dating.lavada.data.data_sources.IUsersRepository
+import com.uzlov.dating.lavada.service.MatchesService
 import javax.inject.Inject
 
 class UserRemoteRepositoryImpl @Inject constructor(
@@ -20,5 +21,9 @@ class UserRemoteRepositoryImpl @Inject constructor(
     override fun updateUser(id: String, field: String, value: Any) =
         remoteDataSource.updateUser(id, field, value)
 
+    override fun observeMatches(uid: String, matchesCallback: MatchesService.MatchesStateListener)
+    = remoteDataSource.observeMatches(uid, matchesCallback)
+
+    override suspend fun getRemoteUsers() = remoteDataSource.getRemoteUsers()
 
 }

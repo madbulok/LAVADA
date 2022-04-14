@@ -4,7 +4,7 @@ import android.util.Log
 import com.uzlov.dating.lavada.data.data_sources.IUsersRepository
 import com.uzlov.dating.lavada.data.data_sources.interfaces.IMessageDataSource
 import com.uzlov.dating.lavada.domain.models.Chat
-import java.lang.RuntimeException
+import com.uzlov.dating.lavada.service.NewMessageService
 import javax.inject.Inject
 
 class ChatUseCase @Inject constructor(private val chatRepository: IMessageDataSource, private val userRepository: IUsersRepository) {
@@ -64,4 +64,9 @@ class ChatUseCase @Inject constructor(private val chatRepository: IMessageDataSo
     suspend fun getChat(selfId: String, companionId: String) : Chat {
         return chatRepository.getChat(companionId, selfId)
     }
+
+    fun observeNewMessage(
+        uid: String,
+        messageCallback: NewMessageService.NewMessageStateListener,
+    ) = chatRepository.observeNewMessages(uid, messageCallback)
 }

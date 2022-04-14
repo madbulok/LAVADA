@@ -88,8 +88,11 @@ class MainVideosFragment :
         super.onViewCreated(view, savedInstanceState)
         model = factoryViewModel.create(UsersViewModel::class.java)
         updateData()
-
-        
+        lifecycleScope.launchWhenResumed {
+      //      получаем список тут
+            Log.d("HDSGAFS", model.getRemoteUsers().toString())
+        }
+        model.getData()
         with(viewBinding) {
             rvVideosUsers.adapter = mAdapter
             rvVideosUsers.setHasFixedSize(true)
@@ -122,13 +125,13 @@ class MainVideosFragment :
 
                 override fun sendMessage(user: User) {
                     //check likes?
-                    if (self.premium == true){
+                    if (self.premium == true) {
 
-                    firebaseEmailAuthService.getUserUid()?.let { selfId ->
-                        self.chats[user.uid] = self.uid
-                        PlayerViewAdapter.pauseCurrentPlayingVideo()
-                        openChatActivity(user.uid)
-                    }
+                        firebaseEmailAuthService.getUserUid()?.let { selfId ->
+                            self.chats[user.uid] = self.uid
+                            PlayerViewAdapter.pauseCurrentPlayingVideo()
+                            openChatActivity(user.uid)
+                        }
                     } else {
                         showCustomAlertOnlyPremium()
                     }
@@ -192,7 +195,7 @@ class MainVideosFragment :
         }
     }
 
-    private fun updateData(){
+    private fun updateData() {
         model.getUsers()?.observe(this, { users ->
             firebaseEmailAuthService.getUserUid()?.let { it ->
                 lifecycleScope.launchWhenResumed {
@@ -202,14 +205,21 @@ class MainVideosFragment :
                         testData = users
                         mAdapter.updateList(
                             model.sortUsers(
-                                users, self.lat!!, self.lon!!,
-                                userFilter.sex, userFilter.ageStart, userFilter.ageEnd, self.black_list)
+                                users,
+                                self.lat!!,
+                                self.lon!!,
+                                userFilter.sex,
+                                userFilter.ageStart,
+                                userFilter.ageEnd,
+                                self.black_list
+                            )
                         )
                     }
                 }
             }
         })
     }
+
     private val chatsFragment by lazy {
         ChatsFragment()
     }

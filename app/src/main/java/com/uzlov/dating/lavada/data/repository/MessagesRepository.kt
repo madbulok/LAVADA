@@ -1,5 +1,6 @@
 package com.uzlov.dating.lavada.data.repository
 
+import android.util.Log
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -9,12 +10,11 @@ import com.uzlov.dating.lavada.app.Constants
 import com.uzlov.dating.lavada.data.data_sources.interfaces.IMessageDataSource
 import com.uzlov.dating.lavada.domain.models.Chat
 import com.uzlov.dating.lavada.domain.models.ChatMessage
+import com.uzlov.dating.lavada.service.NewMessageService
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.callbackFlow
-import java.lang.Exception
-import java.lang.RuntimeException
 import java.util.*
 import javax.inject.Inject
 import kotlin.coroutines.resumeWithException
@@ -88,19 +88,19 @@ class MessagesRepository @Inject constructor(mDatabase: FirebaseDatabase) : IMes
     override suspend fun getChat(companionId: String, selfId: String): Chat {
         return suspendCoroutine { continuation ->
             ref.get()
-                .addOnCompleteListener { task->
+                .addOnCompleteListener { task ->
                     try {
                         val chat = task.result.children.map { value ->
                             value.getValue(Chat::class.java)!!
                         }.firstOrNull {
                             it.members?.containsAll(listOf(companionId, selfId)) == true // because null safety =)
                         }
-                        if (chat != null){
+                        if (chat != null) {
                             continuation.resumeWith(Result.success(chat))
                         } else {
                             throw RuntimeException("Chat not found!")
                         }
-                    } catch (e: RuntimeException){
+                    } catch (e: RuntimeException) {
                         continuation.resumeWithException(e)
                     }
                 }.addOnFailureListener { exception ->
@@ -161,5 +161,29 @@ class MessagesRepository @Inject constructor(mDatabase: FirebaseDatabase) : IMes
                 }
             }
         }
+    }
+
+    override fun observeNewMessages(
+        uidChat: String,
+        messageCallback: NewMessageService.NewMessageStateListener
+    ) {
+        ref.child(uidChat).addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                try {
+                    val result = snapshot.getValue<Chat>()
+                    if (result != null) {
+                        messageCallback.newMessage(result.messages.last().sender, result.messages.last())
+                    } else {
+                        throw RuntimeException()
+                    }
+                } catch (e: Throwable) {
+                    Log.d("FAIL", "something wrong")
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                error.toException().printStackTrace()
+            }
+        })
     }
 }
