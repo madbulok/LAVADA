@@ -24,5 +24,6 @@ class UserRemoteRepositoryImpl @Inject constructor(
     override fun observeMatches(uid: String, matchesCallback: MatchesService.MatchesStateListener)
     = remoteDataSource.observeMatches(uid, matchesCallback)
 
+    override suspend fun getRemoteUsers() = remoteDataSource.getRemoteUsers()
 
 }

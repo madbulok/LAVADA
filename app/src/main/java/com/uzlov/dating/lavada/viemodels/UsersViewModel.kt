@@ -1,5 +1,6 @@
 package com.uzlov.dating.lavada.viemodels
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
@@ -8,23 +9,22 @@ import com.uzlov.dating.lavada.data.use_cases.UserUseCases
 import com.uzlov.dating.lavada.domain.logic.distance
 import com.uzlov.dating.lavada.domain.models.User
 import com.uzlov.dating.lavada.service.MatchesService
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import javax.inject.Inject
 
 class UsersViewModel @Inject constructor(private var usersUseCases: UserUseCases?) : ViewModel() {
 
     fun getUsers() = usersUseCases?.getUsers()
 
-    fun getUser(uid: String): LiveData<User?>{
-       return liveData {
-           viewModelScope.launch(Dispatchers.IO) {
-               emit(usersUseCases?.getUser(uid))
-           }
-       }
+    fun getUser(uid: String): LiveData<User?> {
+        return liveData {
+            viewModelScope.launch(Dispatchers.IO) {
+                emit(usersUseCases?.getUser(uid))
+            }
+        }
     }
 
-    suspend fun getUserSuspend(uid: String) : User? {
+    suspend fun getUserSuspend(uid: String): User? {
         return usersUseCases?.getUser(uid)
     }
 
@@ -32,7 +32,8 @@ class UsersViewModel @Inject constructor(private var usersUseCases: UserUseCases
 
     fun removeUser(id: String) = usersUseCases?.removeUsers(id)
 
-    fun updateUser(id: String, field: String, value: Any) = usersUseCases?.updateUser(id, field, value)
+    fun updateUser(id: String, field: String, value: Any) =
+        usersUseCases?.updateUser(id, field, value)
 
     fun sortUsers(
         data: List<User>,
@@ -70,7 +71,7 @@ class UsersViewModel @Inject constructor(private var usersUseCases: UserUseCases
         val iterator = myData.iterator()
         while (iterator.hasNext()) {
             val item = iterator.next()
-            if (blockedUID.contains(item.uid)){
+            if (blockedUID.contains(item.uid)) {
                 myBlackList.add(item)
             }
         }
@@ -81,4 +82,17 @@ class UsersViewModel @Inject constructor(private var usersUseCases: UserUseCases
         phone: String,
         matchesCallback: MatchesService.MatchesStateListener,
     ) = usersUseCases?.observeMatches(phone, matchesCallback)
+
+    suspend fun getRemoteUsers() = usersUseCases?.getRemoteUsers()
+
+    private val viewModelCoroutineScope = CoroutineScope(
+        Dispatchers.Main
+                + SupervisorJob()
+                + CoroutineExceptionHandler { _, throwable ->
+           Log.d("SOMETHING WRONG", throwable.message.toString())
+        })
+
+    fun getData() {
+        viewModelCoroutineScope.launch { usersUseCases?.getRemoteUsers() }
+    }
 }

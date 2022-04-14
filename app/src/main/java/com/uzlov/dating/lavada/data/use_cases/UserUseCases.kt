@@ -17,6 +17,7 @@ class UserUseCases @Inject constructor(
         uid: String,
         matchesCallback: MatchesService.MatchesStateListener,
     ) = userRepository.observeMatches(uid, matchesCallback)
+    suspend fun getRemoteUsers() = userRepository.getRemoteUsers()
 
 
 //    suspend fun getUsers(): Flow<User> {
