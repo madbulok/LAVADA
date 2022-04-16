@@ -1,10 +1,12 @@
 package com.uzlov.dating.lavada.ui.fragments
 
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.RecyclerView
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
@@ -14,8 +16,10 @@ import com.uzlov.dating.lavada.domain.models.MappedChat
 import com.uzlov.dating.lavada.ui.adapters.PlayerViewAdapter
 import com.uzlov.dating.lavada.ui.adapters.UsersChatsAdapter
 import com.uzlov.dating.lavada.ui.adapters.UsersProfileStoriesAdapter
+import com.uzlov.dating.lavada.ui.swipes.SwipeHelper
 import com.uzlov.dating.lavada.viemodels.MessageChatViewModel
 import javax.inject.Inject
+
 
 class ChatsFragment :
     BaseFragment<FragmentChatsLayoutBinding>(FragmentChatsLayoutBinding::inflate) {
@@ -148,6 +152,34 @@ class ChatsFragment :
 
             cancelSearch.setOnClickListener {
                 setSearchState(View.GONE)
+            }
+
+            val swipeHelper = object : SwipeHelper(requireContext(), chatRecyclerView) {
+                override fun instantiateUnderlayButton(
+                    viewHolder: RecyclerView.ViewHolder?,
+                    underlayButtons: MutableList<UnderlayButton>,
+                ) {
+                    underlayButtons.add(UnderlayButton(
+                        "Block",
+                        0,
+                        Color.parseColor("#007AFF"),
+                        object : UnderlayButtonClickListener {
+                            override fun onClick(pos: Int) {
+                                Log.e("TAG", "onClick: ")
+                            }
+                        }
+                    ))
+                    underlayButtons.add(UnderlayButton(
+                        "Delete",
+                        0,
+                        Color.parseColor("#FF3B30"),
+                        object : UnderlayButtonClickListener {
+                            override fun onClick(pos: Int) {
+                                Log.e("TAG", "onClick: ")
+                            }
+                        }
+                    ))
+                }
             }
         }
     }
