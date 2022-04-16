@@ -21,16 +21,17 @@ class PlayerViewAdapter {
     companion object{
         // for hold all players generated
         private var playersMap: MutableMap<Int, SimpleExoPlayer>  = mutableMapOf()
+        private val progressiveMediaSource = ProgressiveMediaSource.Factory(DefaultHttpDataSourceFactory("Demo"))
         // for hold current player
         private var currentPlayingVideo: Pair<Int, SimpleExoPlayer>? = null
         fun releaseAllPlayers(){
-            playersMap.map {
+            playersMap.forEach {
                 it.value.release()
             }
         }
 
         fun pauseAllPlayers(){
-            playersMap.map {
+            playersMap.forEach {
                 it.value.stop(false)
             }
         }
@@ -59,7 +60,7 @@ class PlayerViewAdapter {
             if (playersMap[index]?.playWhenReady == false) {
                 pauseCurrentPlayingVideo()
                 playersMap[index]?.playWhenReady = true
-                currentPlayingVideo = Pair(index, playersMap.get(index)!!)
+                currentPlayingVideo = Pair(index, playersMap[index]!!)
             }
 
         }
@@ -77,7 +78,7 @@ class PlayerViewAdapter {
             // We'll show the controller, change to true if want controllers as pause and start
             this.useController = false
             // Provide url to load the video from here
-            val mediaSource = ProgressiveMediaSource.Factory(DefaultHttpDataSourceFactory("Demo")).createMediaSource(Uri.parse(url))
+            val mediaSource = progressiveMediaSource.createMediaSource(Uri.parse(url))
 
             player.prepare(mediaSource)
 
@@ -93,7 +94,7 @@ class PlayerViewAdapter {
 
                 override fun onPlayerError(error: ExoPlaybackException) {
                     super.onPlayerError(error)
-                    this@loadVideo.context.toast("Oops! Error occurred while playing media.")
+                    this@loadVideo.context.toast("Oops! Error ${error.message}")
                 }
 
                 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
