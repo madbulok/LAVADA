@@ -35,7 +35,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
         android:gravity="center"
-        android:text="@string/log_in_to_your_account"
+        android:text="@string/login_to_account"
         app:layout_constraintTop_toBottomOf="@+id/tv_label_welcome" />
 
     <com.google.android.material.textfield.TextInputLayout
@@ -54,7 +54,7 @@
             android:id="@+id/ti_et_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/hint_e_mail"
+            android:hint="@string/email_hint"
             android:inputType="textEmailAddress" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -79,7 +79,7 @@
             android:id="@+id/text_input_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/hint_password"
+            android:hint="@string/password_hint"
             android:inputType="textPassword" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -90,7 +90,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
-        android:text="@string/forgot_password"
+        android:text="@string/forgot_assword"
         android:textColor="@color/Link_text"
         app:layout_constraintTop_toBottomOf="@id/til_password" />
 
@@ -103,7 +103,7 @@
         android:layout_marginTop="30dp"
         android:layout_marginEnd="20dp"
         android:gravity="center"
-        android:text="@string/another_email"
+        android:text="@string/or_sign_with_another"
         app:layout_constraintTop_toBottomOf="@id/tv_label_forgot_pass" />
 
     <ImageButton

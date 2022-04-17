@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_marginTop="40dp">
 
     <ImageView
         android:id="@+id/tbBackAction"
@@ -13,7 +14,7 @@
         android:layout_marginTop="18dp"
         android:layout_marginStart="22dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/tbSearchAction"
@@ -49,7 +50,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="@string/chats_label"
+        android:text="@string/chats"
         android:textColor="@color/Primary_text"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="@+id/tbBackAction"
@@ -60,7 +61,7 @@
 
     <TextView
         android:id="@+id/cancelSearch"
-        android:text="@string/cancel_label"
+        android:text="@string/cancel"
         android:textColor="@color/Secondary_text"
         android:textSize="16sp"
         android:visibility="gone"
@@ -78,6 +79,8 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_marginTop="27dp"
+        android:layout_marginStart="22dp"
+        android:layout_marginEnd="22dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
