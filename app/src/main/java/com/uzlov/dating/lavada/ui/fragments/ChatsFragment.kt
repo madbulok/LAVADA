@@ -121,7 +121,6 @@ class ChatsFragment :
             messageChatViewModel.getChats(it, auth.getUserUid() ?: "")
                 .observe(viewLifecycleOwner, { result ->
                     renderUi(result)
-                    Log.e("TAG", "loadAllChats: $result")
                 })
         }
     }
@@ -133,11 +132,7 @@ class ChatsFragment :
     }
 
     private fun renderUi(chats: List<MappedChat>) {
-//        if (!chats.isNullOrEmpty()) {
-            chatAdapter.setChats(chats)
-//        } else {
-//            Toast.makeText(requireContext(), "Чатов пока нет!", Toast.LENGTH_SHORT).show()
-//        }
+        chatAdapter.setChats(chats)
     }
 
     private fun initListeners() {
@@ -160,7 +155,7 @@ class ChatsFragment :
                     underlayButtons: MutableList<UnderlayButton>,
                 ) {
                     underlayButtons.add(UnderlayButton(
-                        "Block",
+                        getString(R.string.block),
                         0,
                         Color.parseColor("#007AFF"),
                         object : UnderlayButtonClickListener {
@@ -170,12 +165,12 @@ class ChatsFragment :
                         }
                     ))
                     underlayButtons.add(UnderlayButton(
-                        "Delete",
+                        getString(R.string.delete),
                         0,
                         Color.parseColor("#FF3B30"),
                         object : UnderlayButtonClickListener {
                             override fun onClick(pos: Int) {
-                                Log.e("TAG", "onClick: ")
+
                             }
                         }
                     ))
