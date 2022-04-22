@@ -34,4 +34,11 @@ class GiftsViewModels @Inject constructor(var giftsRepository: IGiftsDataSource)
         }
         return resultById
     }
+
+    suspend fun sendGift(token: String, map: Map<String, String>) = giftsRepository.sendGift(token, map)
+    suspend fun getALlGifts(token: String) = giftsRepository.getALlGifts(token)
+    suspend fun postPurchase(token: String, map: Map<String, String>) = giftsRepository.postPurchase(token, map)
+    suspend fun getListGifts(token: String, limit: String, offset: String, status: String) = giftsRepository.getListGifts(token, limit, offset, status)
+    suspend fun getListReceivedGifts(token: String, limit: String, offset: String) = giftsRepository.getListReceivedGifts(token, limit, offset)
+
 }

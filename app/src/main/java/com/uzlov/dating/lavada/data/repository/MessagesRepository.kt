@@ -10,6 +10,7 @@ import com.uzlov.dating.lavada.app.Constants
 import com.uzlov.dating.lavada.data.data_sources.interfaces.IMessageDataSource
 import com.uzlov.dating.lavada.domain.models.Chat
 import com.uzlov.dating.lavada.domain.models.ChatMessage
+import com.uzlov.dating.lavada.retrofit.RemoteDataSource
 import com.uzlov.dating.lavada.service.NewMessageService
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
@@ -185,5 +186,33 @@ class MessagesRepository @Inject constructor(mDatabase: FirebaseDatabase) : IMes
                 error.toException().printStackTrace()
             }
         })
+    }
+
+    override suspend fun createMessage(token: String, map: Map<String, String>) {
+        RemoteDataSource().createMessage(token, map)
+    }
+
+    override suspend fun getMessage(token: String, chatId: String) {
+        RemoteDataSource().getMessage(token, chatId)
+    }
+
+    override suspend fun updateStatus(token: String, map: Map<String, String>) {
+        RemoteDataSource().updateStatus(token, map)
+    }
+
+    override suspend fun getListChats(token: String, offset: String, limit: String) {
+        RemoteDataSource().getListChats(token, offset, limit)
+    }
+
+    override suspend fun createRemoteChat(token: String, map: Map<String, String>) {
+        RemoteDataSource().createChat(token, map)
+    }
+
+    override suspend fun getChatById(token: String, chatId: String) {
+        RemoteDataSource().getChatById(token, chatId)
+    }
+
+    override suspend fun checkChat(token: String, firebaseUid: String) {
+        RemoteDataSource().checkChat(token, firebaseUid)
     }
 }

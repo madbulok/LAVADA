@@ -7,6 +7,7 @@ import com.google.firebase.database.ValueEventListener
 import com.uzlov.dating.lavada.app.Constants
 import com.uzlov.dating.lavada.data.data_sources.interfaces.IGiftsDataSource
 import com.uzlov.dating.lavada.domain.models.CategoryGifts
+import com.uzlov.dating.lavada.retrofit.RemoteDataSource
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
@@ -51,5 +52,30 @@ class GiftRemoteDataSourceImpl @Inject constructor(var database: FirebaseDatabas
         }
         ref.child(id).addValueEventListener(listener)
         awaitClose { ref.removeEventListener(listener) }
+    }
+
+    override suspend fun sendGift(token: String, map: Map<String, String>) {
+        RemoteDataSource().sendGift(token, map)
+    }
+
+    override suspend fun getALlGifts(token: String) {
+        RemoteDataSource().getALlGifts(token)
+    }
+
+    override suspend fun postPurchase(token: String, map: Map<String, String>) {
+        RemoteDataSource().postPurchase(token, map)
+    }
+
+    override suspend fun getListGifts(
+        token: String,
+        limit: String,
+        offset: String,
+        status: String
+    ) {
+        RemoteDataSource().getListGifts(token, limit, offset, status)
+    }
+
+    override suspend fun getListReceivedGifts(token: String, limit: String, offset: String) {
+        RemoteDataSource().getListReceivedGifts(token, limit, offset)
     }
 }
