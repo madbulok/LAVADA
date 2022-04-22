@@ -36,10 +36,19 @@
         style="@style/Title3"
         android:textStyle="bold"
         android:textColor="@color/Placeholder_text"
-        android:layout_marginTop="148dp"
+        android:layout_marginTop="30dp"
         android:text="@string/your_block_people_will_be_here"
-        app:layout_constraintTop_toBottomOf="@+id/chatLabel"
-        android:visibility="gone"/>
+        app:layout_constraintTop_toBottomOf="@+id/chatLabel" />
+
+    <ImageView
+        android:id="@+id/iv_black_list_empty"
+        android:layout_width="335dp"
+        android:layout_height="375dp"
+        android:layout_marginTop="28dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chatLabel"/>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/blackListRecyclerView"
         android:layout_width="0dp"
@@ -47,6 +56,7 @@
         android:orientation="vertical"
         android:layout_marginTop="24dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -47,7 +47,7 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setFullscreen()
+//        setFullscreen()
         _viewBinding = LoginActivityBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
 

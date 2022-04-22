@@ -16,8 +16,8 @@ import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
 import com.uzlov.dating.lavada.data.repository.PreferenceRepository
 import com.uzlov.dating.lavada.databinding.MainVideosFragmentBinding
-import com.uzlov.dating.lavada.domain.models.User
-import com.uzlov.dating.lavada.domain.models.UserFilter
+import com.uzlov.dating.lavada.domain.models.*
+import com.uzlov.dating.lavada.retrofit.RemoteDataSource
 import com.uzlov.dating.lavada.ui.SingleSnap
 import com.uzlov.dating.lavada.ui.activities.SingleChatActivity
 import com.uzlov.dating.lavada.ui.adapters.PlayerViewAdapter
@@ -30,6 +30,9 @@ import com.uzlov.dating.lavada.viemodels.MessageChatViewModel
 import com.uzlov.dating.lavada.viemodels.UsersViewModel
 import com.uzlov.dating.lavada.viemodels.ViewModelFactory
 import kotlinx.coroutines.delay
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import javax.inject.Inject
 
 
@@ -87,11 +90,57 @@ class MainVideosFragment :
         super.onViewCreated(view, savedInstanceState)
         model = factoryViewModel.create(UsersViewModel::class.java)
         updateData()
-        lifecycleScope.launchWhenResumed {
-      //      получаем список тут
-            Log.d("HDSGAFS", model.getRemoteUsers().toString())
+
+        //получаем токен от fb
+        val userToken = firebaseEmailAuthService.auth.currentUser?.getIdToken(true)
+        userToken?.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+
+                val idToken: String? = task.result?.token
+                Log.d("TOKEN!!!!", idToken!!)
+                lifecycleScope.launchWhenResumed {
+                    //      получаем список тут
+                    try {
+                        val params = HashMap<String?, String?>()
+                        params["token"] = idToken
+                        val remote = model.authRemoteUser(params)
+                        if (remote != null) {
+//                            val map = HashMap<String, RequestBody>()
+//                            map["user_description"] = "Интересная блондинка".toRequestBody("text/plain".toMediaTypeOrNull())
+//                            map["user_email"] = "testuser1@test.com".toRequestBody()
+//                            map["user_age"] = "18".toRequestBody()
+//                            map["user_location_lng"] = "37.555555".toRequestBody()
+//                            map["user_location_lat"] = "55.555555".toRequestBody()
+//                            map["user_address"] = "Москва".toRequestBody()
+//                            //    map["user_gender"] = "FEMALE"
+//                            map["user_nickname"] = "Кристина".toRequestBody()
+                            model.getRemoteUser(remote)
+                            //              model.updateRemoteUser(remote!!, map).toString()
+
+                        }
+
+//                        val balance = HashMap<String, String>()
+//                        balance["expiration_pay"] = "2022-06-10 00:00:00"
+//                        balance["pay_system"] = "google"
+//                        balance["trx_id"] = "452fk sgio"
+//                        balance["amount"] = "300"
+//                        balance["meta[0]"] = JsonArray().toString()
+//                        balance["status"] = "succeeded"
+                        //           Log.d("GET_REMOTE_USER_BY_ID", model.getRemoteUserById(remote.data.token!!, "yX6MhMaHZzb7APFKyeQNZpAvmfk2").toString())
+                        //        Log.d("POST_BALANCE",
+                        //            model.postSubscribe(remote.data.token!!, balance).toString()
+                        //       )
+                        //      Log.d("NEW_BALANCE", model.getRemoteBalance(remote.data.token!!).toString())
+                    } catch (e: Exception) {
+                        Log.e("EXCEPTION", e.toString())
+                    }
+                }
+            } else {
+                // Handle error -> task.getException();
+            }
         }
-        model.getData()
+
+
         with(viewBinding) {
             rvVideosUsers.adapter = mAdapter
             rvVideosUsers.setHasFixedSize(true)
@@ -144,6 +193,7 @@ class MainVideosFragment :
         }
         setOnClickListener()
     }
+
 
     private fun showCustomAlertToComplain() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_custom_layout, null)
@@ -325,3 +375,4 @@ class MainVideosFragment :
             }
     }
 }
+

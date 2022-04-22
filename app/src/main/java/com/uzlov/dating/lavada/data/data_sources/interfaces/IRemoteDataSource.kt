@@ -1,11 +1,9 @@
 package com.uzlov.dating.lavada.data.data_sources.interfaces
 
 import androidx.lifecycle.LiveData
-import com.uzlov.dating.lavada.domain.models.RemoteUser
 import com.uzlov.dating.lavada.domain.models.User
 import com.uzlov.dating.lavada.service.MatchesService
-import kotlinx.coroutines.flow.Flow
-import retrofit2.Call
+import okhttp3.RequestBody
 
 interface  IRemoteDataSource {
 
@@ -19,5 +17,18 @@ interface  IRemoteDataSource {
         uid: String,
         matchesCallback: MatchesService.MatchesStateListener
     )
-    suspend fun getRemoteUsers()
+    /**пользователи*/
+    suspend fun getRemoteUser(token: String): User?
+    suspend fun getRemoteUserById(token: String, id: String): User?
+    suspend fun authUser(token: HashMap<String?, String?>): String?
+    suspend fun getRemoteUsers(token: String)
+    suspend fun getUserBalance(token: String)
+    suspend fun updateRemoteUser(token: String, field: Map<String, String>)
+    suspend fun updateRemoteData(token: String, field: HashMap<String, RequestBody>)
+    suspend fun postBalance(token: String, balance: Map<String, String>)
+    suspend fun postSubscribe(token: String, subscribe: Map<String, String>)
+
+    /**лайки*/
+    suspend fun setLike(token: String, requestBody: RequestBody)
+    suspend fun checkLike(token: String, firebaseUid: String)
 }
