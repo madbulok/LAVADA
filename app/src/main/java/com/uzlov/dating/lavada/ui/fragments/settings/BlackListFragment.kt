@@ -1,10 +1,14 @@
 package com.uzlov.dating.lavada.ui.fragments.settings
 
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.View
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
+import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
 import com.uzlov.dating.lavada.databinding.FragmentBlackListBinding
@@ -52,6 +56,7 @@ class BlackListFragment :
         viewBinding.tbBackAction.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
+        loadImage(resources.getDrawable(R.drawable.black_list_empty), viewBinding.ivBlackListEmpty)
         viewBinding.blackListRecyclerView.adapter = blackListAdapter
         loadBlockedUsers()
     }
@@ -77,14 +82,26 @@ class BlackListFragment :
         })
     }
 
+    private fun loadImage(image: Drawable, container: ImageView) {
+        view?.let {
+            Glide
+                .with(it.context)
+                .load(image)
+                .error(R.drawable.ic_default_user)
+                .into(container)
+        }
+    }
+
     private fun renderUi(users: List<User>?) {
         if (!users.isNullOrEmpty()) {
             blackListAdapter.setBlackList(users)
             viewBinding.blackListRecyclerView.visibility = View.VISIBLE
             viewBinding.tvEmptyBlackList.visibility = View.GONE
+            viewBinding.ivBlackListEmpty.visibility = View.GONE
         } else {
             viewBinding.blackListRecyclerView.visibility = View.GONE
             viewBinding.tvEmptyBlackList.visibility = View.VISIBLE
+            viewBinding.ivBlackListEmpty.visibility = View.VISIBLE
         }
     }
 
