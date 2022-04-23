@@ -1,22 +1,18 @@
 package com.uzlov.dating.lavada.data.data_sources.implementation
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.google.android.gms.common.api.Api
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.getValue
+import com.uzlov.dating.lavada.data.convertDtoToModel
 import com.uzlov.dating.lavada.data.data_sources.interfaces.IRemoteDataSource
-import com.uzlov.dating.lavada.domain.models.RemoteUser
 import com.uzlov.dating.lavada.domain.models.User
 import com.uzlov.dating.lavada.retrofit.RemoteDataSource
 import com.uzlov.dating.lavada.service.MatchesService
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import okhttp3.RequestBody
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
@@ -119,21 +115,47 @@ class UsersRemoteDataSourceImpl : IRemoteDataSource {
         })
     }
 
-    override suspend fun getRemoteUsers() {
-        RemoteDataSource().getData()
-//        getData().enqueue(object : Callback<List<RemoteUser>?> {
-//            override fun onResponse(
-//                call: Call<List<RemoteUser>?>,
-//                response: Response<List<RemoteUser>?>
-//
-//            ) {
-//                Log.d("CORRECT", response.body().toString())
-//            }
-//
-//            override fun onFailure(call: Call<List<RemoteUser>?>, t: Throwable) {
-//                Log.d("NO_CORRECT", "fail((((((((((")
-//            }
-//        })
+    override suspend fun getRemoteUser(token: String): User {
+        return convertDtoToModel(RemoteDataSource().getUser(token))
+    }
+
+    override suspend fun getRemoteUserById(token: String, id: String): User {
+        return convertDtoToModel(RemoteDataSource().getUserById(token, id))
+    }
+
+    override suspend fun updateRemoteUser(token: String, field: Map<String, String>){
+        RemoteDataSource().updateUser(token, field)
+    }
+
+    override suspend fun updateRemoteData(token: String, field: HashMap<String, RequestBody>) {
+        RemoteDataSource().updateData(token, field)
+    }
+
+    override suspend fun authUser(token: HashMap<String?, String?>): String? {
+        return RemoteDataSource().authUser(token).data.token
+    }
+
+    override suspend fun getRemoteUsers(token: String) {
+        RemoteDataSource().getUsers(token)
+    }
+
+    override suspend fun getUserBalance(token: String) {
+        RemoteDataSource().getBalance(token)
+    }
+    override suspend fun postBalance(token: String, balance: Map<String, String>){
+        RemoteDataSource().postBalance(token, balance)
+    }
+
+    override suspend fun postSubscribe(token: String, subscribe: Map<String, String>) {
+        RemoteDataSource().postSubscribe(token, subscribe)
+    }
+
+    override suspend fun setLike(token: String, requestBody: RequestBody) {
+        RemoteDataSource().setLike(token, requestBody)
+    }
+
+    override suspend fun checkLike(token: String, firebaseUid: String) {
+        RemoteDataSource().checkLike(token, firebaseUid)
     }
 
     override fun removeUser(id: String) {

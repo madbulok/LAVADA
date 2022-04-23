@@ -11,4 +11,10 @@ interface IGiftsDataSource {
 
     @ExperimentalCoroutinesApi
     suspend fun getCategoryByID(id: String): Flow<CategoryGifts?>
+
+    suspend fun sendGift(token: String, map: Map<String, String>)
+    suspend fun getALlGifts(token: String)
+    suspend fun postPurchase(token: String, map: Map<String, String>)
+    suspend fun getListGifts(token: String, limit: String, offset: String, status: String)
+    suspend fun getListReceivedGifts(token: String, limit: String, offset: String)
 }

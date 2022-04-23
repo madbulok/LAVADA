@@ -1,6 +1,5 @@
 package com.uzlov.dating.lavada.viemodels
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
@@ -9,12 +8,32 @@ import com.uzlov.dating.lavada.data.use_cases.UserUseCases
 import com.uzlov.dating.lavada.domain.logic.distance
 import com.uzlov.dating.lavada.domain.models.User
 import com.uzlov.dating.lavada.service.MatchesService
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import okhttp3.RequestBody
 import javax.inject.Inject
 
 class UsersViewModel @Inject constructor(private var usersUseCases: UserUseCases?) : ViewModel() {
-
+    //получаем список пользователей с fb
     fun getUsers() = usersUseCases?.getUsers()
+    //получаем пользователя с бэка
+    suspend fun getRemoteUser(token: String) = usersUseCases?.getRemoteUser(token)
+    suspend fun getRemoteUserById(token: String, id: String) = usersUseCases?.getRemoteUserById(token, id)
+
+    //авторизуем юзера
+    suspend fun authRemoteUser(token: HashMap<String?, String?>) = usersUseCases?.authRemoteUser(token)
+
+    // пользователи
+    suspend fun getRemoteUsers(token: String) = usersUseCases?.getRemoteUsers(token)
+    suspend fun getRemoteBalance(token: String) = usersUseCases?.getUserBalance(token)
+    suspend fun postRemoteBalance(token: String, balance: Map<String, String>) = usersUseCases?.postBalance(token, balance)
+    suspend fun postSubscribe(token: String, subscribe: Map<String, String>) = usersUseCases?.postSubscribe(token, subscribe)
+    suspend fun updateRemoteUser(token: String, field: HashMap<String, String>) = usersUseCases?.updateRemoteUser(token, field)
+    suspend fun updateRemoteData(token: String, field: HashMap<String, RequestBody>) = usersUseCases?.updateRemoteData(token, field)
+
+    //лайки
+    suspend fun setLike(token: String, requestBody: RequestBody) = usersUseCases?.setLike(token, requestBody)
+    suspend fun checkLike(token: String, firebaseUid: String) = usersUseCases?.checkLike(token, firebaseUid)
 
     fun getUser(uid: String): LiveData<User?> {
         return liveData {
@@ -83,16 +102,6 @@ class UsersViewModel @Inject constructor(private var usersUseCases: UserUseCases
         matchesCallback: MatchesService.MatchesStateListener,
     ) = usersUseCases?.observeMatches(phone, matchesCallback)
 
-    suspend fun getRemoteUsers() = usersUseCases?.getRemoteUsers()
 
-    private val viewModelCoroutineScope = CoroutineScope(
-        Dispatchers.Main
-                + SupervisorJob()
-                + CoroutineExceptionHandler { _, throwable ->
-           Log.d("SOMETHING WRONG", throwable.message.toString())
-        })
 
-    fun getData() {
-        viewModelCoroutineScope.launch { usersUseCases?.getRemoteUsers() }
-    }
 }

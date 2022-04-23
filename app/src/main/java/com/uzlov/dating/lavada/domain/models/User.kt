@@ -33,9 +33,36 @@ data class User(
     var premium: Boolean? = null,
     var balance: Int = 0
 ) : Parcelable
+
 @Parcelize
 data class RemoteUser(
-    @Expose val id: String? = null,
-    @Expose val login: String? = null,
-    @Expose val avatarUrl: String? = null
-): Parcelable
+    @Expose val status: String? = null,
+    @Expose val data: ReUser,
+) : Parcelable
+
+@Parcelize
+data class ReUser(
+    val user_id: String? = null,
+    val user_firebase_uid: String? = null,
+    val user_status: String? = null,
+    val user_email: String? = null,
+    val user_nickname: String? = null,
+    val user_firstname: String? = null,
+    val user_lastname: String? = null,
+    val user_photo: String? = null,
+    val user_video: String? = null,
+    val user_location_lat: String? = null,
+    val user_location_lng: String? = null,
+    val user_fb: String? = null,
+    val user_vk: String? = null,
+    val user_ok: String? = null,
+    val user_instagram: String? = null,
+    val user_twitter: String? = null,
+    val user_age: String? = null,
+    val user_gender: String? = null,
+    val user_address: String? = null,
+    val _has_premium: List<String?>? = null,
+    val token: String? = null,
+    val user_balance: String? = null,
+    val user_description: String? = null
+) : Parcelable

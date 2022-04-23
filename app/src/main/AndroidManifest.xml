@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.uzlov.dating.lavada">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -27,7 +28,9 @@
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true"
+        tools:targetApi="m">
 
         <activity
             android:name=".ui.activities.SplashActivity"
@@ -78,7 +81,7 @@
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name" />
-        <activity
+  <!--      <activity
             android:name="com.facebook.CustomTabActivity"
             android:exported="true">
             <intent-filter><action android:name="android.intent.action.VIEW" />
@@ -88,7 +91,7 @@
 
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
-        </activity>
+        </activity> -->
         <activity android:name=".ui.activities.SingleChatActivity" />
 
         <!--        <activity android:name=".test_feauters.UzlovTestActivity"-->

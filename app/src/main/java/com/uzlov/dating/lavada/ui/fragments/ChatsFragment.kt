@@ -1,12 +1,16 @@
 package com.uzlov.dating.lavada.ui.fragments
 
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.ImageView
+import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
@@ -94,6 +98,7 @@ class ChatsFragment :
             chatRecyclerView.adapter = chatAdapter
         }
         initListeners()
+        loadImage(resources.getDrawable(R.drawable.chats_clear), viewBinding.ivClearChat)
 
         // загружаем все чаты
         loadAllChats()
@@ -121,6 +126,7 @@ class ChatsFragment :
             messageChatViewModel.getChats(it, auth.getUserUid() ?: "")
                 .observe(viewLifecycleOwner, { result ->
                     renderUi(result)
+                    Log.e("TAG", "loadAllChats: $result")
                 })
         }
     }
@@ -132,7 +138,27 @@ class ChatsFragment :
     }
 
     private fun renderUi(chats: List<MappedChat>) {
-        chatAdapter.setChats(chats)
+        if (!chats.isNullOrEmpty()) {
+            viewBinding.chatRecyclerView.visibility = View.VISIBLE
+            viewBinding.ivClearChat.visibility = View.GONE
+            viewBinding.tvClearChat.visibility = View.GONE
+            chatAdapter.setChats(chats)
+        } else {
+            viewBinding.ivClearChat.visibility = View.VISIBLE
+            viewBinding.tvClearChat.visibility = View.VISIBLE
+            viewBinding.chatRecyclerView.visibility = View.GONE
+            Toast.makeText(requireContext(), "Чатов пока нет!", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun loadImage(image: Drawable, container: ImageView) {
+        view?.let {
+            Glide
+                .with(it.context)
+                .load(image)
+                .error(R.drawable.ic_default_user)
+                .into(container)
+        }
     }
 
     private fun initListeners() {
@@ -155,7 +181,7 @@ class ChatsFragment :
                     underlayButtons: MutableList<UnderlayButton>,
                 ) {
                     underlayButtons.add(UnderlayButton(
-                        getString(R.string.block),
+                        "Block",
                         0,
                         Color.parseColor("#007AFF"),
                         object : UnderlayButtonClickListener {
@@ -165,12 +191,12 @@ class ChatsFragment :
                         }
                     ))
                     underlayButtons.add(UnderlayButton(
-                        getString(R.string.delete),
+                        "Delete",
                         0,
                         Color.parseColor("#FF3B30"),
                         object : UnderlayButtonClickListener {
                             override fun onClick(pos: Int) {
-
+                                Log.e("TAG", "onClick: ")
                             }
                         }
                     ))

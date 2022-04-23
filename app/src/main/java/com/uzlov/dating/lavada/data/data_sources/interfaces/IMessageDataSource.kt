@@ -18,4 +18,13 @@ interface IMessageDataSource {
     suspend fun getChat(companionId: String, selfId: String): Chat
     suspend fun hasChat(companionId: String, selfId: String) : Boolean
     fun observeNewMessages(uidChat: String, messageCallback: NewMessageService.NewMessageStateListener)
+
+    /**чаты*/
+    suspend fun createMessage(token: String, map: Map<String, String>)
+    suspend fun getMessage(token: String, chatId: String)
+    suspend fun updateStatus(token: String, map: Map<String, String>)
+    suspend fun getListChats(token: String, offset: String, limit: String)
+    suspend fun createRemoteChat(token: String, map: Map<String, String>)
+    suspend fun getChatById(token: String, chatId: String)
+    suspend fun checkChat(token: String, firebaseUid: String)
 }
