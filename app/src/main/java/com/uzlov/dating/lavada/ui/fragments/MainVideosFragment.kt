@@ -245,27 +245,27 @@ class MainVideosFragment :
     }
 
     private fun updateData() {
-        model.getUsers()?.observe(this, { users ->
+        model.getUsers()?.observe(viewLifecycleOwner, { users ->
             firebaseEmailAuthService.getUserUid()?.let { it ->
-                lifecycleScope.launchWhenResumed {
-                    model.getUserSuspend(it)?.let {
-                        it.url_avatar?.let { it1 -> loadImage(it1, viewBinding.ivProfile) }
-                        self = it
-                        testData = users
-                        mAdapter.updateList(
-                            model.sortUsers(
-                                users,
-                                self.lat!!,
-                                self.lon!!,
-                                userFilter.sex,
-                                userFilter.ageStart,
-                                userFilter.ageEnd,
-                                self.black_list
-                            )
+
+                model.getUser(it).observe(viewLifecycleOwner) {
+                    it?.url_avatar?.let { it1 -> loadImage(it1, viewBinding.ivProfile) }
+                    self = it?.copy()!!
+                    testData = users
+                    mAdapter.updateList(
+                        model.sortUsers(
+                            users,
+                            self.lat!!,
+                            self.lon!!,
+                            userFilter.sex,
+                            userFilter.ageStart,
+                            userFilter.ageEnd,
+                            self.black_list
                         )
-                    }
+                    )
                 }
             }
+
         })
     }
 

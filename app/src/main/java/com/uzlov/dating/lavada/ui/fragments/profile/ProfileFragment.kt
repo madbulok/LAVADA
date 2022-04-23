@@ -82,15 +82,13 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
         super.onViewCreated(view, savedInstanceState)
 
         firebaseEmailAuthService.getUserUid()?.let { it ->
-            lifecycleScope.launchWhenResumed {
-                model.getUserSuspend(it)?.let { result ->
-                    user = result
+                model.getUser(it).observe(viewLifecycleOwner) { result ->
+                    user = result?.copy()!!
                     viewBinding.tvLocation.text = result.location
                     viewBinding.tvName.text = result.name + ", " + result.age
                     viewBinding.btnCoins.text = result.balance.toString()
                     result.url_avatar?.let { it1 -> loadImage(it1, viewBinding.ivProfile) }
                 }
-            }
         }
         with(viewBinding) {
             ivEditProfile.setOnClickListener {

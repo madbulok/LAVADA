@@ -28,13 +28,11 @@ class ShopFragment : BaseFragment<FragmentShopBinding>(FragmentShopBinding::infl
 //            если покупка удалась
             if (true) {
                 firebaseEmailAuthService.getUserUid()?.let { it ->
-                    lifecycleScope.launchWhenResumed {
-                        model.getUserSuspend(it)?.let { result ->
-                            var copyBalance = result.balance
+                        model.getUser(it).observe(viewLifecycleOwner) { result ->
+                            val copyBalance = result?.balance ?: 0
                             model.updateUser(it, "balance", 300+copyBalance)
                             updateData()
                         }
-                    }
                 }
             }
         }
@@ -44,8 +42,8 @@ class ShopFragment : BaseFragment<FragmentShopBinding>(FragmentShopBinding::infl
             if (true) {
                 firebaseEmailAuthService.getUserUid()?.let { it ->
                     lifecycleScope.launchWhenResumed {
-                        model.getUserSuspend(it)?.let { result ->
-                            var copyBalance = result.balance
+                        model.getUser(it).observe(viewLifecycleOwner)  { result ->
+                            val copyBalance = result?.balance ?: 0
                             model.updateUser(it, "balance", 500+copyBalance)
                             updateData()
                         }
@@ -59,8 +57,8 @@ class ShopFragment : BaseFragment<FragmentShopBinding>(FragmentShopBinding::infl
             if (true) {
                 firebaseEmailAuthService.getUserUid()?.let { it ->
                     lifecycleScope.launchWhenResumed {
-                        model.getUserSuspend(it)?.let { result ->
-                            var copyBalance = result.balance
+                        model.getUser(it).observe(viewLifecycleOwner)  { result ->
+                            val copyBalance = result?.balance ?: 0
                             model.updateUser(it, "balance", 1500+copyBalance)
                             updateData()
                         }
@@ -74,8 +72,8 @@ class ShopFragment : BaseFragment<FragmentShopBinding>(FragmentShopBinding::infl
             if (true) {
                 firebaseEmailAuthService.getUserUid()?.let { it ->
                     lifecycleScope.launchWhenResumed {
-                        model.getUserSuspend(it)?.let { result ->
-                            var copyBalance = result.balance
+                        model.getUser(it).observe(viewLifecycleOwner)  { result ->
+                            val copyBalance = result?.balance ?: 0
                             model.updateUser(it, "balance", 3500+copyBalance)
                             updateData()
                         }
@@ -101,8 +99,8 @@ class ShopFragment : BaseFragment<FragmentShopBinding>(FragmentShopBinding::infl
     private fun updateData(){
         firebaseEmailAuthService.getUserUid()?.let { it ->
             lifecycleScope.launchWhenResumed {
-                model.getUserSuspend(it)?.let { result ->
-                    viewBinding.btnCoins.text = result.balance.toString()
+                model.getUser(it).observe(viewLifecycleOwner) { result ->
+                    viewBinding.btnCoins.text = result?.balance.toString()
                 }
             }
         }

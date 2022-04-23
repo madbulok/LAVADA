@@ -90,32 +90,30 @@ class PreviewVideoFragment :
 
             btnNext.setOnClickListener {
                 if (request == 1) {
-                    firebaseEmailAuthService.getUserUid()?.let { it ->
-                        lifecycleScope.launchWhenResumed {
-                            userViewModel.getUserSuspend(it)?.let { resultSelf ->
-                                self = resultSelf
-                                val result = firebaseStorageService.uploadVideo(path)
-                                startLoading()
-                                result.first.addOnSuccessListener {
-                                    result.second.downloadUrl.addOnSuccessListener {
-                                        userViewModel.updateUser(
-                                            self.uid,
-                                            "url_video",
-                                            it.toString()
-                                        )
-                                    }
-                                    Toast.makeText(
-                                        context,
-                                        "Ваше видео успешно обновлено",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                    (requireActivity() as HostActivity).rollbackFragment()
-                                    endLoading()
-
-                                }.addOnFailureListener {
-                                    it.printStackTrace()
-                                    endWithErrorLoading()
+                    firebaseEmailAuthService.getUserUid()?.let { uid ->
+                        userViewModel.getUser(uid).observe(viewLifecycleOwner) { resultSelf ->
+                            self = resultSelf?.copy()!!
+                            startLoading()
+                            val result = firebaseStorageService.uploadVideo(path)
+                            result.first.addOnSuccessListener {
+                                result.second.downloadUrl.addOnSuccessListener {
+                                    userViewModel.updateUser(
+                                        self.uid,
+                                        "url_video",
+                                        it.toString()
+                                    )
                                 }
+                                Toast.makeText(
+                                    requireContext(),
+                                    "Ваше видео успешно обновлено",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                endLoading()
+                                (requireActivity() as HostActivity).rollbackFragment()
+
+                            }.addOnFailureListener {
+                                it.printStackTrace()
+                                endWithErrorLoading()
                             }
                         }
                     }
