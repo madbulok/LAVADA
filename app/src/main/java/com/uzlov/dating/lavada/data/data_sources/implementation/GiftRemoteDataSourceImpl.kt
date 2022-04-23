@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import javax.inject.Inject
 
-class GiftRemoteDataSourceImpl @Inject constructor(var database: FirebaseDatabase) :
+class GiftRemoteDataSourceImpl @Inject constructor(database: FirebaseDatabase, val remoteDataSource: RemoteDataSource) :
     IGiftsDataSource {
 
     private val ref = database.getReference(Constants.FIREBASE_PATH_GIFTS)
@@ -55,15 +55,15 @@ class GiftRemoteDataSourceImpl @Inject constructor(var database: FirebaseDatabas
     }
 
     override suspend fun sendGift(token: String, map: Map<String, String>) {
-        RemoteDataSource().sendGift(token, map)
+        remoteDataSource.sendGift(token, map)
     }
 
     override suspend fun getALlGifts(token: String) {
-        RemoteDataSource().getALlGifts(token)
+        remoteDataSource.getALlGifts(token)
     }
 
     override suspend fun postPurchase(token: String, map: Map<String, String>) {
-        RemoteDataSource().postPurchase(token, map)
+        remoteDataSource.postPurchase(token, map)
     }
 
     override suspend fun getListGifts(
@@ -72,10 +72,10 @@ class GiftRemoteDataSourceImpl @Inject constructor(var database: FirebaseDatabas
         offset: String,
         status: String
     ) {
-        RemoteDataSource().getListGifts(token, limit, offset, status)
+        remoteDataSource.getListGifts(token, limit, offset, status)
     }
 
     override suspend fun getListReceivedGifts(token: String, limit: String, offset: String) {
-        RemoteDataSource().getListReceivedGifts(token, limit, offset)
+        remoteDataSource.getListReceivedGifts(token, limit, offset)
     }
 }

@@ -22,14 +22,11 @@ class GeoModule {
     fun gson(): GsonConverterFactory = GsonConverterFactory.create()
 
     @Provides
-    fun provideService() : Retrofit = Retrofit.Builder()
+    fun provideService() : GeoApi = Retrofit.Builder()
         .baseUrl(baseUrl())
         .addConverterFactory(gson())
         .client(client())
-        .build()
-
-    @Provides
-    fun provideGeocodingApi(retrofit: Retrofit): GeoApi = retrofit.create(GeoApi::class.java)
+        .build().create(GeoApi::class.java)
 
     @Provides
     fun provideGeoRepository(api: GeoApi) : IGeocodingRepository = GeocodingRepositoryImpl(api)
