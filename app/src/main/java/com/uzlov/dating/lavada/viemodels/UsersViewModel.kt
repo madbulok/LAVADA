@@ -1,9 +1,6 @@
 package com.uzlov.dating.lavada.viemodels
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.liveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.uzlov.dating.lavada.data.use_cases.UserUseCases
 import com.uzlov.dating.lavada.domain.logic.distance
 import com.uzlov.dating.lavada.domain.models.User
@@ -14,11 +11,66 @@ import okhttp3.RequestBody
 import javax.inject.Inject
 
 class UsersViewModel @Inject constructor(private var usersUseCases: UserUseCases?) : ViewModel() {
+
+    private val selfUser = MutableLiveData<User>()
+    private val userById = MutableLiveData<User>()
+    private val remoteUserById = MutableLiveData<User>()
+
+    /**
+     * Получаем пользователя с сервера
+     * @param token собственный токен
+     * */
+    fun getRemoteUser(token: String) : LiveData<User?>{
+        viewModelScope.launch(Dispatchers.IO) {
+            usersUseCases?.getRemoteUser(token)?.let {
+                selfUser.postValue(it)
+            }
+        }
+        return selfUser
+    }
+
+    /**
+     * Получает пользователя по UID
+     * @param uid идентификатор пользователя
+     * */
+    fun getUser(uid: String): LiveData<User?> {
+        viewModelScope.launch(Dispatchers.IO) {
+            usersUseCases?.getUser(uid)?.let {
+                userById.postValue(it)
+            }
+        }
+        return userById
+    }
+
+    /**
+     * Отправляет пользователя на сервер
+     * @param user объект пользователя
+     * */
+    fun addUser(user: User) {
+        viewModelScope.launch(Dispatchers.IO) {
+            usersUseCases?.putUser(user)
+        }
+    }
+
+    /**
+     * Отправляет пользователя на сервер
+     * @param token ваш токен
+     * @param id uid пользователя
+     * */
+    fun getRemoteUserById(token: String, id: String) : LiveData<User> {
+        viewModelScope.launch(Dispatchers.IO) {
+            usersUseCases?.getRemoteUserById(token, id)?.let {
+                remoteUserById.postValue(it)
+            }
+        }
+        return remoteUserById
+    }
+
+
     //получаем список пользователей с fb
     fun getUsers() = usersUseCases?.getUsers()
-    //получаем пользователя с бэка
-    suspend fun getRemoteUser(token: String) = usersUseCases?.getRemoteUser(token)
-    suspend fun getRemoteUserById(token: String, id: String) = usersUseCases?.getRemoteUserById(token, id)
+
+
 
     //авторизуем юзера
     suspend fun authRemoteUser(token: HashMap<String?, String?>) = usersUseCases?.authRemoteUser(token)
@@ -35,19 +87,7 @@ class UsersViewModel @Inject constructor(private var usersUseCases: UserUseCases
     suspend fun setLike(token: String, requestBody: RequestBody) = usersUseCases?.setLike(token, requestBody)
     suspend fun checkLike(token: String, firebaseUid: String) = usersUseCases?.checkLike(token, firebaseUid)
 
-    fun getUser(uid: String): LiveData<User?> {
-        return liveData {
-            viewModelScope.launch(Dispatchers.IO) {
-                emit(usersUseCases?.getUser(uid))
-            }
-        }
-    }
 
-    suspend fun getUserSuspend(uid: String): User? {
-        return usersUseCases?.getUser(uid)
-    }
-
-    fun addUser(user: User) = usersUseCases?.putUser(user)
 
     fun removeUser(id: String) = usersUseCases?.removeUsers(id)
 
@@ -101,7 +141,5 @@ class UsersViewModel @Inject constructor(private var usersUseCases: UserUseCases
         phone: String,
         matchesCallback: MatchesService.MatchesStateListener,
     ) = usersUseCases?.observeMatches(phone, matchesCallback)
-
-
 
 }
