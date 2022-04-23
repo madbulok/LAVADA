@@ -52,10 +52,15 @@ class LogInFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
         )
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         requireContext().appComponent.inject(this)
         model = factoryViewModel.create(UsersViewModel::class.java)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         viewBinding.tilPassword.isEndIconVisible = false
         addTextChangedListener()
         addClickListeners()

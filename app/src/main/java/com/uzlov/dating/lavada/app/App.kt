@@ -17,7 +17,7 @@ class App : Application() {
         super.onCreate()
         FirebaseApp.initializeApp(this)
         FirebaseAuth.getInstance()
-            .currentUser?.getIdToken(false)?.addOnSuccessListener {
+            .currentUser?.getIdToken(true)?.addOnSuccessListener {
             if (it.token.isNullOrEmpty()){
                 toast("Token error!")
             } else {
@@ -32,7 +32,7 @@ class App : Application() {
     }
 
     companion object {
-        private lateinit var tokenUser: String
+        private var tokenUser: String = ""
         fun getToken() : String = tokenUser
     }
 }

@@ -20,6 +20,7 @@ class ViewModelFactory @Inject constructor(private val viewModels: MutableMap<Cl
         return try {
             creator.get() as T
         } catch (e: Exception) {
+            e.printStackTrace()
             throw RuntimeException()
         }
     }
