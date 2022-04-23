@@ -29,8 +29,8 @@ data class User(
     var dist: Double? = 0.0, //хранит расстояние между ним и тем, кому его показывать
     var location: String? = "",
     var black_list: MutableList<String> = mutableListOf(), //хранит UID для блэклиста
-    var ready: Boolean? = null,
-    var premium: Boolean? = null,
+    var ready: Boolean = false,
+    var premium: Boolean = false,
     var balance: Int = 0
 ) : Parcelable
 
