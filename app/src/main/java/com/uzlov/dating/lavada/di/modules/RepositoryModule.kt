@@ -3,6 +3,8 @@ package com.uzlov.dating.lavada.di.modules
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.uzlov.dating.lavada.app.App
 import com.uzlov.dating.lavada.data.OAuthInterceptor
+import com.uzlov.dating.lavada.data.data_sources.implementation.SubscriptionsRemoteDataSourceImpl
+import com.uzlov.dating.lavada.data.data_sources.interfaces.ISubscriptionsDataSource
 import com.uzlov.dating.lavada.retrofit.ApiService
 import com.uzlov.dating.lavada.retrofit.BaseInterceptor
 import com.uzlov.dating.lavada.retrofit.RemoteDataSource
@@ -106,5 +108,12 @@ class RepositoryModule {
         @Named(RETROFIT_WITH_TOKEN)  apiWithToken: ApiService,
         @Named(RETROFIT_WITHOUT_TOKEN)  apiWithOutToken: ApiService,
     ) = RemoteDataSource(apiWithToken, apiWithOutToken)
+
+
+
+
+    @Provides
+    @Singleton
+    fun provideSubsRepository(@Named(RETROFIT_WITHOUT_TOKEN) apiService: ApiService) : ISubscriptionsDataSource = SubscriptionsRemoteDataSourceImpl(apiService)
 
 }
