@@ -12,13 +12,11 @@ import com.uzlov.dating.lavada.app.App
 import com.uzlov.dating.lavada.data.use_cases.UserUseCases
 import com.uzlov.dating.lavada.data.data_sources.IUsersRepository
 import com.uzlov.dating.lavada.data.data_sources.implementation.GiftRemoteDataSourceImpl
-import com.uzlov.dating.lavada.data.data_sources.implementation.SubscriptionsRemoteDataSourceImpl
 import com.uzlov.dating.lavada.data.data_sources.implementation.PurchasesRemoteDataSourceImpl
 import com.uzlov.dating.lavada.data.data_sources.implementation.UsersRemoteDataSourceImpl
 import com.uzlov.dating.lavada.data.data_sources.interfaces.*
 import com.uzlov.dating.lavada.data.repository.*
 import com.uzlov.dating.lavada.data.use_cases.ChatUseCase
-import com.uzlov.dating.lavada.retrofit.ApiService
 import com.uzlov.dating.lavada.retrofit.RemoteDataSource
 import dagger.Module
 import dagger.Provides
@@ -48,7 +46,8 @@ class FirebaseModule {
     fun provideUserUseCase(userRepository: IUsersRepository) : UserUseCases = UserUseCases(userRepository)
 
     @Provides
-    fun provideGiftRepository(db: FirebaseDatabase, remoteDataSource: RemoteDataSource) : IGiftsDataSource = GiftRemoteDataSourceImpl(db, remoteDataSource)
+    fun provideGiftRepository(remoteDataSource: RemoteDataSource) : IGiftsDataSource = GiftRemoteDataSourceImpl(
+        remoteDataSource)
 
     @Provides
     @Singleton

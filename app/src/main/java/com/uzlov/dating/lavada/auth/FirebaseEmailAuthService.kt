@@ -73,6 +73,10 @@ class FirebaseEmailAuthService @Inject constructor(val auth: FirebaseAuth) {
         return auth.currentUser?.uid
     }
 
+    fun getUser(): FirebaseUser? {
+        return auth.currentUser
+    }
+
     companion object {
         const val TAG = "EmailPassword"
     }
