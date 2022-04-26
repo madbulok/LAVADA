@@ -79,9 +79,9 @@ class PersonalInfoFragment :
         super.onViewCreated(view, savedInstanceState)
         model = factoryViewModel.create(UsersViewModel::class.java)
         checkPermission()
-        firebaseEmailAuthService.getUserUid()?.let {
+        firebaseEmailAuthService.getUserUid()?.let { uid ->
             lifecycleScope.launchWhenResumed {
-                model.getUserSuspend(it)?.let { result ->
+                model.getUser(uid).observe(viewLifecycleOwner) { result ->
                     result?.let { user ->
                         userThis = user
                         with(viewBinding) {

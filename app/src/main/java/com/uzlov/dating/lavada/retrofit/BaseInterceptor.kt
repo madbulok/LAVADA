@@ -4,7 +4,7 @@ import okhttp3.Interceptor
 import okhttp3.Response
 import java.io.IOException
 
-class BaseInterceptor private constructor() : Interceptor {
+class BaseInterceptor() : Interceptor {
 
     private var responseCode: Int = 0
 
@@ -39,11 +39,5 @@ class BaseInterceptor private constructor() : Interceptor {
         CLIENT_ERROR,
         SERVER_ERROR,
         UNDEFINED_ERROR
-    }
-
-    companion object {
-
-        val interceptor: BaseInterceptor
-            get() = BaseInterceptor()
     }
 }

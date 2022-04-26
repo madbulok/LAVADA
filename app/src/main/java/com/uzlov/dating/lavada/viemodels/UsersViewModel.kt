@@ -1,9 +1,6 @@
 package com.uzlov.dating.lavada.viemodels
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.liveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.uzlov.dating.lavada.data.use_cases.UserUseCases
 import com.uzlov.dating.lavada.domain.logic.distance
 import com.uzlov.dating.lavada.domain.models.User
@@ -13,46 +10,100 @@ import kotlinx.coroutines.launch
 import okhttp3.RequestBody
 import javax.inject.Inject
 
-class UsersViewModel @Inject constructor(private var usersUseCases: UserUseCases?) : ViewModel() {
-    //получаем список пользователей с fb
-    fun getUsers() = usersUseCases?.getUsers()
-    //получаем пользователя с бэка
-    suspend fun getRemoteUser(token: String) = usersUseCases?.getRemoteUser(token)
-    suspend fun getRemoteUserById(token: String, id: String) = usersUseCases?.getRemoteUserById(token, id)
+class UsersViewModel @Inject constructor(private val usersUseCases: UserUseCases) : ViewModel() {
 
-    //авторизуем юзера
-    suspend fun authRemoteUser(token: HashMap<String?, String?>) = usersUseCases?.authRemoteUser(token)
+    private val selfUser = MutableLiveData<User>()
+    private val userById = MutableLiveData<User>()
+    private val remoteUserById = MutableLiveData<User>()
+    private val tokenResult = MutableLiveData<String>()
 
-    // пользователи
-    suspend fun getRemoteUsers(token: String) = usersUseCases?.getRemoteUsers(token)
-    suspend fun getRemoteBalance(token: String) = usersUseCases?.getUserBalance(token)
-    suspend fun postRemoteBalance(token: String, balance: Map<String, String>) = usersUseCases?.postBalance(token, balance)
-    suspend fun postSubscribe(token: String, subscribe: Map<String, String>) = usersUseCases?.postSubscribe(token, subscribe)
-    suspend fun updateRemoteUser(token: String, field: HashMap<String, String>) = usersUseCases?.updateRemoteUser(token, field)
-    suspend fun updateRemoteData(token: String, field: HashMap<String, RequestBody>) = usersUseCases?.updateRemoteData(token, field)
-
-    //лайки
-    suspend fun setLike(token: String, requestBody: RequestBody) = usersUseCases?.setLike(token, requestBody)
-    suspend fun checkLike(token: String, firebaseUid: String) = usersUseCases?.checkLike(token, firebaseUid)
-
-    fun getUser(uid: String): LiveData<User?> {
-        return liveData {
-            viewModelScope.launch(Dispatchers.IO) {
-                emit(usersUseCases?.getUser(uid))
+    /**
+     * Получаем пользователя с сервера
+     * @param token собственный токен
+     * */
+    fun getRemoteUser(token: String) : LiveData<User?>{
+        viewModelScope.launch(Dispatchers.IO) {
+            usersUseCases.getRemoteUser(token)?.let {
+                selfUser.postValue(it)
             }
+        }
+        return selfUser
+    }
+
+    /**
+     * Получает пользователя по UID
+     * @param uid идентификатор пользователя
+     * */
+    fun getUser(uid: String): LiveData<User?> {
+        viewModelScope.launch(Dispatchers.IO) {
+            usersUseCases.getUser(uid)?.let {
+                userById.postValue(it)
+            }
+        }
+        return userById
+    }
+
+    /**
+     * Отправляет пользователя на сервер
+     * @param user объект пользователя
+     * */
+    fun addUser(user: User) {
+        viewModelScope.launch(Dispatchers.IO) {
+            usersUseCases.putUser(user)
         }
     }
 
-    suspend fun getUserSuspend(uid: String): User? {
-        return usersUseCases?.getUser(uid)
+    /**
+     * Получает пользователя на сервер
+     * @param token ваш токен
+     * @param id uid пользователя
+     * */
+    fun getRemoteUserById(token: String, id: String) : LiveData<User> {
+        viewModelScope.launch(Dispatchers.IO) {
+            usersUseCases.getRemoteUserById(token, id)?.let {
+                remoteUserById.postValue(it)
+            }
+        }
+        return remoteUserById
     }
 
-    fun addUser(user: User) = usersUseCases?.putUser(user)
 
-    fun removeUser(id: String) = usersUseCases?.removeUsers(id)
+    //получаем список пользователей с fb
+    fun getUsers() = usersUseCases.getUsers()
+
+
+
+    /**
+     * Авторизация пользователя на сервере
+     * @param token токен после авторизации или регистрации пользователя через FirebaseAuth
+    * */
+    fun authRemoteUser(token: HashMap<String?, String?>) : LiveData<String>{
+        viewModelScope.launch(Dispatchers.IO) {
+            usersUseCases.authRemoteUser(token)?.let {
+                tokenResult.postValue(it)
+            }
+        }
+        return tokenResult
+    }
+
+    // пользователи
+    suspend fun getRemoteUsers(token: String) = usersUseCases.getRemoteUsers(token)
+    suspend fun getRemoteBalance(token: String) = usersUseCases.getUserBalance(token)
+    suspend fun postRemoteBalance(token: String, balance: Map<String, String>) = usersUseCases.postBalance(token, balance)
+    suspend fun postSubscribe(token: String, subscribe: Map<String, String>) = usersUseCases.postSubscribe(token, subscribe)
+    suspend fun updateRemoteUser(token: String, field: HashMap<String, String>) = usersUseCases.updateRemoteUser(token, field)
+    suspend fun updateRemoteData(token: String, field: HashMap<String, RequestBody>) = usersUseCases.updateRemoteData(token, field)
+
+    //лайки
+    suspend fun setLike(token: String, requestBody: RequestBody) = usersUseCases.setLike(token, requestBody)
+    suspend fun checkLike(token: String, firebaseUid: String) = usersUseCases.checkLike(token, firebaseUid)
+
+
+
+    fun removeUser(id: String) = usersUseCases.removeUsers(id)
 
     fun updateUser(id: String, field: String, value: Any) =
-        usersUseCases?.updateUser(id, field, value)
+        usersUseCases.updateUser(id, field, value)
 
     fun sortUsers(
         data: List<User>,
@@ -100,8 +151,6 @@ class UsersViewModel @Inject constructor(private var usersUseCases: UserUseCases
     fun observeMatches(
         phone: String,
         matchesCallback: MatchesService.MatchesStateListener,
-    ) = usersUseCases?.observeMatches(phone, matchesCallback)
-
-
+    ) = usersUseCases.observeMatches(phone, matchesCallback)
 
 }

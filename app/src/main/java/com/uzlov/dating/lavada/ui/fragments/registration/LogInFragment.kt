@@ -11,7 +11,6 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.common.api.ApiException
@@ -34,7 +33,7 @@ import javax.inject.Inject
 class LogInFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::inflate) {
 
     @Inject
-    lateinit var firebaseEmailAuthService: FirebaseEmailAuthService
+    lateinit var authService: FirebaseEmailAuthService
 
     @Inject
     lateinit var preferenceRepository: PreferenceRepository
@@ -48,14 +47,19 @@ class LogInFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
     private val googleSignInClient: GoogleSignInClient by lazy {
         GoogleSignIn.getClient(
             requireContext(),
-            firebaseEmailAuthService.getGSO(requireContext())
+            authService.getGSO(requireContext())
         )
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        requireContext().appComponent.inject(this)
+        model = factoryViewModel.create(UsersViewModel::class.java)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        requireContext().appComponent.inject(this)
-        model = factoryViewModel.create(UsersViewModel::class.java)
+
         viewBinding.tilPassword.isEndIconVisible = false
         addTextChangedListener()
         addClickListeners()
@@ -63,8 +67,10 @@ class LogInFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
         viewBinding.tvLabelForgotPass.setOnClickListener {
             if (!viewBinding.tiEtEmail.text.toString().isNullOrBlank()) {
                 showCustomAlert()
-            } else
-                Toast.makeText(context, "Сначала попытайтесь войти", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(requireContext(), "Сначала попытайтесь войти", Toast.LENGTH_SHORT)
+                    .show()
+            }
         }
     }
 
@@ -73,52 +79,43 @@ class LogInFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
             if (!viewBinding.tiEtEmail.text.isNullOrEmpty()) {
                 val email = viewBinding.tiEtEmail.text.toString()
                 val password = viewBinding.textInputPassword.text.toString()
-                if (!email.isNullOrEmpty() && password.isNotEmpty()) {
-                    firebaseEmailAuthService.loginWithEmailAndPassword(email, password)
-                        .addOnCompleteListener(requireActivity()) { task ->
-                            if (task.isSuccessful) {
-                                firebaseEmailAuthService.getUserUid()?.let { it ->
-                                    lifecycleScope.launchWhenResumed {
-                                        model.getUserSuspend(it)?.let { result ->
-                                            result.let {
-                                                self = it
-                                                val user = User(
-                                                    uid = firebaseEmailAuthService.auth.currentUser?.uid
-                                                        ?: "",
-                                                    email = firebaseEmailAuthService.auth.currentUser?.email
-                                                )
 
-                                                self.ready?.let { it1 ->
-                                                    AuthorizedUser(
-                                                        uuid = firebaseEmailAuthService.auth.currentUser?.uid
-                                                            ?: "",
-                                                        datetime = System.currentTimeMillis() / 1000,
-                                                        name = firebaseEmailAuthService.auth.currentUser?.email
-                                                            ?: "",
-                                                        isReady = it1
-                                                    ).let { it2 ->
-                                                        preferenceRepository.updateUser(
-                                                            it2
-                                                        )
-                                                    }
-                                                }
-                                                if (self.ready == true) {
-                                                    (requireActivity() as LoginActivity).startHome()
-                                                } else (requireActivity() as LoginActivity).startFillDataFragment(
-                                                    user
-                                                )
-                                            }
-                                        }
+                if (!email.isNullOrEmpty() && password.isNotEmpty()) {
+                    authService.loginWithEmailAndPassword(email, password)
+                        .addOnSuccessListener(requireActivity()) { _ ->
+                            authService.getUserUid()?.let { uid ->
+                                model.getUser(uid).observe(viewLifecycleOwner) { result ->
+                                    self = result?.copy()!!
+                                    val user = User(
+                                        uid = authService.auth.currentUser?.uid ?: "",
+                                        email = authService.auth.currentUser?.email
+                                    )
+
+                                    AuthorizedUser(
+                                        uuid = authService.auth.currentUser?.uid ?: "",
+                                        datetime = System.currentTimeMillis() / 1000,
+                                        name = authService.auth.currentUser?.email ?: "",
+                                        isReady = self.ready
+                                    ).also { prefUser ->
+                                        preferenceRepository.updateUser(prefUser)
+                                    }
+
+                                    if (self.ready) {
+                                        (requireActivity() as LoginActivity).startHome()
+                                    } else {
+                                        (requireActivity() as LoginActivity)
+                                            .startFillDataFragment(user)
                                     }
                                 }
-                            } else {
-                                Toast.makeText(
-                                    requireContext(),
-                                    task.exception?.localizedMessage
-                                        ?: "Ошибка входа. Возможно неверные данные",
-                                    Toast.LENGTH_SHORT
-                                ).show()
                             }
+                        }.addOnFailureListener { error ->
+                            error.printStackTrace()
+                            Toast.makeText(
+                                requireContext(),
+                                error.localizedMessage
+                                    ?: "Ошибка входа. Возможно неверные данные",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                 }
             }
@@ -141,72 +138,58 @@ class LogInFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
                 val task = GoogleSignIn.getSignedInAccountFromIntent(data)
                 try {
                     task.getResult(ApiException::class.java)?.let {
-                        firebaseEmailAuthService.setToken(it.idToken!!)
-                        lifecycleScope.launchWhenResumed {
-                            preferenceRepository.updateUser(
-                                AuthorizedUser(
-                                    uuid = firebaseEmailAuthService.auth.currentUser?.uid ?: "",
-                                    datetime = System.currentTimeMillis() / 1000,
-                                    name = firebaseEmailAuthService.auth.currentUser?.email ?: "",
-
-                                    )
+                        authService.setToken(it.idToken!!)
+                        preferenceRepository.updateUser(
+                            AuthorizedUser(
+                                uuid = authService.auth.currentUser?.uid ?: "",
+                                datetime = System.currentTimeMillis() / 1000,
+                                name = authService.auth.currentUser?.email ?: ""
                             )
-                            firebaseEmailAuthService.loginWithGoogleAccount()
-                                .addOnCompleteListener(requireActivity()) { _task ->
-                                    if (_task.isSuccessful) {
-                                        firebaseEmailAuthService.getUserUid()?.let { it ->
-                                            lifecycleScope.launchWhenResumed {
-                                                model.getUserSuspend(it)?.let { result ->
-                                                    result.let { it1 ->
-                                                        self = it1
-                                                        val user = User(
-                                                            uid = firebaseEmailAuthService.auth.currentUser?.uid
-                                                                ?: "",
-                                                            email = firebaseEmailAuthService.auth.currentUser?.email
-                                                        )
+                        )
+                        authService.loginWithGoogleAccount()
+                            .addOnSuccessListener(requireActivity()) { _ ->
+                                authService.getUserUid()?.let { it ->
+                                    model.getUser(it).observe(viewLifecycleOwner) { result ->
+                                        self = result?.copy()!!
+                                        val user = User(
+                                            uid = authService.auth.currentUser?.uid ?: "",
+                                            email = authService.auth.currentUser?.email
+                                        )
 
-                                                        self.ready?.let { result1 ->
-                                                            AuthorizedUser(
-                                                                uuid = firebaseEmailAuthService.auth.currentUser?.uid
-                                                                    ?: "",
-                                                                datetime = System.currentTimeMillis() / 1000,
-                                                                name = firebaseEmailAuthService.auth.currentUser?.email
-                                                                    ?: "",
-                                                                isReady = result1
-                                                            ).let { it2 ->
-                                                                preferenceRepository.updateUser(
-                                                                    it2
-                                                                )
-                                                            }
-                                                        }
-                                                        if (self.ready == true) {
-                                                            (requireActivity() as LoginActivity).startHome()
-                                                        } else (requireActivity() as LoginActivity).startFillDataFragment(
-                                                            user
-                                                        )
-                                                    }
-                                                }
-                                            }
+                                        AuthorizedUser(
+                                            uuid = authService.auth.currentUser?.uid ?: "",
+                                            datetime = System.currentTimeMillis() / 1000,
+                                            name = authService.auth.currentUser?.email ?: "",
+                                            isReady = self.ready
+                                        ).also { prefUser ->
+                                            preferenceRepository.updateUser(prefUser)
                                         }
-                                    } else {
-                                        Log.w(TAG, "createUserWithGoogle:failure", _task.exception)
+                                        if (self.ready) {
+                                            (requireActivity() as LoginActivity).startHome()
+                                        } else {
+                                            (requireActivity() as LoginActivity)
+                                                .startFillDataFragment(user)
+                                        }
                                     }
                                 }
-                        }
+                            }.addOnFailureListener { error->
+                                error.printStackTrace()
+                                Toast.makeText(requireContext(), error.localizedMessage, Toast.LENGTH_SHORT).show()
+                            }
                     }
                 } catch (e: ApiException) {
-                    Log.w(TAG, "Google sign in failed", e)
+                    e.printStackTrace()
+                    Toast.makeText(requireContext(), e.message, Toast.LENGTH_SHORT).show()
                 }
             }
         }
 
     private fun showCustomAlert() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_custom_layout, null)
-        val customDialog = context?.let {
-            MaterialAlertDialogBuilder(it, R.style.MaterialAlertDialog_rounded)
+        val customDialog = MaterialAlertDialogBuilder(requireContext(), R.style.MaterialAlertDialog_rounded)
                 .setView(dialogView)
                 .show()
-        }
+
         val btDismiss = dialogView.findViewById<TextView>(R.id.btDismissCustomDialog)
         btDismiss.setOnClickListener {
             customDialog?.dismiss()
@@ -222,7 +205,7 @@ class LogInFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
 
             val email = viewBinding.tiEtEmail.text.toString()
             if (!email.isNullOrEmpty()) {
-                firebaseEmailAuthService.auth.sendPasswordResetEmail(email)
+                authService.auth.sendPasswordResetEmail(email)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
                             Log.d(TAG, "Email sent.")

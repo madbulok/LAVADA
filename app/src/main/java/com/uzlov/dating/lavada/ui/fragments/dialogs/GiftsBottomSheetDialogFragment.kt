@@ -42,15 +42,14 @@ class GiftsBottomSheetDialogFragment : BottomSheetDialogFragment() {
         object : GiftsAdapter.OnGiftsClickListener {
             override fun onClick(gift: Gift) {
                 firebaseEmailAuthService.getUserUid()?.let { it ->
-                    lifecycleScope.launchWhenResumed {
-                        model.getUserSuspend(it)?.let { result ->
-                            if (result.balance >= gift.cost){
+                        model.getUser(it).observe(viewLifecycleOwner) { result ->
+                            if (result?.balance != null && result.balance >= gift.cost){
                                 val newBalance = result.balance - gift.cost
                                 viewBinding?.btnCoins?.text = newBalance.toString()
                                 model.updateUser(it, "balance", newBalance)
                                 Toast.makeText(context, "отправляем подарок/оставляем себе/ что мы там тут с ним делаем", Toast.LENGTH_SHORT).show()
                             }
-                            if (result.balance < gift.cost) {
+                            if (result?.balance != null && result.balance < gift.cost) {
                                 viewBinding?.btnCoins?.setTextColor(resources.getColor(R.color.Error))
                                 viewBinding?.tvNeedMoreCoins?.visibility = View.VISIBLE
 
@@ -59,7 +58,6 @@ class GiftsBottomSheetDialogFragment : BottomSheetDialogFragment() {
                                 viewBinding?.tvNeedMoreCoins?.visibility = View.GONE
                             }
                         }
-                    }
                 }
             }
         }
@@ -102,19 +100,17 @@ class GiftsBottomSheetDialogFragment : BottomSheetDialogFragment() {
             behavior.state = BottomSheetBehavior.STATE_COLLAPSED
         }
         firebaseEmailAuthService.getUserUid()?.let { it ->
-            lifecycleScope.launchWhenResumed {
-                model.getUserSuspend(it)?.let { result ->
-                    viewBinding?.btnCoins?.text = result.balance.toString()
-                    viewBinding?.btnCoins?.text = result.balance.toString()
-                    //подставить тут актуальную минимальную цену или вообще тягать ее из цен на подарки
-                    if (result.balance == 0) {
-                        viewBinding?.btnCoins?.setTextColor(resources.getColor(R.color.Error))
-                        viewBinding?.tvNeedMoreCoins?.visibility = View.VISIBLE
+            model.getUser(it).observe(viewLifecycleOwner) { result ->
+                viewBinding?.btnCoins?.text = result?.balance.toString()
+                viewBinding?.btnCoins?.text = result?.balance.toString()
+                //подставить тут актуальную минимальную цену или вообще тягать ее из цен на подарки
+                if (result != null && result.balance == 0) {
+                    viewBinding?.btnCoins?.setTextColor(resources.getColor(R.color.Error))
+                    viewBinding?.tvNeedMoreCoins?.visibility = View.VISIBLE
 
-                    } else {
-                        viewBinding?.btnCoins?.setTextColor(resources.getColor(R.color.Primary_text))
-                        viewBinding?.tvNeedMoreCoins?.visibility = View.GONE
-                    }
+                } else {
+                    viewBinding?.btnCoins?.setTextColor(resources.getColor(R.color.Primary_text))
+                    viewBinding?.tvNeedMoreCoins?.visibility = View.GONE
                 }
             }
         }

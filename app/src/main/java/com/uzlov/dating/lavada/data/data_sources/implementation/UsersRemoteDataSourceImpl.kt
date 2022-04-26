@@ -13,11 +13,12 @@ import com.uzlov.dating.lavada.domain.models.User
 import com.uzlov.dating.lavada.retrofit.RemoteDataSource
 import com.uzlov.dating.lavada.service.MatchesService
 import okhttp3.RequestBody
+import javax.inject.Inject
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 
-class UsersRemoteDataSourceImpl : IRemoteDataSource {
+class UsersRemoteDataSourceImpl @Inject constructor(val remoteDataSource: RemoteDataSource) : IRemoteDataSource {
 
     private val mDatabase by lazy {
         FirebaseDatabase.getInstance("https://lavada-7777-default-rtdb.europe-west1.firebasedatabase.app/")
@@ -116,46 +117,46 @@ class UsersRemoteDataSourceImpl : IRemoteDataSource {
     }
 
     override suspend fun getRemoteUser(token: String): User {
-        return convertDtoToModel(RemoteDataSource().getUser(token))
+        return convertDtoToModel(remoteDataSource.getUser(token))
     }
 
     override suspend fun getRemoteUserById(token: String, id: String): User {
-        return convertDtoToModel(RemoteDataSource().getUserById(token, id))
+        return convertDtoToModel(remoteDataSource.getUserById(token, id))
     }
 
     override suspend fun updateRemoteUser(token: String, field: Map<String, String>){
-        RemoteDataSource().updateUser(token, field)
+        remoteDataSource.updateUser(token, field)
     }
 
     override suspend fun updateRemoteData(token: String, field: HashMap<String, RequestBody>) {
-        RemoteDataSource().updateData(token, field)
+        remoteDataSource.updateData(token, field)
     }
 
     override suspend fun authUser(token: HashMap<String?, String?>): String? {
-        return RemoteDataSource().authUser(token).data.token
+        return remoteDataSource.authUser(token).data.token
     }
 
     override suspend fun getRemoteUsers(token: String) {
-        RemoteDataSource().getUsers(token)
+        remoteDataSource.getUsers(token)
     }
 
     override suspend fun getUserBalance(token: String) {
-        RemoteDataSource().getBalance(token)
+        remoteDataSource.getBalance(token)
     }
     override suspend fun postBalance(token: String, balance: Map<String, String>){
-        RemoteDataSource().postBalance(token, balance)
+        remoteDataSource.postBalance(token, balance)
     }
 
     override suspend fun postSubscribe(token: String, subscribe: Map<String, String>) {
-        RemoteDataSource().postSubscribe(token, subscribe)
+        remoteDataSource.postSubscribe(token, subscribe)
     }
 
     override suspend fun setLike(token: String, requestBody: RequestBody) {
-        RemoteDataSource().setLike(token, requestBody)
+        remoteDataSource.setLike(token, requestBody)
     }
 
     override suspend fun checkLike(token: String, firebaseUid: String) {
-        RemoteDataSource().checkLike(token, firebaseUid)
+        remoteDataSource.checkLike(token, firebaseUid)
     }
 
     override fun removeUser(id: String) {

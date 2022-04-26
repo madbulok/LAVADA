@@ -7,9 +7,6 @@ import kotlinx.coroutines.flow.Flow
 interface IGiftsDataSource {
 
     @ExperimentalCoroutinesApi
-    suspend fun getCategoryGifts(): Flow<List<CategoryGifts>>
-
-    @ExperimentalCoroutinesApi
     suspend fun getCategoryByID(id: String): Flow<CategoryGifts?>
 
     suspend fun sendGift(token: String, map: Map<String, String>)

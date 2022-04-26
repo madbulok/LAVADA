@@ -62,22 +62,21 @@ class BlackListFragment :
     }
 
     private fun loadBlockedUsers() {
-        model.getUsers()?.observe(this, { users ->
+        model.getUsers()?.observe(viewLifecycleOwner, { users ->
             auth.getUserUid()?.let { it ->
-                lifecycleScope.launchWhenResumed {
-                    model.getUserSuspend(it)?.let { result ->
-                        result.let {
-                            if (it != null) {
-                                self = it
-                            }
-                            renderUi(
-                                model.blockedUsers(
-                                    users, self.black_list
-                                )
-                            )
+                model.getUser(it).observe(viewLifecycleOwner) { result ->
+                    result.let {
+                        if (it != null) {
+                            self = it
                         }
+                        renderUi(
+                            model.blockedUsers(
+                                users, self.black_list
+                            )
+                        )
                     }
                 }
+
             }
         })
     }

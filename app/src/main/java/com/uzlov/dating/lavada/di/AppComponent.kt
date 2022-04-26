@@ -26,7 +26,8 @@ import javax.inject.Singleton
         BillingModule::class,
         StorageModule::class,
         GeoModule::class,
-        LocationModule::class
+        LocationModule::class,
+        RepositoryModule::class
     ]
 )
 @Singleton

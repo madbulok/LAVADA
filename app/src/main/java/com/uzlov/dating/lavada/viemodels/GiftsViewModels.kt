@@ -5,25 +5,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.uzlov.dating.lavada.data.data_sources.interfaces.IGiftsDataSource
 import com.uzlov.dating.lavada.domain.models.CategoryGifts
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class GiftsViewModels @Inject constructor(var giftsRepository: IGiftsDataSource) : ViewModel() {
+class GiftsViewModels @Inject constructor(private val giftsRepository: IGiftsDataSource) : ViewModel() {
 
     private val result = MutableLiveData<List<CategoryGifts>>()
     private val resultById = MutableLiveData<CategoryGifts?>()
-
-    fun getCategoryGifts(): MutableLiveData<List<CategoryGifts>> {
-        viewModelScope.launch {
-            giftsRepository.getCategoryGifts()
-                .collect {
-                    result.postValue(it)
-                }
-        }
-
-        return result
-    }
 
     fun getCategoryByID(id: String): MutableLiveData<CategoryGifts?> {
         viewModelScope.launch {
@@ -35,10 +25,33 @@ class GiftsViewModels @Inject constructor(var giftsRepository: IGiftsDataSource)
         return resultById
     }
 
-    suspend fun sendGift(token: String, map: Map<String, String>) = giftsRepository.sendGift(token, map)
-    suspend fun getALlGifts(token: String) = giftsRepository.getALlGifts(token)
-    suspend fun postPurchase(token: String, map: Map<String, String>) = giftsRepository.postPurchase(token, map)
-    suspend fun getListGifts(token: String, limit: String, offset: String, status: String) = giftsRepository.getListGifts(token, limit, offset, status)
-    suspend fun getListReceivedGifts(token: String, limit: String, offset: String) = giftsRepository.getListReceivedGifts(token, limit, offset)
+    fun sendGift(token: String, map: Map<String, String>){
+        viewModelScope.launch(Dispatchers.IO) {
+            giftsRepository.sendGift(token, map)
+        }
+    }
 
+    fun getALlGifts(token: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            giftsRepository.getALlGifts(token)
+        }
+    }
+
+    fun postPurchase(token: String, map: Map<String, String>) {
+        viewModelScope.launch(Dispatchers.IO) {
+            giftsRepository.postPurchase(token, map)
+        }
+    }
+
+    fun getListGifts(token: String, limit: String, offset: String, status: String){
+        viewModelScope.launch(Dispatchers.IO) {
+            giftsRepository.getListGifts(token, limit, offset, status)
+        }
+    }
+
+    fun getListReceivedGifts(token: String, limit: String, offset: String){
+        viewModelScope.launch(Dispatchers.IO) {
+            giftsRepository.getListReceivedGifts(token, limit, offset)
+        }
+    }
 }

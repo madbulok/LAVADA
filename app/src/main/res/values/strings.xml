@@ -89,6 +89,9 @@
 
     <string name="facebook_app_id">672136000645610</string>
     <string name="fb_login_protocol_scheme">fb672136000645610</string>
+    <string name="man">Man</string>
+    <string name="woman">Woman</string>
+    <string name="another">Another</string>
 
     <string name="privacy_text">
         <h2>Мы собираем и используем следующую информацию о вас:</h2><br />
@@ -164,6 +167,11 @@
         <h2>3. Изменение Пользовательского соглашения</h2> <br />
         Время от времени мы вносим изменения в Пользовательское соглашение, например, когда мы обновляем функционал наших Услуг или объединяем несколько приложений или услуг, управляемых нами или нашими аффилированными лицами в один комбинированный сервис или приложение, или когда происходят изменения в законодательстве. Мы будем прилагать коммерчески разумные усилия, чтобы уведомить всех пользователей о любых существенных изменениях в настоящем пользовательском соглашении, например, посредством уведомлений на нашей Платформе. Однако вы должны регулярно просматривать Пользовательское соглашение для проверки таких изменений. Мы также обновим дату “Последнего обновления” в верхней части настоящего пользовательского соглашения, которая отражает дату вступления в силу соответствующих изменений в Пользовательское соглашение. Продолжение доступа или использования услуг после даты новой версии Пользовательского соглашения означает ваше согласие с ним. Если вы не согласны с новой редакцией пользовательского соглашения, вы должны прекратить доступ к нашим услугам или их использование.
     </string>
+
+
+    <!--    DON'T USE IT, WILL BE REMOVED-->
+    <!--    DON'T USE IT, WILL BE REMOVED-->
+    <!--    DON'T USE IT, WILL BE REMOVED-->
     <string name="is_match">Match</string>
     <string name="chats_label">Chats</string>
     <string name="cancel_label">Cancel</string>
@@ -207,9 +215,7 @@
     <string name="nly_seen_by_premium_users">Оnly seen by premium users</string>
     <string name="social_network">Social network</string>
     <string name="age">age</string>
-    <string name="man">Man</string>
-    <string name="woman">Woman</string>
-    <string name="another">Another</string>
+
     <string name="sex">sex</string>
 
     <string name="recommend">We will recommend diets and exercises that suit you</string>

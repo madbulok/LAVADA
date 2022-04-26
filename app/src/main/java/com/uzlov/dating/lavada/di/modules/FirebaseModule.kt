@@ -12,12 +12,12 @@ import com.uzlov.dating.lavada.app.App
 import com.uzlov.dating.lavada.data.use_cases.UserUseCases
 import com.uzlov.dating.lavada.data.data_sources.IUsersRepository
 import com.uzlov.dating.lavada.data.data_sources.implementation.GiftRemoteDataSourceImpl
-import com.uzlov.dating.lavada.data.data_sources.implementation.SubscriptionsRemoteDataSourceImpl
 import com.uzlov.dating.lavada.data.data_sources.implementation.PurchasesRemoteDataSourceImpl
 import com.uzlov.dating.lavada.data.data_sources.implementation.UsersRemoteDataSourceImpl
 import com.uzlov.dating.lavada.data.data_sources.interfaces.*
 import com.uzlov.dating.lavada.data.repository.*
 import com.uzlov.dating.lavada.data.use_cases.ChatUseCase
+import com.uzlov.dating.lavada.retrofit.RemoteDataSource
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -37,7 +37,7 @@ class FirebaseModule {
     fun provideRealtimeDatabase() : FirebaseDatabase = FirebaseDatabase.getInstance("https://lavada-7777-default-rtdb.europe-west1.firebasedatabase.app/")
 
     @Provides
-    fun provideUserRemoteDataSource() : IRemoteDataSource = UsersRemoteDataSourceImpl()
+    fun provideUserRemoteDataSource(remoteDataSource: RemoteDataSource) : IRemoteDataSource = UsersRemoteDataSourceImpl(remoteDataSource)
 
     @Provides
     fun provideUserRepository(remoteDataSource: IRemoteDataSource) : IUsersRepository = UserRemoteRepositoryImpl(remoteDataSource)
@@ -46,16 +46,15 @@ class FirebaseModule {
     fun provideUserUseCase(userRepository: IUsersRepository) : UserUseCases = UserUseCases(userRepository)
 
     @Provides
-    fun provideGiftRepository(db: FirebaseDatabase) : IGiftsDataSource = GiftRemoteDataSourceImpl(db)
+    fun provideGiftRepository(remoteDataSource: RemoteDataSource) : IGiftsDataSource = GiftRemoteDataSourceImpl(
+        remoteDataSource)
 
     @Provides
+    @Singleton
     fun providePurchaseRepository(db: FirebaseDatabase) : IPurchasesDataSource = PurchasesRemoteDataSourceImpl(db)
 
     @Provides
-    fun provideSubsRepository(db: FirebaseDatabase) : ISubscriptionsDataSource = SubscriptionsRemoteDataSourceImpl(db)
-
-    @Provides
-    fun provideMessageRepository(db: FirebaseDatabase) : IMessageDataSource = MessagesRepository(db)
+    fun provideMessageRepository(db: FirebaseDatabase, remoteDataSource: RemoteDataSource) : IMessageDataSource = MessagesRepository(db, remoteDataSource)
 
     @Provides
     fun provideStorage(): FirebaseStorage = Firebase.storage

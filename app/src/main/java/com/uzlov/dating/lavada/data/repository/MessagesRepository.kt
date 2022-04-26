@@ -25,7 +25,7 @@ import kotlin.coroutines.suspendCoroutine
  * Отправка и получение сообщений
  *
  */
-class MessagesRepository @Inject constructor(mDatabase: FirebaseDatabase) : IMessageDataSource {
+class MessagesRepository @Inject constructor(mDatabase: FirebaseDatabase, val remoteDataSource: RemoteDataSource) : IMessageDataSource {
 
     private val ref = mDatabase.getReference(Constants.FIREBASE_PATH_CHATS)
 
@@ -189,30 +189,30 @@ class MessagesRepository @Inject constructor(mDatabase: FirebaseDatabase) : IMes
     }
 
     override suspend fun createMessage(token: String, map: Map<String, String>) {
-        RemoteDataSource().createMessage(token, map)
+        remoteDataSource.createMessage(token, map)
     }
 
     override suspend fun getMessage(token: String, chatId: String) {
-        RemoteDataSource().getMessage(token, chatId)
+        remoteDataSource.getMessage(token, chatId)
     }
 
     override suspend fun updateStatus(token: String, map: Map<String, String>) {
-        RemoteDataSource().updateStatus(token, map)
+        remoteDataSource.updateStatus(token, map)
     }
 
     override suspend fun getListChats(token: String, offset: String, limit: String) {
-        RemoteDataSource().getListChats(token, offset, limit)
+        remoteDataSource.getListChats(token, offset, limit)
     }
 
     override suspend fun createRemoteChat(token: String, map: Map<String, String>) {
-        RemoteDataSource().createChat(token, map)
+        remoteDataSource.createChat(token, map)
     }
 
     override suspend fun getChatById(token: String, chatId: String) {
-        RemoteDataSource().getChatById(token, chatId)
+        remoteDataSource.getChatById(token, chatId)
     }
 
     override suspend fun checkChat(token: String, firebaseUid: String) {
-        RemoteDataSource().checkChat(token, firebaseUid)
+        remoteDataSource.checkChat(token, firebaseUid)
     }
 }

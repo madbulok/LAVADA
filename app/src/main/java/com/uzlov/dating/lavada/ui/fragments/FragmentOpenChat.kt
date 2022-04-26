@@ -71,8 +71,8 @@ class FragmentOpenChat :
                 messagesAdapter.setMessages(it.messages)
                 val companionUid = it.getCompanionUid(selfUid)
                 lifecycleScope.launchWhenResumed {
-                    userViewModel.getUserSuspend(companionUid)?.let { user ->
-                       updateUiCompanion(user)
+                    userViewModel.getUser(companionUid).observe(viewLifecycleOwner) { user ->
+                       updateUiCompanion(user!!)
                     }
                 }
 

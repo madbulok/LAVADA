@@ -50,7 +50,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="@string/recommend"
+        android:text="@string/we_will_recommend_diets"
         android:gravity="center"
         android:textColor="@color/Primary_text"
         android:textSize="16sp"
@@ -76,7 +76,7 @@
             android:id="@+id/ti_et_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/name"
+            android:hint="@string/name_hint"
             android:inputType="textEmailAddress" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -125,7 +125,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:text="@string/age"
+        android:text="@string/age_hint"
         android:textColor="@color/Secondary_text"
         app:layout_constraintEnd_toEndOf="@+id/tv_sex"
         app:layout_constraintStart_toStartOf="@+id/tv_sex"

@@ -2,13 +2,11 @@ package com.uzlov.dating.lavada.ui.fragments
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.uzlov.dating.lavada.R
@@ -17,7 +15,6 @@ import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
 import com.uzlov.dating.lavada.data.repository.PreferenceRepository
 import com.uzlov.dating.lavada.databinding.MainVideosFragmentBinding
 import com.uzlov.dating.lavada.domain.models.*
-import com.uzlov.dating.lavada.retrofit.RemoteDataSource
 import com.uzlov.dating.lavada.ui.SingleSnap
 import com.uzlov.dating.lavada.ui.activities.SingleChatActivity
 import com.uzlov.dating.lavada.ui.adapters.PlayerViewAdapter
@@ -29,20 +26,17 @@ import com.uzlov.dating.lavada.ui.fragments.profile.ProfileFragment
 import com.uzlov.dating.lavada.viemodels.MessageChatViewModel
 import com.uzlov.dating.lavada.viemodels.UsersViewModel
 import com.uzlov.dating.lavada.viemodels.ViewModelFactory
-import kotlinx.coroutines.delay
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
 import javax.inject.Inject
 
 
 class MainVideosFragment :
     BaseFragment<MainVideosFragmentBinding>(MainVideosFragmentBinding::inflate) {
+
     @Inject
     lateinit var preferenceRepository: PreferenceRepository
 
     @Inject
-    lateinit var firebaseEmailAuthService: FirebaseEmailAuthService
+    lateinit var authService: FirebaseEmailAuthService
 
     @Inject
     lateinit var factoryViewModel: ViewModelFactory
@@ -83,7 +77,6 @@ class MainVideosFragment :
         super.onCreate(savedInstanceState)
         requireContext().appComponent.inject(this)
         userFilter = preferenceRepository.readFilter()
-        retainInstance = true
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -92,52 +85,27 @@ class MainVideosFragment :
         updateData()
 
         //получаем токен от fb
-        val userToken = firebaseEmailAuthService.auth.currentUser?.getIdToken(true)
-        userToken?.addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-
-                val idToken: String? = task.result?.token
-                Log.d("TOKEN!!!!", idToken!!)
-                lifecycleScope.launchWhenResumed {
-                    //      получаем список тут
-                    try {
-                        val params = HashMap<String?, String?>()
-                        params["token"] = idToken
-                        val remote = model.authRemoteUser(params)
-                        if (remote != null) {
-//                            val map = HashMap<String, RequestBody>()
-//                            map["user_description"] = "Интересная блондинка".toRequestBody("text/plain".toMediaTypeOrNull())
-//                            map["user_email"] = "testuser1@test.com".toRequestBody()
-//                            map["user_age"] = "18".toRequestBody()
-//                            map["user_location_lng"] = "37.555555".toRequestBody()
-//                            map["user_location_lat"] = "55.555555".toRequestBody()
-//                            map["user_address"] = "Москва".toRequestBody()
-//                            //    map["user_gender"] = "FEMALE"
-//                            map["user_nickname"] = "Кристина".toRequestBody()
-                            model.getRemoteUser(remote)
-                            //              model.updateRemoteUser(remote!!, map).toString()
-
-                        }
-
-//                        val balance = HashMap<String, String>()
-//                        balance["expiration_pay"] = "2022-06-10 00:00:00"
-//                        balance["pay_system"] = "google"
-//                        balance["trx_id"] = "452fk sgio"
-//                        balance["amount"] = "300"
-//                        balance["meta[0]"] = JsonArray().toString()
-//                        balance["status"] = "succeeded"
-                        //           Log.d("GET_REMOTE_USER_BY_ID", model.getRemoteUserById(remote.data.token!!, "yX6MhMaHZzb7APFKyeQNZpAvmfk2").toString())
-                        //        Log.d("POST_BALANCE",
-                        //            model.postSubscribe(remote.data.token!!, balance).toString()
-                        //       )
-                        //      Log.d("NEW_BALANCE", model.getRemoteBalance(remote.data.token!!).toString())
-                    } catch (e: Exception) {
-                        Log.e("EXCEPTION", e.toString())
+        authService.getUser()?.getIdToken(true)?.addOnSuccessListener { task ->
+            val idToken: String? = task.token
+            //      получаем список тут
+            try {
+                val params = HashMap<String?, String?>()
+                params["token"] = idToken
+                model.authRemoteUser(params).observe(viewLifecycleOwner){ tokenServer ->
+                    if (tokenServer != null) {
+                        model.getRemoteUser(tokenServer)
+                        //              model.updateRemoteUser(remote!!, map).toString()
+                    } else {
+                        throw RuntimeException("Token from server is null")
                     }
                 }
-            } else {
-                // Handle error -> task.getException();
+            } catch (error: Exception) {
+                error.printStackTrace()
+                Toast.makeText(requireContext(), error.localizedMessage, Toast.LENGTH_SHORT).show()
             }
+        }?.addOnFailureListener { error ->
+            error.printStackTrace()
+            Toast.makeText(requireContext(), error.localizedMessage, Toast.LENGTH_SHORT).show()
         }
 
 
@@ -152,9 +120,6 @@ class MainVideosFragment :
                 override fun onItemClick(position: Int, model: User?) {
                     Toast.makeText(requireContext(), "Вы отправили симпатию", Toast.LENGTH_SHORT)
                         .show()
-                    lifecycleScope.launchWhenResumed {
-                        delay(500)
-                    }
                 }
             })
             mAdapter.setOnActionClickListener(object : ProfileRecyclerAdapter.OnActionListener {
@@ -173,9 +138,8 @@ class MainVideosFragment :
 
                 override fun sendMessage(user: User) {
                     //check likes?
-                    if (self.premium == true) {
-
-                        firebaseEmailAuthService.getUserUid()?.let { selfId ->
+                    if (self.premium) {
+                        authService.getUserUid()?.let {
                             self.chats[user.uid] = self.uid
                             PlayerViewAdapter.pauseCurrentPlayingVideo()
                             openChatActivity(user.uid)
@@ -198,11 +162,10 @@ class MainVideosFragment :
     private fun showCustomAlertToComplain() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_custom_layout, null)
         val customDialog =
-            context?.let {
-                MaterialAlertDialogBuilder(it, R.style.MaterialAlertDialog_rounded)
+                MaterialAlertDialogBuilder(requireContext(), R.style.MaterialAlertDialog_rounded)
                     .setView(dialogView)
                     .show()
-            }
+
         val btDismiss = dialogView.findViewById<TextView>(R.id.btDismissCustomDialog)
         btDismiss.text = getString(R.string.no)
         btDismiss.setOnClickListener {
@@ -214,18 +177,18 @@ class MainVideosFragment :
         val btSendPass = dialogView.findViewById<Button>(R.id.btnSendPasswordCustomDialog)
         btSendPass.text = getString(R.string.yes)
         btSendPass.setOnClickListener {
-            Toast.makeText(context, "Жалуемся", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Жалуемся", Toast.LENGTH_SHORT).show()
             customDialog?.dismiss()
         }
     }
 
     private fun showCustomAlertOnlyPremium() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_custom_layout, null)
-        val customDialog = context?.let {
-            MaterialAlertDialogBuilder(it, R.style.MaterialAlertDialog_rounded)
+        val customDialog =
+            MaterialAlertDialogBuilder(requireContext(), R.style.MaterialAlertDialog_rounded)
                 .setView(dialogView)
                 .show()
-        }
+
         dialogView.findViewById<TextView>(R.id.description).text =
             getString(R.string.go_to_the_store_to_buy_premium)
 
@@ -245,33 +208,29 @@ class MainVideosFragment :
     }
 
     private fun updateData() {
-        model.getUsers()?.observe(this, { users ->
-            firebaseEmailAuthService.getUserUid()?.let { it ->
-                lifecycleScope.launchWhenResumed {
-                    model.getUserSuspend(it)?.let {
-                        it.url_avatar?.let { it1 -> loadImage(it1, viewBinding.ivProfile) }
-                        self = it
-                        testData = users
-                        mAdapter.updateList(
-                            model.sortUsers(
-                                users,
-                                self.lat!!,
-                                self.lon!!,
-                                userFilter.sex,
-                                userFilter.ageStart,
-                                userFilter.ageEnd,
-                                self.black_list
-                            )
+        model.getUsers().observe(viewLifecycleOwner, { users ->
+            authService.getUserUid()?.let { it ->
+
+                model.getUser(it).observe(viewLifecycleOwner) {
+                    it?.url_avatar?.let { it1 -> loadImage(it1, viewBinding.ivProfile) }
+                    self = it?.copy()!!
+                    testData = users
+                    mAdapter.updateList(
+                        model.sortUsers(
+                            users,
+                            self.lat!!,
+                            self.lon!!,
+                            userFilter.sex,
+                            userFilter.ageStart,
+                            userFilter.ageEnd,
+                            self.black_list
                         )
-                    }
+                    )
                 }
             }
         })
     }
 
-    private val chatsFragment by lazy {
-        ChatsFragment()
-    }
     private val profileFragment by lazy {
         ProfileFragment()
     }
@@ -337,12 +296,6 @@ class MainVideosFragment :
         }
     }
 
-    override fun onStop() {
-        super.onStop()
-        Log.e("TAG", "onStop: ")
-
-    }
-
     override fun onResume() {
         super.onResume()
         PlayerViewAdapter.playCurrentPlayingVideo()
@@ -361,11 +314,7 @@ class MainVideosFragment :
     companion object {
 
         private const val CURRENT_USER = "user"
-        fun newInstance() =
-            MainVideosFragment().apply {
-                arguments = Bundle().apply {
-                }
-            }
+        fun newInstance() = MainVideosFragment()
 
         fun newInstance(userId: String) =
             MainVideosFragment().apply {
