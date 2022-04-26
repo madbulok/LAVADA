@@ -5,7 +5,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 
 interface ISubscriptionsDataSource {
-    @ExperimentalCoroutinesApi
-    suspend fun getSubscriptions(uidUser: String) : Flow<List<Subscription>>
+    suspend fun getAvailableSubscriptions() : List<Subscription>
+    suspend fun getCurrentSubscription(uidUser: String)
     suspend fun putSubscription(subscription: Subscription)
 }
