@@ -1,7 +1,6 @@
 package com.uzlov.dating.lavada.data.repository
 
 import androidx.lifecycle.LiveData
-import com.uzlov.dating.lavada.data.data_sources.IUsersRepository
 import com.uzlov.dating.lavada.data.data_sources.interfaces.IRemoteDataSource
 import com.uzlov.dating.lavada.domain.models.User
 import com.uzlov.dating.lavada.service.MatchesService
@@ -11,7 +10,7 @@ import javax.inject.Inject
 class UserRemoteRepositoryImpl @Inject constructor(
     private var remoteDataSource: IRemoteDataSource
 ) :
-    IUsersRepository {
+    IRemoteDataSource {
     override fun getUsers(): LiveData<List<User>> = remoteDataSource.getUsers()
 
     override suspend fun getUser(id: String): User? = remoteDataSource.getUser(id)
@@ -19,6 +18,9 @@ class UserRemoteRepositoryImpl @Inject constructor(
     override fun removeUser(id: String) = remoteDataSource.removeUser(id)
 
     override fun putUser(user: User) = remoteDataSource.putUser(user)
+
+    override fun getUsersWithUserID(id: String): LiveData<List<User>> = remoteDataSource.getUsersWithUserID(id)
+
     override fun updateUser(id: String, field: String, value: Any) =
         remoteDataSource.updateUser(id, field, value)
 
@@ -27,8 +29,7 @@ class UserRemoteRepositoryImpl @Inject constructor(
 
     override suspend fun getRemoteUser(token: String): User? = remoteDataSource.getRemoteUser(token)
     override suspend fun getRemoteUserById(token: String, id: String) = remoteDataSource.getRemoteUserById(token, id)
-
-    override suspend fun authRemoteUser(token: HashMap<String?, String?>): String? = remoteDataSource.authUser(token)
+    override suspend fun authUser(token: HashMap<String?, String?>)  = remoteDataSource.authUser(token)
     override suspend fun getRemoteUsers(token: String) = remoteDataSource.getRemoteUsers(token)
     override suspend fun getUserBalance(token: String) = remoteDataSource.getUserBalance(token)
     override suspend fun updateRemoteUser(token: String, field: Map<String, String>) = remoteDataSource.updateRemoteUser(token, field)

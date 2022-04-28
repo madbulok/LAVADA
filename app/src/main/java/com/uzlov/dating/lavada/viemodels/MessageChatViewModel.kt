@@ -6,9 +6,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.uzlov.dating.lavada.app.getCompanionUid
-import com.uzlov.dating.lavada.data.data_sources.IUsersRepository
 import com.uzlov.dating.lavada.data.data_sources.interfaces.IMessageDataSource
 import com.uzlov.dating.lavada.data.use_cases.ChatUseCase
+import com.uzlov.dating.lavada.data.use_cases.UserUseCases
 import com.uzlov.dating.lavada.domain.models.Chat
 import com.uzlov.dating.lavada.domain.models.MappedChat
 import com.uzlov.dating.lavada.service.NewMessageService
@@ -21,7 +21,7 @@ import javax.inject.Inject
 class MessageChatViewModel @Inject constructor(
     var messagesRepository: IMessageDataSource,
     var useCase: ChatUseCase,
-    var userRemoteRepositoryImpl: IUsersRepository
+    private var userUseCases: UserUseCases
 ) : ViewModel() {
 
     private val chats = MutableLiveData<List<Chat>>()
@@ -43,7 +43,7 @@ class MessageChatViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             val result = messagesRepository.getChats(userId)
             val mapped = result.map { chat->
-                MappedChat(userRemoteRepositoryImpl.getUser(chat.getCompanionUid(selfId))!!, chat)
+                MappedChat(userUseCases.getUser(chat.getCompanionUid(selfId))!!, chat)
             }
             Log.e("TAG", "getChats: $mapped")
             mappedResult.postValue(mapped)

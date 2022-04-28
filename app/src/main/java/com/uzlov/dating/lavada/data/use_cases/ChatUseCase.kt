@@ -1,13 +1,13 @@
 package com.uzlov.dating.lavada.data.use_cases
 
 import android.util.Log
-import com.uzlov.dating.lavada.data.data_sources.IUsersRepository
 import com.uzlov.dating.lavada.data.data_sources.interfaces.IMessageDataSource
+import com.uzlov.dating.lavada.data.data_sources.interfaces.IRemoteDataSource
 import com.uzlov.dating.lavada.domain.models.Chat
 import com.uzlov.dating.lavada.service.NewMessageService
 import javax.inject.Inject
 
-class ChatUseCase @Inject constructor(private val chatRepository: IMessageDataSource, private val userRepository: IUsersRepository) {
+class ChatUseCase @Inject constructor(private val chatRepository: IMessageDataSource, private val userRepository: IRemoteDataSource) {
 
     private val tag = javaClass.simpleName
 

@@ -14,7 +14,6 @@ import com.google.android.gms.tasks.RuntimeExecutionException
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
-import com.uzlov.dating.lavada.data.data_sources.IUsersRepository
 import com.uzlov.dating.lavada.data.repository.LocationRepository
 import com.uzlov.dating.lavada.databinding.FragmentAboutMyselfBinding
 import com.uzlov.dating.lavada.domain.models.MALE
@@ -22,15 +21,13 @@ import com.uzlov.dating.lavada.domain.models.User
 import com.uzlov.dating.lavada.ui.activities.LoginActivity
 import com.uzlov.dating.lavada.ui.fragments.BaseFragment
 import com.uzlov.dating.lavada.viemodels.GeocodingViewModel
+import com.uzlov.dating.lavada.viemodels.UsersViewModel
 import com.uzlov.dating.lavada.viemodels.ViewModelFactory
 import javax.inject.Inject
 
 
 class AboutMyselfFragment :
     BaseFragment<FragmentAboutMyselfBinding>(FragmentAboutMyselfBinding::inflate) {
-
-    @Inject
-    lateinit var usersRepository: IUsersRepository
 
     @Inject
     lateinit var firebaseEmailAuthService: FirebaseEmailAuthService
@@ -43,11 +40,13 @@ class AboutMyselfFragment :
     lateinit var locationRepository: LocationRepository
 
     private lateinit var geocodingViewModel: GeocodingViewModel
+    private lateinit var userViewModel: UsersViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requireContext().appComponent.inject(this)
         geocodingViewModel = factoryModel.create(GeocodingViewModel::class.java)
+        userViewModel = factoryModel.create(UsersViewModel::class.java)
 
         checkPermission()
     }
@@ -87,7 +86,9 @@ class AboutMyselfFragment :
                     user.email = firebaseEmailAuthService.auth.currentUser?.email
                 }
 
-                usersRepository.putUser(user)
+                // специально оставлю ошибку чтоб заменить на рабочий метод
+//                userViewModel.updateUser(user)
+
                 (requireActivity() as LoginActivity).startSettingsLookInForFragment(user)
 
             }

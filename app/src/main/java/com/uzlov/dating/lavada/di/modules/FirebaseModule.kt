@@ -10,7 +10,6 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
 import com.uzlov.dating.lavada.app.App
 import com.uzlov.dating.lavada.data.use_cases.UserUseCases
-import com.uzlov.dating.lavada.data.data_sources.IUsersRepository
 import com.uzlov.dating.lavada.data.data_sources.implementation.GiftRemoteDataSourceImpl
 import com.uzlov.dating.lavada.data.data_sources.implementation.PurchasesRemoteDataSourceImpl
 import com.uzlov.dating.lavada.data.data_sources.implementation.UsersRemoteDataSourceImpl
@@ -40,10 +39,7 @@ class FirebaseModule {
     fun provideUserRemoteDataSource(remoteDataSource: RemoteDataSource) : IRemoteDataSource = UsersRemoteDataSourceImpl(remoteDataSource)
 
     @Provides
-    fun provideUserRepository(remoteDataSource: IRemoteDataSource) : IUsersRepository = UserRemoteRepositoryImpl(remoteDataSource)
-
-    @Provides
-    fun provideUserUseCase(userRepository: IUsersRepository) : UserUseCases = UserUseCases(userRepository)
+    fun provideUserUseCase(userRepository: IRemoteDataSource) : UserUseCases = UserUseCases(userRepository)
 
     @Provides
     fun provideGiftRepository(remoteDataSource: RemoteDataSource) : IGiftsDataSource = GiftRemoteDataSourceImpl(
@@ -60,6 +56,6 @@ class FirebaseModule {
     fun provideStorage(): FirebaseStorage = Firebase.storage
 
     @Provides
-    fun provideChatUseCases(chatRepository: IMessageDataSource, userRepository: IUsersRepository): ChatUseCase = ChatUseCase(chatRepository, userRepository)
+    fun provideChatUseCases(chatRepository: IMessageDataSource, iRemoteDataSource: IRemoteDataSource): ChatUseCase = ChatUseCase(chatRepository, iRemoteDataSource)
 
 }

@@ -1,34 +1,21 @@
 package com.uzlov.dating.lavada.ui.fragments.profile
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.Log
 import android.view.View
-import android.widget.Toast
-import com.google.android.material.slider.RangeSlider
-import com.google.android.material.slider.Slider
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
-import com.uzlov.dating.lavada.data.data_sources.IUsersRepository
 import com.uzlov.dating.lavada.data.repository.PreferenceRepository
-import com.uzlov.dating.lavada.databinding.FragmentAboutMyselfBinding
 import com.uzlov.dating.lavada.databinding.FragmentLookingForBinding
-import com.uzlov.dating.lavada.domain.models.MALE
 import com.uzlov.dating.lavada.domain.models.User
 import com.uzlov.dating.lavada.domain.models.UserFilter
 import com.uzlov.dating.lavada.ui.activities.LoginActivity
 import com.uzlov.dating.lavada.ui.fragments.BaseFragment
-import com.uzlov.dating.lavada.viemodels.UsersViewModel
-import com.uzlov.dating.lavada.viemodels.ViewModelFactory
 import javax.inject.Inject
 
 class FilterLookingForFragment :
     BaseFragment<FragmentLookingForBinding>(FragmentLookingForBinding::inflate) {
 
-    @Inject
-    lateinit var usersRepository: IUsersRepository
 
     @Inject
     lateinit var firebaseEmailAuthService: FirebaseEmailAuthService

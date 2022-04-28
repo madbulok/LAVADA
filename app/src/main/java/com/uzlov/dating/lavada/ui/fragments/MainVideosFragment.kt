@@ -93,6 +93,7 @@ class MainVideosFragment :
                 params["token"] = idToken
                 model.authRemoteUser(params).observe(viewLifecycleOwner){ tokenServer ->
                     if (tokenServer != null) {
+
                         model.getRemoteUser(tokenServer)
                         //              model.updateRemoteUser(remote!!, map).toString()
                     } else {
