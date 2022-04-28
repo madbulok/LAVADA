@@ -59,7 +59,7 @@ class MatchesService : Service(), LifecycleOwner {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         authService.getUserUid().let { uid ->
             if (uid != null) {
-                usersModel.observeMatches(uid, matchesCallback)
+
             }
         }
         return START_STICKY

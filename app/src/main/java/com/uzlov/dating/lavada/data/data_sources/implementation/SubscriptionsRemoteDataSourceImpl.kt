@@ -7,7 +7,7 @@ import com.uzlov.dating.lavada.retrofit.ApiService
 import javax.inject.Inject
 
 
-class SubscriptionsRemoteDataSourceImpl @Inject constructor(private val apiServerValue: ApiService) :
+class SubscriptionsRemoteDataSourceImpl @Inject constructor() :
     ISubscriptionsDataSource {
 
     override suspend fun getAvailableSubscriptions(): List<Subscription> {

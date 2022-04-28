@@ -19,7 +19,7 @@ import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
 import com.uzlov.dating.lavada.databinding.FragmentPersonalInfoBinding
 import com.uzlov.dating.lavada.domain.models.MALE
 import com.uzlov.dating.lavada.domain.models.User
-import com.uzlov.dating.lavada.storage.FirebaseStorageService
+import com.uzlov.dating.lavada.storage.IStorage
 import com.uzlov.dating.lavada.storage.URIPathHelper
 import com.uzlov.dating.lavada.ui.fragments.BaseFragment
 import com.uzlov.dating.lavada.viemodels.UsersViewModel
@@ -39,7 +39,7 @@ class PersonalInfoFragment :
     lateinit var firebaseEmailAuthService: FirebaseEmailAuthService
 
     @Inject
-    lateinit var firebaseStorageService: FirebaseStorageService
+    lateinit var serverStorageService: IStorage
 
     @Inject
     lateinit var factoryViewModel: ViewModelFactory
@@ -58,18 +58,13 @@ class PersonalInfoFragment :
                 val imageFullPath =
                     data.data?.let { context?.let { it1 -> uriPathHelper.getPath(it1, it) } }
                 if (imageFullPath != null) {
-                    val result = firebaseStorageService.uploadPhoto(imageFullPath)
-                    result.first.addOnFailureListener {
-                        Log.d("SUCCESS_ FIRST", it.toString())
-                    }
-                    result.first.addOnSuccessListener {
-                        Log.d("SUCCESS_ FIRST", "ок")
-                        result.second.downloadUrl.addOnSuccessListener {
-                            Log.d("SUCCESS_ SECOND", "ок")
-                            urlImage = it.toString()
-                            loadImage(urlImage, viewBinding.ivProfile)
-                        }
-                    }
+                    val result = serverStorageService.uploadPhoto(imageFullPath)
+//                    result.first.addOnSuccessListener {
+//                        result.second.downloadUrl.addOnSuccessListener {
+//                            urlImage = it.toString()
+//                            loadImage(urlImage, viewBinding.ivProfile)
+//                        }
+//                    }
                 }
             }
         }
@@ -159,13 +154,13 @@ class PersonalInfoFragment :
                 parentFragmentManager.popBackStack()
             }
             btnSave.setOnClickListener {
-                model.updateUser(userThis.uid, "age", tvAgeValue.text.toString().toInt())
-                userThis.male?.let { it1 -> model.updateUser(userThis.uid, "male", it1) }
-                model.updateUser(userThis.uid, "name", tiEtName.text.toString())
-                model.updateUser(userThis.uid, "about", tiEtAboutMyself.text.toString())
-                if (urlImage.isNotEmpty()) {
-                    model.updateUser(userThis.uid, "url_avatar", urlImage)
-                }
+//                model.updateUser(userThis.uid, "age", tvAgeValue.text.toString().toInt())
+//                userThis.male?.let { it1 -> model.updateUser(userThis.uid, "male", it1) }
+//                model.updateUser(userThis.uid, "name", tiEtName.text.toString())
+//                model.updateUser(userThis.uid, "about", tiEtAboutMyself.text.toString())
+//                if (urlImage.isNotEmpty()) {
+//                    model.updateUser(userThis.uid, "url_avatar", urlImage)
+//                }
                 parentFragmentManager.popBackStack()
             }
         }

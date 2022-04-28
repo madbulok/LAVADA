@@ -1,18 +1,18 @@
 package com.uzlov.dating.lavada.retrofit
 
-import okhttp3.Interceptor
-import okhttp3.OkHttpClient
 import okhttp3.RequestBody
 
-interface DataSource<T> {
+interface IServerDataSource<T> {
     /**пользователи*/
     suspend fun getUser(token: String): T
     suspend fun getUserById(token: String, id: String): T
-    suspend fun authUser(selfToken: HashMap<String?, String?>): T
+    suspend fun authUser(selfToken: HashMap<String, String?>): T
     suspend fun getUsers(token: String): List<T>
     suspend fun getBalance(token: String): T
     suspend fun updateUser(token: String, field: Map<String, String>): T
     suspend fun updateData(token: String, field: HashMap<String, RequestBody>): T
+    suspend fun saveUser(token: String, filed: Map<String, String>)
+    suspend fun removeUser(token: String, id: String)
     suspend fun postBalance(token: String, balance: Map<String, String>): T
     suspend fun postSubscribe(token: String, subscribe: Map<String, String>): T
 
@@ -36,8 +36,5 @@ interface DataSource<T> {
     suspend fun setLike(token: String, requestBody: RequestBody): T
     suspend fun checkLike(token: String, firebaseUid: String): T
 
-    fun getClient() :  OkHttpClient.Builder
-    fun clearInterceptors()
-    fun addInterceptor(interceptor: Interceptor)
-    fun setToken(token: String, isClearOldest: Boolean = false)
+    fun setToken(token: String)
 }

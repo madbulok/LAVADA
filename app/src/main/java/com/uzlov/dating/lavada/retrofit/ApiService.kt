@@ -52,7 +52,7 @@ interface ApiService {
     @FormUrlEncoded
     @POST("api/v1/user/auth")
     fun authUserAsync(
-        @FieldMap params: HashMap<String?, String?>
+        @FieldMap params: HashMap<String, String?>
     ): Deferred<RemoteUser>
 
     //начисление баланса пользователю +

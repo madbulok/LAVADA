@@ -24,7 +24,6 @@ import javax.inject.Singleton
         FirebaseModule::class,
         ViewModelModule::class,
         BillingModule::class,
-        StorageModule::class,
         GeoModule::class,
         LocationModule::class,
         RepositoryModule::class

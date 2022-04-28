@@ -1,11 +1,9 @@
 package com.uzlov.dating.lavada.viemodels
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.uzlov.dating.lavada.app.getCompanionUid
 import com.uzlov.dating.lavada.data.data_sources.interfaces.IMessageDataSource
 import com.uzlov.dating.lavada.data.use_cases.ChatUseCase
 import com.uzlov.dating.lavada.data.use_cases.UserUseCases
@@ -14,7 +12,6 @@ import com.uzlov.dating.lavada.domain.models.MappedChat
 import com.uzlov.dating.lavada.service.NewMessageService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -31,8 +28,7 @@ class MessageChatViewModel @Inject constructor(
     // получить все чаты пользователя
     fun getChats(userId: String): LiveData<List<Chat>> {
         viewModelScope.launch(Dispatchers.IO) {
-            val result = messagesRepository.getChats(userId)
-            chats.postValue(result)
+
         }
         return chats
     }
@@ -41,12 +37,7 @@ class MessageChatViewModel @Inject constructor(
 
     fun getChats(userId: String, selfId: String): LiveData<List<MappedChat>> {
         viewModelScope.launch(Dispatchers.IO) {
-            val result = messagesRepository.getChats(userId)
-            val mapped = result.map { chat->
-                MappedChat(userUseCases.getUser(chat.getCompanionUid(selfId))!!, chat)
-            }
-            Log.e("TAG", "getChats: $mapped")
-            mappedResult.postValue(mapped)
+
         }
         return mappedResult
     }
@@ -54,9 +45,7 @@ class MessageChatViewModel @Inject constructor(
     // создать чат с конкретным пользователем
     fun createChat(selfId: String, companionId: String) : LiveData<String>{
         viewModelScope.launch(Dispatchers.IO) {
-            useCase.createChat(selfId, companionId).let { uid ->
-                createdChat.postValue(uid)
-            }
+
         }
         return createdChat
     }
@@ -64,7 +53,7 @@ class MessageChatViewModel @Inject constructor(
     // отправить сообщение
     fun sendMessage(uidChat: String, chat: Chat) {
         viewModelScope.launch(Dispatchers.IO) {
-            messagesRepository.sendMessage(uidChat, chat)
+
         }
     }
 
@@ -72,10 +61,7 @@ class MessageChatViewModel @Inject constructor(
     @ExperimentalCoroutinesApi
     fun retrieveMessages(uid: String) : LiveData<Chat> {
         viewModelScope.launch(Dispatchers.IO) {
-            messagesRepository.observeMessages(uid)
-                .collect {
-                    chatMessages.postValue(it)
-                }
+
         }
         return chatMessages
     }
@@ -84,8 +70,6 @@ class MessageChatViewModel @Inject constructor(
         uid: String,
         messageCallback: NewMessageService.NewMessageStateListener
     ) {
-        useCase.observeNewMessage(
-            uid, messageCallback
-        )
+
     }
 }

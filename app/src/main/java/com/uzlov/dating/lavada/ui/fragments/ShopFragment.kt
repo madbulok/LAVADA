@@ -30,7 +30,7 @@ class ShopFragment : BaseFragment<FragmentShopBinding>(FragmentShopBinding::infl
                 firebaseEmailAuthService.getUserUid()?.let { it ->
                         model.getUser(it).observe(viewLifecycleOwner) { result ->
                             val copyBalance = result?.balance ?: 0
-                            model.updateUser(it, "balance", 300+copyBalance)
+//                            model.updateUser(it, "balance", 300+copyBalance)
                             updateData()
                         }
                 }
@@ -41,13 +41,12 @@ class ShopFragment : BaseFragment<FragmentShopBinding>(FragmentShopBinding::infl
             Toast.makeText(context, "Покупаем 500 монет", Toast.LENGTH_SHORT).show()
             if (true) {
                 firebaseEmailAuthService.getUserUid()?.let { it ->
-                    lifecycleScope.launchWhenResumed {
                         model.getUser(it).observe(viewLifecycleOwner)  { result ->
                             val copyBalance = result?.balance ?: 0
-                            model.updateUser(it, "balance", 500+copyBalance)
+//                            model.updateUser(it, "balance", 500+copyBalance)
                             updateData()
                         }
-                    }
+
                 }
             }
         }
@@ -56,13 +55,11 @@ class ShopFragment : BaseFragment<FragmentShopBinding>(FragmentShopBinding::infl
             Toast.makeText(context, "Покупаем 1500 монет", Toast.LENGTH_SHORT).show()
             if (true) {
                 firebaseEmailAuthService.getUserUid()?.let { it ->
-                    lifecycleScope.launchWhenResumed {
                         model.getUser(it).observe(viewLifecycleOwner)  { result ->
                             val copyBalance = result?.balance ?: 0
-                            model.updateUser(it, "balance", 1500+copyBalance)
+//                            model.updateUser(it, "balance", 1500+copyBalance)
                             updateData()
                         }
-                    }
                 }
             }
         }
@@ -74,7 +71,7 @@ class ShopFragment : BaseFragment<FragmentShopBinding>(FragmentShopBinding::infl
                     lifecycleScope.launchWhenResumed {
                         model.getUser(it).observe(viewLifecycleOwner)  { result ->
                             val copyBalance = result?.balance ?: 0
-                            model.updateUser(it, "balance", 3500+copyBalance)
+//                            model.updateUser(it, "balance", 3500+copyBalance)
                             updateData()
                         }
                     }

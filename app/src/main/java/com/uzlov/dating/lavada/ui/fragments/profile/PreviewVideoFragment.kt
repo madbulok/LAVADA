@@ -3,9 +3,7 @@ package com.uzlov.dating.lavada.ui.fragments.profile
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.core.os.bundleOf
-import androidx.lifecycle.lifecycleScope
 import com.google.android.exoplayer2.DefaultLoadControl
 import com.google.android.exoplayer2.DefaultRenderersFactory
 import com.google.android.exoplayer2.ExoPlayerFactory
@@ -17,9 +15,8 @@ import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
 import com.uzlov.dating.lavada.data.repository.PreferenceRepository
 import com.uzlov.dating.lavada.databinding.FragmentPreviewVideoBinding
-import com.uzlov.dating.lavada.domain.models.AuthorizedUser
 import com.uzlov.dating.lavada.domain.models.User
-import com.uzlov.dating.lavada.storage.FirebaseStorageService
+import com.uzlov.dating.lavada.storage.IStorage
 import com.uzlov.dating.lavada.ui.activities.HostActivity
 import com.uzlov.dating.lavada.ui.activities.LoginActivity
 import com.uzlov.dating.lavada.ui.fragments.BaseFragment
@@ -32,10 +29,10 @@ class PreviewVideoFragment :
     BaseFragment<FragmentPreviewVideoBinding>(FragmentPreviewVideoBinding::inflate) {
 
     @Inject
-    lateinit var firebaseStorageService: FirebaseStorageService
+    lateinit var firebaseEmailAuthService: FirebaseEmailAuthService
 
     @Inject
-    lateinit var firebaseEmailAuthService: FirebaseEmailAuthService
+    lateinit var serverStorageService: IStorage
 
     @Inject
     lateinit var preferenceRepository: PreferenceRepository
@@ -94,65 +91,66 @@ class PreviewVideoFragment :
                         userViewModel.getUser(uid).observe(viewLifecycleOwner) { resultSelf ->
                             self = resultSelf?.copy()!!
                             startLoading()
-                            val result = firebaseStorageService.uploadVideo(path)
-                            result.first.addOnSuccessListener {
-                                result.second.downloadUrl.addOnSuccessListener {
-                                    userViewModel.updateUser(
-                                        self.uid,
-                                        "url_video",
-                                        it.toString()
-                                    )
-                                }
-                                Toast.makeText(
-                                    requireContext(),
-                                    "Ваше видео успешно обновлено",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                                endLoading()
-                                (requireActivity() as HostActivity).rollbackFragment()
-
-                            }.addOnFailureListener {
-                                it.printStackTrace()
-                                endWithErrorLoading()
-                            }
+                            val result = serverStorageService.uploadVideo(path)
+//                            val result = serverStorageService.uploadVideo(path)
+//                            result.first.addOnSuccessListener {
+//                                result.second.downloadUrl.addOnSuccessListener {
+//                                    userViewModel.updateUser(
+//                                        self.uid,
+//                                        "url_video",
+//                                        it.toString()
+//                                    )
+//                                }
+//                                Toast.makeText(
+//                                    requireContext(),
+//                                    "Ваше видео успешно обновлено",
+//                                    Toast.LENGTH_SHORT
+//                                ).show()
+//                                endLoading()
+//                                (requireActivity() as HostActivity).rollbackFragment()
+//
+//                            }.addOnFailureListener {
+//                                it.printStackTrace()
+//                                endWithErrorLoading()
+//                            }
                         }
                     }
 
                 } else {
-                    val result = firebaseStorageService.uploadVideo(path)
+                    val result = serverStorageService.uploadVideo(path)
                     startLoading()
-                    result.first.addOnSuccessListener {
-                        result.second.downloadUrl.addOnSuccessListener {
-                            user.url_video = it.toString()
-                            user.ready = true
-                            userViewModel.addUser(user)
-                        }
-                        val localUser = preferenceRepository.readUser()
-                        if (localUser != null) {
-                            preferenceRepository.updateUser(
-                                AuthorizedUser(
-                                    localUser.uuid,
-                                    localUser.datetime,
-                                    localUser.name,
-                                    true
-                                )
-                            )
-                        } else {
-                            val localUserNew = AuthorizedUser(
-                                uuid = user.uid,
-                                datetime = System.currentTimeMillis() / 1000,
-                                name = user.name ?: "No name",
-                                isReady = true
-                            )
-                            preferenceRepository.updateUser(localUserNew)
-                        }
-
-                        endLoading()
-                        (requireActivity() as LoginActivity).routeToMainScreen()
-                    }.addOnFailureListener {
-                        it.printStackTrace()
-                        endWithErrorLoading()
-                    }
+//                    result.first.addOnSuccessListener {
+//                        result.second.downloadUrl.addOnSuccessListener {
+//                            user.url_video = it.toString()
+//                            user.ready = true
+//                            userViewModel.addUser(user)
+//                        }
+//                        val localUser = preferenceRepository.readUser()
+//                        if (localUser != null) {
+//                            preferenceRepository.updateUser(
+//                                AuthorizedUser(
+//                                    localUser.uuid,
+//                                    localUser.datetime,
+//                                    localUser.name,
+//                                    true
+//                                )
+//                            )
+//                        } else {
+//                            val localUserNew = AuthorizedUser(
+//                                uuid = user.uid,
+//                                datetime = System.currentTimeMillis() / 1000,
+//                                name = user.name ?: "No name",
+//                                isReady = true
+//                            )
+//                            preferenceRepository.updateUser(localUserNew)
+//                        }
+//
+//                        endLoading()
+//                        (requireActivity() as LoginActivity).routeToMainScreen()
+//                    }.addOnFailureListener {
+//                        it.printStackTrace()
+//                        endWithErrorLoading()
+//                    }
                 }
             }
             viewBinding.itemVideoExoplayer.player = player

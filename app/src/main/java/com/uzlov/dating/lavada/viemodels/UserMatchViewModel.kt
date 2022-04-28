@@ -17,10 +17,10 @@ class UserMatchViewModel @Inject constructor(var messagesRepository: IMessageDat
     private val chats = MutableLiveData<List<Chat>>()
 
     // получить все чаты пользователя
-    fun getMatches(userId: String) : LiveData<List<Chat>> {
+    fun getMatches(token: String, userId: String) : LiveData<List<Chat>> {
         viewModelScope.launch {
-            val result = messagesRepository.getChats(userId)
-            chats.postValue(result)
+            val result = messagesRepository.getChatById(token, userId)
+
         }
         return chats
     }

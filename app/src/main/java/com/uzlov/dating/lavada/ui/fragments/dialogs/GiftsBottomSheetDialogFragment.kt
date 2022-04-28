@@ -46,7 +46,7 @@ class GiftsBottomSheetDialogFragment : BottomSheetDialogFragment() {
                             if (result?.balance != null && result.balance >= gift.cost){
                                 val newBalance = result.balance - gift.cost
                                 viewBinding?.btnCoins?.text = newBalance.toString()
-                                model.updateUser(it, "balance", newBalance)
+//                                model.updateUser(it, "balance", newBalance)
                                 Toast.makeText(context, "отправляем подарок/оставляем себе/ что мы там тут с ним делаем", Toast.LENGTH_SHORT).show()
                             }
                             if (result?.balance != null && result.balance < gift.cost) {

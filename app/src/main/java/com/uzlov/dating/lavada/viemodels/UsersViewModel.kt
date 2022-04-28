@@ -1,16 +1,22 @@
 package com.uzlov.dating.lavada.viemodels
 
+import android.util.Log
 import androidx.lifecycle.*
+import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
 import com.uzlov.dating.lavada.data.use_cases.UserUseCases
+import com.uzlov.dating.lavada.di.modules.ServerCommunication
 import com.uzlov.dating.lavada.domain.logic.distance
 import com.uzlov.dating.lavada.domain.models.User
-import com.uzlov.dating.lavada.service.MatchesService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.RequestBody
 import javax.inject.Inject
 
-class UsersViewModel @Inject constructor(private val usersUseCases: UserUseCases) : ViewModel() {
+class UsersViewModel @Inject constructor(
+    private val usersUseCases: UserUseCases,
+    private val authService: FirebaseEmailAuthService,
+    private val serverCommunication: ServerCommunication
+) : ViewModel() {
 
     private val selfUser = MutableLiveData<User>()
     private val userById = MutableLiveData<User>()
@@ -21,11 +27,13 @@ class UsersViewModel @Inject constructor(private val usersUseCases: UserUseCases
      * Получаем пользователя с сервера
      * @param token собственный токен
      * */
-    fun getRemoteUser(token: String) : LiveData<User?>{
-        viewModelScope.launch(Dispatchers.IO) {
-            usersUseCases.getRemoteUser(token)?.let {
-                selfUser.postValue(it)
-            }
+    fun getUser() : LiveData<User?>{
+
+        authService.getUser()?.getIdToken(true)?.addOnSuccessListener {
+            usersUseCases.setToken(it.token!!)
+                viewModelScope.launch(Dispatchers.IO) {
+                    usersUseCases.getRemoteUser(it.token!!)
+                }
         }
         return selfUser
     }
@@ -36,8 +44,8 @@ class UsersViewModel @Inject constructor(private val usersUseCases: UserUseCases
      * */
     fun getUser(uid: String): LiveData<User?> {
         viewModelScope.launch(Dispatchers.IO) {
-            usersUseCases.getUser(uid)?.let {
-                userById.postValue(it)
+            usersUseCases.getUser(uid).let {
+
             }
         }
         return userById
@@ -49,7 +57,7 @@ class UsersViewModel @Inject constructor(private val usersUseCases: UserUseCases
      * */
     fun addUser(user: User) {
         viewModelScope.launch(Dispatchers.IO) {
-            usersUseCases.putUser(user)
+//            usersUseCases.saveUser(user)
         }
     }
 
@@ -60,16 +68,28 @@ class UsersViewModel @Inject constructor(private val usersUseCases: UserUseCases
      * */
     fun getRemoteUserById(token: String, id: String) : LiveData<User> {
         viewModelScope.launch(Dispatchers.IO) {
-            usersUseCases.getRemoteUserById(token, id)?.let {
-                remoteUserById.postValue(it)
+            usersUseCases.getRemoteUserById(token, id).let {
+
             }
         }
         return remoteUserById
     }
 
+    private val listUsers = MutableLiveData<List<Any>>()
 
     //получаем список пользователей с fb
-    fun getUsers() = usersUseCases.getUsers()
+    fun getUsers(token: String): LiveData<List<Any>> {
+            viewModelScope.launch(Dispatchers.IO) {
+                serverCommunication.updateToken(token) // обновляем токен полученый с сервера
+                val result = serverCommunication.apiServiceWithToken?.getUsersAsync()
+                val users = result?.await()
+                Log.e("TAG", "getUsers: ${users}")
+//                listUsers.postValue(usersUseCases.getUsers(it.token ?: ""))
+            }
+
+
+        return listUsers
+    }
 
 
 
@@ -77,10 +97,10 @@ class UsersViewModel @Inject constructor(private val usersUseCases: UserUseCases
      * Авторизация пользователя на сервере
      * @param token токен после авторизации или регистрации пользователя через FirebaseAuth
     * */
-    fun authRemoteUser(token: HashMap<String?, String?>) : LiveData<String>{
+    fun authRemoteUser(token: HashMap<String, String?>) : LiveData<String>{
         viewModelScope.launch(Dispatchers.IO) {
-            usersUseCases.authRemoteUser(token)?.let {
-                tokenResult.postValue(it)
+            usersUseCases.authRemoteUser(token).let {
+
             }
         }
         return tokenResult
@@ -100,10 +120,18 @@ class UsersViewModel @Inject constructor(private val usersUseCases: UserUseCases
 
 
 
-    fun removeUser(id: String) = usersUseCases.removeUsers(id)
+    fun removeUser(token: String, id: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            usersUseCases.removeUser(token, id)
+        }
+    }
 
-    fun updateUser(id: String, field: String, value: Any) =
-        usersUseCases.updateUser(id, field, value)
+    fun updateUser(token: String, field: Map<String, String>) {
+        viewModelScope.launch(Dispatchers.IO) {
+            usersUseCases.updateUser(token, field)
+        }
+    }
+
 
     fun sortUsers(
         data: List<User>,
@@ -148,9 +176,8 @@ class UsersViewModel @Inject constructor(private val usersUseCases: UserUseCases
         return myBlackList
     }
 
-    fun observeMatches(
-        phone: String,
-        matchesCallback: MatchesService.MatchesStateListener,
-    ) = usersUseCases.observeMatches(phone, matchesCallback)
-
+    override fun onCleared() {
+        super.onCleared()
+        serverCommunication.destroy() // освобождаем память
+    }
 }

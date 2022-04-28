@@ -4,9 +4,7 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.app.appComponent
@@ -39,7 +37,7 @@ class BlackListFragment :
             override fun onClick(blackList: User) {
                 val removeUID = blackList.uid
                 self.black_list.remove(removeUID)
-                model.updateUser(self.uid, "black_list", self.black_list)
+//                model.updateUser(self.uid, "black_list", self.black_list)
                 loadBlockedUsers()
             }
         }
@@ -62,23 +60,23 @@ class BlackListFragment :
     }
 
     private fun loadBlockedUsers() {
-        model.getUsers()?.observe(viewLifecycleOwner, { users ->
-            auth.getUserUid()?.let { it ->
-                model.getUser(it).observe(viewLifecycleOwner) { result ->
-                    result.let {
-                        if (it != null) {
-                            self = it
-                        }
-                        renderUi(
-                            model.blockedUsers(
-                                users, self.black_list
-                            )
-                        )
-                    }
-                }
-
-            }
-        })
+//        model.getUsers().observe(viewLifecycleOwner, { users ->
+//            auth.getUserUid()?.let { it ->
+//                model.getUser(it).observe(viewLifecycleOwner) { result ->
+//                    result.let {
+//                        if (it != null) {
+//                            self = it
+//                        }
+////                        renderUi(
+////                            model.blockedUsers(
+////                                users, self.black_list
+////                            )
+////                        )
+//                    }
+//                }
+//
+//            }
+//        })
     }
 
     private fun loadImage(image: Drawable, container: ImageView) {

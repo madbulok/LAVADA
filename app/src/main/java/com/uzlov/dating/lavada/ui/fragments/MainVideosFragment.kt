@@ -2,6 +2,7 @@ package com.uzlov.dating.lavada.ui.fragments
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
@@ -10,6 +11,7 @@ import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.uzlov.dating.lavada.R
+import com.uzlov.dating.lavada.app.App
 import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
 import com.uzlov.dating.lavada.data.repository.PreferenceRepository
@@ -89,17 +91,17 @@ class MainVideosFragment :
             val idToken: String? = task.token
             //      получаем список тут
             try {
-                val params = HashMap<String?, String?>()
-                params["token"] = idToken
-                model.authRemoteUser(params).observe(viewLifecycleOwner){ tokenServer ->
-                    if (tokenServer != null) {
-
-                        model.getRemoteUser(tokenServer)
-                        //              model.updateRemoteUser(remote!!, map).toString()
-                    } else {
-                        throw RuntimeException("Token from server is null")
-                    }
-                }
+//                val params = HashMap<String, String?>()
+//                params["token"] = idToken
+//                model.authRemoteUser(params).observe(viewLifecycleOwner){ tokenServer ->
+//                    if (tokenServer != null) {
+//
+//                        model.getRemoteUser()
+//                        //              model.updateRemoteUser(remote!!, map).toString()
+//                    } else {
+//                        throw RuntimeException("Token from server is null")
+//                    }
+//                }
             } catch (error: Exception) {
                 error.printStackTrace()
                 Toast.makeText(requireContext(), error.localizedMessage, Toast.LENGTH_SHORT).show()
@@ -209,27 +211,36 @@ class MainVideosFragment :
     }
 
     private fun updateData() {
-        model.getUsers().observe(viewLifecycleOwner, { users ->
-            authService.getUserUid()?.let { it ->
 
-                model.getUser(it).observe(viewLifecycleOwner) {
-                    it?.url_avatar?.let { it1 -> loadImage(it1, viewBinding.ivProfile) }
-                    self = it?.copy()!!
-                    testData = users
-                    mAdapter.updateList(
-                        model.sortUsers(
-                            users,
-                            self.lat!!,
-                            self.lon!!,
-                            userFilter.sex,
-                            userFilter.ageStart,
-                            userFilter.ageEnd,
-                            self.black_list
-                        )
-                    )
+        // Работает.
+        // 1) Получаем token firebase
+        // 2) Отправляем token firebase на наш сервер для авороизации
+        // 3) Получаем от нашего сервера token для общения с ним (нашим сервером)
+        authService.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
+            model.authRemoteUser(hashMapOf("token" to tokenFb.token))
+                .observe(viewLifecycleOwner) { tokenBack ->
+                    model.getUsers(tokenBack).observe(viewLifecycleOwner) {
+                        Log.e("TAG", "updateData: ${it}")
+                    }
                 }
-            }
-        })
+        }
+//                model.getUser(it).observe(viewLifecycleOwner) {
+//                    it?.url_avatar?.let { it1 -> loadImage(it1, viewBinding.ivProfile) }
+//                    self = it?.copy()!!
+////                    testData = users
+////                    mAdapter.updateList(
+////                        model.sortUsers(
+////                            users,
+////                            self.lat!!,
+////                            self.lon!!,
+////                            userFilter.sex,
+////                            userFilter.ageStart,
+////                            userFilter.ageEnd,
+////                            self.black_list
+////                        )
+////                    )
+//                }
+
     }
 
     private val profileFragment by lazy {

@@ -8,6 +8,7 @@ import com.uzlov.dating.lavada.di.AppComponent
 import com.uzlov.dating.lavada.di.DaggerAppComponent
 import com.uzlov.dating.lavada.di.modules.AppModule
 import com.uzlov.dating.lavada.ui.adapters.toast
+const val BASE_URL = "http://vm3355680.52ssd.had.wf/"
 
 class App : Application() {
     lateinit var appComponent: AppComponent
@@ -16,24 +17,10 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         FirebaseApp.initializeApp(this)
-        FirebaseAuth.getInstance()
-            .currentUser?.getIdToken(true)?.addOnSuccessListener {
-            if (it.token.isNullOrEmpty()){
-                toast("Token error!")
-            } else {
-                tokenUser = it.token.toString()
-            }
-        }?.addOnFailureListener {
-            toast("Token error! ${it.message}")
-        }
+
         appComponent = DaggerAppComponent.builder()
             .appModule(AppModule(this))
             .build()
-    }
-
-    companion object {
-        private var tokenUser: String = ""
-        fun getToken() : String = tokenUser
     }
 }
 
