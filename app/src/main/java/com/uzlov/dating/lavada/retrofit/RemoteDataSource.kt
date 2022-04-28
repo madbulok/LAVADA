@@ -1,7 +1,10 @@
 package com.uzlov.dating.lavada.retrofit
 
+import com.uzlov.dating.lavada.data.OAuthInterceptor
 import com.uzlov.dating.lavada.di.modules.RepositoryModule
 import com.uzlov.dating.lavada.domain.models.RemoteUser
+import okhttp3.Interceptor
+import okhttp3.OkHttpClient
 import okhttp3.RequestBody
 import javax.inject.Inject
 import javax.inject.Named
@@ -10,6 +13,7 @@ import javax.inject.Named
 class RemoteDataSource @Inject constructor(
     @field:Named(RepositoryModule.RETROFIT_WITH_TOKEN) private val apiWithToken: ApiService,
     @field:Named(RepositoryModule.RETROFIT_WITHOUT_TOKEN) private val apiWithOutToken: ApiService,
+    val okHttpClient:  OkHttpClient.Builder,
     ) : DataSource<Any> {
 
     /**пользователи*/
@@ -105,5 +109,23 @@ class RemoteDataSource @Inject constructor(
 
     override suspend fun checkLike(token: String, firebaseUid: String): Any {
         return apiWithToken.checkLikeAsync(firebaseUid).await()
+    }
+
+    // желательно этим методом не пользоваться, нарушает инкапсуляцию
+    override fun getClient():  OkHttpClient.Builder {
+        return okHttpClient
+    }
+
+    override fun clearInterceptors() {
+        okHttpClient.interceptors().clear()
+    }
+
+    override fun addInterceptor(interceptor: Interceptor) {
+        okHttpClient.addInterceptor(interceptor)
+    }
+
+    override fun setToken(token: String, isClearOldest: Boolean) {
+        if (isClearOldest) clearInterceptors()
+        okHttpClient.addInterceptor(OAuthInterceptor("Bearer", token))
     }
 }

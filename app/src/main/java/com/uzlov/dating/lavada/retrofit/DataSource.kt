@@ -1,5 +1,7 @@
 package com.uzlov.dating.lavada.retrofit
 
+import okhttp3.Interceptor
+import okhttp3.OkHttpClient
 import okhttp3.RequestBody
 
 interface DataSource<T> {
@@ -33,4 +35,9 @@ interface DataSource<T> {
     /**лайки*/
     suspend fun setLike(token: String, requestBody: RequestBody): T
     suspend fun checkLike(token: String, firebaseUid: String): T
+
+    fun getClient() :  OkHttpClient.Builder
+    fun clearInterceptors()
+    fun addInterceptor(interceptor: Interceptor)
+    fun setToken(token: String, isClearOldest: Boolean = false)
 }

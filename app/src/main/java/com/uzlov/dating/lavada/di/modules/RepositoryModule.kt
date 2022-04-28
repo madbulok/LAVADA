@@ -107,7 +107,8 @@ class RepositoryModule {
     fun provideDataSourceRemote(
         @Named(RETROFIT_WITH_TOKEN)  apiWithToken: ApiService,
         @Named(RETROFIT_WITHOUT_TOKEN)  apiWithOutToken: ApiService,
-    ) = RemoteDataSource(apiWithToken, apiWithOutToken)
+        client:  OkHttpClient.Builder
+    ) = RemoteDataSource(apiWithToken, apiWithOutToken, client)
 
 
 
