@@ -2,13 +2,13 @@ package com.uzlov.dating.lavada.data.data_sources.implementation
 
 import com.uzlov.dating.lavada.data.data_sources.interfaces.IGiftsDataSource
 import com.uzlov.dating.lavada.domain.models.CategoryGifts
-import com.uzlov.dating.lavada.retrofit.RemoteDataSource
+import com.uzlov.dating.lavada.retrofit.RemoteIDataSource
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-class GiftRemoteDataSourceImpl @Inject constructor(val remoteDataSource: RemoteDataSource) :
+class GiftRemoteDataSourceImpl @Inject constructor(val remoteDataSource: RemoteIDataSource) :
     IGiftsDataSource {
 
     @ExperimentalCoroutinesApi
