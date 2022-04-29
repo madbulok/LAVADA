@@ -1,7 +1,9 @@
 package com.uzlov.dating.lavada.data.use_cases
 
+import com.uzlov.dating.lavada.domain.models.User
 import com.uzlov.dating.lavada.retrofit.IServerDataSource
 import okhttp3.Interceptor
+import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody
 import javax.inject.Inject
@@ -12,7 +14,7 @@ class UserUseCases @Inject constructor(
     suspend fun getUsers(token: String) = userRemoteDataSource.getUsers(token)
     suspend fun getUser(id: String) = userRemoteDataSource.getUser(id)
     suspend fun updateUser(token: String, field: Map<String, String>) = userRemoteDataSource.updateUser(token, field)
-    suspend fun saveUser(token: String, field: Map<String, String>) = userRemoteDataSource.saveUser(token, field)
+    suspend fun saveUser(token: String, user: User) = userRemoteDataSource.saveUser(token, user)
     suspend fun removeUser(token: String, id: String) = userRemoteDataSource.removeUser(token, id)
 
     /**пользователи*/
@@ -22,7 +24,7 @@ class UserUseCases @Inject constructor(
     suspend fun authRemoteUser(token: HashMap<String, String?>) = userRemoteDataSource.authUser(token)
     suspend fun getUserBalance(token: String) = userRemoteDataSource.getBalance(token)
     suspend fun updateRemoteUser(token: String, field: Map<String, String>) = userRemoteDataSource.updateUser(token, field)
-    suspend fun updateRemoteData(token: String, field: HashMap<String, RequestBody>)=userRemoteDataSource.updateData(token, field)
+    suspend fun updateRemoteData(token: String, field: MultipartBody.Part)=userRemoteDataSource.updateData(token, field)
     suspend fun postBalance(token: String, balance: Map<String, String>) = userRemoteDataSource.postBalance(token, balance)
 
     suspend fun postSubscribe(token: String, subscribe: Map<String, String>) = userRemoteDataSource.postSubscribe(token, subscribe)

@@ -22,64 +22,87 @@ class ShopFragment : BaseFragment<FragmentShopBinding>(FragmentShopBinding::infl
     lateinit var factoryViewModel: ViewModelFactory
     private lateinit var model: UsersViewModel
 
-    private val shopFragmentListener: FragmentBuyCoins.OnSelectListener = object : FragmentBuyCoins.OnSelectListener {
-        override fun coins300() {
-            Toast.makeText(context, "Покупаем 300 монет", Toast.LENGTH_SHORT).show()
+    private val shopFragmentListener: FragmentBuyCoins.OnSelectListener =
+        object : FragmentBuyCoins.OnSelectListener {
+            override fun coins300() {
+                Toast.makeText(context, "Покупаем 300 монет", Toast.LENGTH_SHORT).show()
 //            если покупка удалась
-            if (true) {
-                firebaseEmailAuthService.getUserUid()?.let { it ->
-                        model.getUser(it).observe(viewLifecycleOwner) { result ->
-                            val copyBalance = result?.balance ?: 0
-//                            model.updateUser(it, "balance", 300+copyBalance)
-                            updateData()
+                if (true) {
+                    firebaseEmailAuthService.getUser()?.getIdToken(true)
+                        ?.addOnSuccessListener { tokenFb ->
+                            lifecycleScope.launchWhenResumed {
+                                model.authRemoteUser(hashMapOf("token" to tokenFb.token))
+                                    .observe(viewLifecycleOwner) { tokenBack ->
+                                        model.postRemoteBalance(
+                                            tokenBack,
+                                            300.toString()
+                                        )
+                                    }
+                            }
                         }
                 }
+                updateData()
             }
-        }
 
-        override fun coins500() {
-            Toast.makeText(context, "Покупаем 500 монет", Toast.LENGTH_SHORT).show()
-            if (true) {
-                firebaseEmailAuthService.getUserUid()?.let { it ->
-                        model.getUser(it).observe(viewLifecycleOwner)  { result ->
-                            val copyBalance = result?.balance ?: 0
-//                            model.updateUser(it, "balance", 500+copyBalance)
-                            updateData()
-                        }
-
-                }
-            }
-        }
-
-        override fun coins1500() {
-            Toast.makeText(context, "Покупаем 1500 монет", Toast.LENGTH_SHORT).show()
-            if (true) {
-                firebaseEmailAuthService.getUserUid()?.let { it ->
-                        model.getUser(it).observe(viewLifecycleOwner)  { result ->
-                            val copyBalance = result?.balance ?: 0
-//                            model.updateUser(it, "balance", 1500+copyBalance)
-                            updateData()
+            override fun coins500() {
+                Toast.makeText(context, "Покупаем 500 монет", Toast.LENGTH_SHORT).show()
+                if (true) {
+                    firebaseEmailAuthService.getUser()?.getIdToken(true)
+                        ?.addOnSuccessListener { tokenFb ->
+                            lifecycleScope.launchWhenResumed {
+                                model.authRemoteUser(hashMapOf("token" to tokenFb.token))
+                                    .observe(viewLifecycleOwner) { tokenBack ->
+                                        model.postRemoteBalance(
+                                            tokenBack,
+                                            500.toString()
+                                        )
+                                    }
+                            }
                         }
                 }
+                updateData()
             }
-        }
 
-        override fun coins3500() {
-            Toast.makeText(context, "Покупаем 3500 монет", Toast.LENGTH_SHORT).show()
-            if (true) {
-                firebaseEmailAuthService.getUserUid()?.let { it ->
-                    lifecycleScope.launchWhenResumed {
-                        model.getUser(it).observe(viewLifecycleOwner)  { result ->
-                            val copyBalance = result?.balance ?: 0
-//                            model.updateUser(it, "balance", 3500+copyBalance)
-                            updateData()
+            override fun coins1500() {
+                Toast.makeText(context, "Покупаем 1500 монет", Toast.LENGTH_SHORT).show()
+                if (true) {
+                    firebaseEmailAuthService.getUser()?.getIdToken(true)
+                        ?.addOnSuccessListener { tokenFb ->
+                            lifecycleScope.launchWhenResumed {
+                                model.authRemoteUser(hashMapOf("token" to tokenFb.token))
+                                    .observe(viewLifecycleOwner) { tokenBack ->
+                                        model.postRemoteBalance(
+                                            tokenBack,
+                                            1500.toString()
+                                        )
+                                    }
+                            }
                         }
-                    }
                 }
+                updateData()
             }
+
+            override fun coins3500() {
+                Toast.makeText(context, "Покупаем 3500 монет", Toast.LENGTH_SHORT).show()
+                if (true) {
+                    firebaseEmailAuthService.getUser()?.getIdToken(true)
+                        ?.addOnSuccessListener { tokenFb ->
+                            lifecycleScope.launchWhenResumed {
+                                model.authRemoteUser(hashMapOf("token" to tokenFb.token))
+                                    .observe(viewLifecycleOwner) { tokenBack ->
+                                        model.postRemoteBalance(
+                                            tokenBack,
+                                            3500.toString()
+                                        )
+                                    }
+                            }
+                        }
+                }
+                updateData()
+            }
+
         }
 
-    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requireContext().appComponent.inject(this)
@@ -89,19 +112,23 @@ class ShopFragment : BaseFragment<FragmentShopBinding>(FragmentShopBinding::infl
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initListeners()
-       updateData()
+        updateData()
 
     }
 
-    private fun updateData(){
-        firebaseEmailAuthService.getUserUid()?.let { it ->
+    private fun updateData() {
+        firebaseEmailAuthService.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
             lifecycleScope.launchWhenResumed {
-                model.getUser(it).observe(viewLifecycleOwner) { result ->
-                    viewBinding.btnCoins.text = result?.balance.toString()
-                }
+                model.authRemoteUser(hashMapOf("token" to tokenFb.token))
+                    .observe(viewLifecycleOwner) { tokenBack ->
+                        model.getRemoteBalance(tokenBack).observe(viewLifecycleOwner) { result ->
+                            viewBinding.btnCoins.text = result.toString()
+                        }
+                    }
             }
         }
     }
+
     private fun initListeners() {
         with(viewBinding) {
             tvAboutPremiumLabel.setOnClickListener {

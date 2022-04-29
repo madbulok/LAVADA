@@ -14,8 +14,7 @@ class FragmentSelectSourceVideo(private var listener: OnSelectListener? = null) 
 
     companion object {
         fun newInstance(): FragmentSelectSourceVideo {
-            val fragment = FragmentSelectSourceVideo()
-            return fragment
+            return FragmentSelectSourceVideo()
         }
     }
 

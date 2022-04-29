@@ -1,6 +1,7 @@
 package com.uzlov.dating.lavada.data
 
 import okhttp3.Interceptor
+import javax.inject.Singleton
 
 class OAuthInterceptor(private val tokenType: String, private val accessToken: String):
     Interceptor {
@@ -11,3 +12,4 @@ class OAuthInterceptor(private val tokenType: String, private val accessToken: S
         return chain.proceed(request)
     }
 }
+

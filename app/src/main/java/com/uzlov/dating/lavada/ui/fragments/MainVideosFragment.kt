@@ -11,7 +11,6 @@ import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.uzlov.dating.lavada.R
-import com.uzlov.dating.lavada.app.App
 import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
 import com.uzlov.dating.lavada.data.repository.PreferenceRepository
@@ -85,33 +84,6 @@ class MainVideosFragment :
         super.onViewCreated(view, savedInstanceState)
         model = factoryViewModel.create(UsersViewModel::class.java)
         updateData()
-
-        //получаем токен от fb
-        authService.getUser()?.getIdToken(true)?.addOnSuccessListener { task ->
-            val idToken: String? = task.token
-            //      получаем список тут
-            try {
-//                val params = HashMap<String, String?>()
-//                params["token"] = idToken
-//                model.authRemoteUser(params).observe(viewLifecycleOwner){ tokenServer ->
-//                    if (tokenServer != null) {
-//
-//                        model.getRemoteUser()
-//                        //              model.updateRemoteUser(remote!!, map).toString()
-//                    } else {
-//                        throw RuntimeException("Token from server is null")
-//                    }
-//                }
-            } catch (error: Exception) {
-                error.printStackTrace()
-                Toast.makeText(requireContext(), error.localizedMessage, Toast.LENGTH_SHORT).show()
-            }
-        }?.addOnFailureListener { error ->
-            error.printStackTrace()
-            Toast.makeText(requireContext(), error.localizedMessage, Toast.LENGTH_SHORT).show()
-        }
-
-
         with(viewBinding) {
             rvVideosUsers.adapter = mAdapter
             rvVideosUsers.setHasFixedSize(true)
@@ -165,9 +137,9 @@ class MainVideosFragment :
     private fun showCustomAlertToComplain() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_custom_layout, null)
         val customDialog =
-                MaterialAlertDialogBuilder(requireContext(), R.style.MaterialAlertDialog_rounded)
-                    .setView(dialogView)
-                    .show()
+            MaterialAlertDialogBuilder(requireContext(), R.style.MaterialAlertDialog_rounded)
+                .setView(dialogView)
+                .show()
 
         val btDismiss = dialogView.findViewById<TextView>(R.id.btDismissCustomDialog)
         btDismiss.text = getString(R.string.no)
@@ -211,35 +183,30 @@ class MainVideosFragment :
     }
 
     private fun updateData() {
-
         // Работает.
         // 1) Получаем token firebase
         // 2) Отправляем token firebase на наш сервер для авороизации
         // 3) Получаем от нашего сервера token для общения с ним (нашим сервером)
         authService.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
+            Log.e("TOKEN_FB", tokenFb.token.toString())
             model.authRemoteUser(hashMapOf("token" to tokenFb.token))
                 .observe(viewLifecycleOwner) { tokenBack ->
-                    model.getUsers(tokenBack).observe(viewLifecycleOwner) {
-                        Log.e("TAG", "updateData: ${it}")
+                        model.getUsers(tokenBack).observe(this, { users ->
+                    Log.e("MV_TOKEN_BACK", tokenBack)
+                    model.getUser(tokenBack).observe(viewLifecycleOwner) { user ->
+                        Log.e("TAG", "updateData: $user")
+                        user?.url_avatar?.let { it -> loadImage(it, viewBinding.ivProfile) }
+                        self = user?.copy()!!
+                        testData = users
+                        Log.e("USERS", users.toString())
+                        /** пока без сортировки*/
+                        mAdapter.updateList(
+                            users
+                        )
                     }
+                })
                 }
         }
-//                model.getUser(it).observe(viewLifecycleOwner) {
-//                    it?.url_avatar?.let { it1 -> loadImage(it1, viewBinding.ivProfile) }
-//                    self = it?.copy()!!
-////                    testData = users
-////                    mAdapter.updateList(
-////                        model.sortUsers(
-////                            users,
-////                            self.lat!!,
-////                            self.lon!!,
-////                            userFilter.sex,
-////                            userFilter.ageStart,
-////                            userFilter.ageEnd,
-////                            self.black_list
-////                        )
-////                    )
-//                }
 
     }
 
@@ -249,7 +216,6 @@ class MainVideosFragment :
     private val filterSearchPeopleFragment by lazy {
         FilterSearchPeopleFragment()
     }
-
 
     private fun setOnClickListener() {
         with(viewBinding) {
@@ -324,7 +290,6 @@ class MainVideosFragment :
     }
 
     companion object {
-
         private const val CURRENT_USER = "user"
         fun newInstance() = MainVideosFragment()
 
