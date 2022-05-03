@@ -1,5 +1,7 @@
 package com.uzlov.dating.lavada.retrofit
 
+import com.uzlov.dating.lavada.domain.models.User
+import okhttp3.MultipartBody
 import okhttp3.RequestBody
 
 interface IServerDataSource<T> {
@@ -7,11 +9,11 @@ interface IServerDataSource<T> {
     suspend fun getUser(token: String): T
     suspend fun getUserById(token: String, id: String): T
     suspend fun authUser(selfToken: HashMap<String, String?>): T
-    suspend fun getUsers(token: String): List<T>
+    suspend fun getUsers(token: String): T
     suspend fun getBalance(token: String): T
     suspend fun updateUser(token: String, field: Map<String, String>): T
-    suspend fun updateData(token: String, field: HashMap<String, RequestBody>): T
-    suspend fun saveUser(token: String, filed: Map<String, String>)
+    suspend fun updateData(token: String, field: MultipartBody.Part): T
+    suspend fun saveUser(token: String, user: User)
     suspend fun removeUser(token: String, id: String)
     suspend fun postBalance(token: String, balance: Map<String, String>): T
     suspend fun postSubscribe(token: String, subscribe: Map<String, String>): T

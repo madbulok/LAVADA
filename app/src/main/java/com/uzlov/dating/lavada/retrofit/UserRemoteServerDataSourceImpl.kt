@@ -2,6 +2,9 @@ package com.uzlov.dating.lavada.retrofit
 
 import com.uzlov.dating.lavada.di.modules.ServerCommunication
 import com.uzlov.dating.lavada.domain.models.RemoteUser
+import com.uzlov.dating.lavada.domain.models.RemoteUserList
+import com.uzlov.dating.lavada.domain.models.User
+import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import javax.inject.Inject
 
@@ -9,7 +12,6 @@ import javax.inject.Inject
 class UserRemoteServerDataSourceImpl @Inject constructor(
     private val serverCommunication: ServerCommunication
     ) : IServerDataSource<Any> {
-
 
     /**пользователи*/
     override suspend fun getUser(token: String): RemoteUser {
@@ -21,12 +23,12 @@ class UserRemoteServerDataSourceImpl @Inject constructor(
     override suspend fun updateUser(token: String, field: Map<String, String>): Any {
         return serverCommunication.apiServiceWithToken?.updateUserAsync(field)!!.await()
     }
-    override suspend fun updateData(token: String, field: HashMap<String, RequestBody>): Any {
+    override suspend fun updateData(token: String, field: MultipartBody.Part): Any {
         return serverCommunication.apiServiceWithToken?.uploadEmployeeDataAsync(field)!!.await()
     }
 
-    override suspend fun saveUser(token: String, filed: Map<String, String>){
-
+    override suspend fun saveUser(token: String, user: User){
+        return serverCommunication.apiServiceWithToken?.saveUserAsync(token, user)!!
     }
 
     override suspend fun removeUser(token: String, id: String) {
@@ -39,7 +41,7 @@ class UserRemoteServerDataSourceImpl @Inject constructor(
     override suspend fun postBalance(token: String, balance: Map<String, String>): Any {
         return serverCommunication.apiServiceWithToken?.postBalanceAsync(balance)!!.await()
     }
-    override suspend fun getUsers(token: String): List<RemoteUser> {
+    override suspend fun getUsers(token: String): RemoteUserList {
         return serverCommunication.apiServiceWithToken?.getUsersAsync()!!.await()
     }
     override suspend fun getBalance(token: String): Any {

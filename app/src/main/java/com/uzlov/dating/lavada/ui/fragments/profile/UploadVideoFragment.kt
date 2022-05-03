@@ -21,6 +21,10 @@ import com.uzlov.dating.lavada.storage.URIPathHelper
 import com.uzlov.dating.lavada.ui.activities.LoginActivity
 import com.uzlov.dating.lavada.ui.fragments.BaseFragment
 import com.uzlov.dating.lavada.ui.fragments.dialogs.FragmentSelectSourceVideo
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import java.io.File
 
 class UploadVideoFragment :
     BaseFragment<FragmentUploadVideoBinding>(FragmentUploadVideoBinding::inflate) {
@@ -78,6 +82,7 @@ class UploadVideoFragment :
                     data.data?.let { uriPathHelper.getPath(requireContext(), it) }
                 list = listOf(data.data) as List<Uri>
                 if (videoFullPath != null) {
+
                     compressVideo()
                 }
             }

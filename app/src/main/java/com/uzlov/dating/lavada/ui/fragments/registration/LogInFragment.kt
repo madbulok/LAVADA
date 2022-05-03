@@ -83,30 +83,36 @@ class LogInFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
                 if (!email.isNullOrEmpty() && password.isNotEmpty()) {
                     authService.loginWithEmailAndPassword(email, password)
                         .addOnSuccessListener(requireActivity()) { _ ->
-                            authService.getUserUid()?.let { uid ->
-                                model.getUser(uid).observe(viewLifecycleOwner) { result ->
-                                    self = result?.copy()!!
-                                    val user = User(
-                                        uid = authService.auth.currentUser?.uid ?: "",
-                                        email = authService.auth.currentUser?.email
-                                    )
+                            authService.getUser()?.getIdToken(true)
+                                ?.addOnSuccessListener { tokenFb ->
+                            model.authRemoteUser(hashMapOf("token" to tokenFb.token))
+                                .observe(viewLifecycleOwner) { tokenBack ->
+                                    model.getUser(tokenBack)
+                                        .observe(viewLifecycleOwner) { result ->
+                                            self = result?.copy()!!
+                                            val user = User(
+                                                uid = authService.auth.currentUser?.uid ?: "",
+                                                email = authService.auth.currentUser?.email
+                                            )
 
-                                    AuthorizedUser(
-                                        uuid = authService.auth.currentUser?.uid ?: "",
-                                        datetime = System.currentTimeMillis() / 1000,
-                                        name = authService.auth.currentUser?.email ?: "",
-                                        isReady = self.ready
-                                    ).also { prefUser ->
-                                        preferenceRepository.updateUser(prefUser)
-                                    }
+                                            AuthorizedUser(
+                                                uuid = authService.auth.currentUser?.uid ?: "",
+                                                datetime = System.currentTimeMillis() / 1000,
+                                                name = authService.auth.currentUser?.email ?: "",
+                                                isReady = self.ready
+                                            ).also { prefUser ->
+                                                preferenceRepository.updateUser(prefUser)
+                                            }
 
-                                    if (self.ready) {
-                                        (requireActivity() as LoginActivity).startHome()
-                                    } else {
-                                        (requireActivity() as LoginActivity)
-                                            .startFillDataFragment(user)
-                                    }
+                                            if (self.ready) {
+                                                (requireActivity() as LoginActivity).startHome()
+                                            } else {
+                                                (requireActivity() as LoginActivity)
+                                                    .startFillDataFragment(user)
+                                            }
+                                        }
                                 }
+                                (requireActivity() as LoginActivity).startHome()
                             }
                         }.addOnFailureListener { error ->
                             error.printStackTrace()
@@ -136,6 +142,7 @@ class LogInFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
             if (result.resultCode == Activity.RESULT_OK) {
                 val data = result.data
                 val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+                (requireActivity() as LoginActivity).startHome()
                 try {
                     task.getResult(ApiException::class.java)?.let {
                         authService.setToken(it.idToken!!)
@@ -148,33 +155,45 @@ class LogInFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
                         )
                         authService.loginWithGoogleAccount()
                             .addOnSuccessListener(requireActivity()) { _ ->
-                                authService.getUserUid()?.let { it ->
-                                    model.getUser(it).observe(viewLifecycleOwner) { result ->
-                                        self = result?.copy()!!
-                                        val user = User(
-                                            uid = authService.auth.currentUser?.uid ?: "",
-                                            email = authService.auth.currentUser?.email
-                                        )
+                                authService.getUser()?.getIdToken(true)
+                                    ?.addOnSuccessListener { tokenFb ->
+                                        model.authRemoteUser(hashMapOf("token" to tokenFb.token))
+                                            .observe(viewLifecycleOwner) { tokenBack ->
+                                                model.getUser(tokenBack)
+                                                    .observe(viewLifecycleOwner) { result ->
+                                                        self = result?.copy()!!
+                                                        val user = User(
+                                                            uid = authService.auth.currentUser?.uid
+                                                                ?: "",
+                                                            email = authService.auth.currentUser?.email
+                                                        )
 
-                                        AuthorizedUser(
-                                            uuid = authService.auth.currentUser?.uid ?: "",
-                                            datetime = System.currentTimeMillis() / 1000,
-                                            name = authService.auth.currentUser?.email ?: "",
-                                            isReady = self.ready
-                                        ).also { prefUser ->
-                                            preferenceRepository.updateUser(prefUser)
-                                        }
-                                        if (self.ready) {
-                                            (requireActivity() as LoginActivity).startHome()
-                                        } else {
-                                            (requireActivity() as LoginActivity)
-                                                .startFillDataFragment(user)
-                                        }
+                                                        AuthorizedUser(
+                                                            uuid = authService.auth.currentUser?.uid
+                                                                ?: "",
+                                                            datetime = System.currentTimeMillis() / 1000,
+                                                            name = authService.auth.currentUser?.email
+                                                                ?: "",
+                                                            isReady = self.ready
+                                                        ).also { prefUser ->
+                                                            preferenceRepository.updateUser(prefUser)
+                                                        }
+                                                        if (self.ready) {
+                                                            (requireActivity() as LoginActivity).startHome()
+                                                        } else {
+                                                            (requireActivity() as LoginActivity)
+                                                                .startFillDataFragment(user)
+                                                        }
+                                                    }
+                                            }
                                     }
-                                }
-                            }.addOnFailureListener { error->
+                            }.addOnFailureListener { error ->
                                 error.printStackTrace()
-                                Toast.makeText(requireContext(), error.localizedMessage, Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    requireContext(),
+                                    error.localizedMessage,
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                     }
                 } catch (e: ApiException) {
@@ -186,7 +205,8 @@ class LogInFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
 
     private fun showCustomAlert() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_custom_layout, null)
-        val customDialog = MaterialAlertDialogBuilder(requireContext(), R.style.MaterialAlertDialog_rounded)
+        val customDialog =
+            MaterialAlertDialogBuilder(requireContext(), R.style.MaterialAlertDialog_rounded)
                 .setView(dialogView)
                 .show()
 

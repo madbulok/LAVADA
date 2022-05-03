@@ -2,6 +2,7 @@ package com.uzlov.dating.lavada.retrofit
 
 import com.uzlov.dating.lavada.domain.models.*
 import kotlinx.coroutines.Deferred
+import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Response
@@ -11,14 +12,14 @@ import retrofit2.http.*
 interface ApiService {
 
     /**пользователи**/
-    //получить список пользователей +
+    //получить список пользователей (пока без сортировки по дистанции) +
     @GET("api/v1/users")
     fun getUsersAsync(
         //       @Query("limit") limit: String,
         //       @Query("offset") offset: String,
         //       @Query("order_by_location") order_by_location: String,
         //       @Query("only_premium") only_premium: String,
-    ): Deferred<List<RemoteUser>>
+    ): Deferred<RemoteUserList>
 
     //получить пользователя +
     @GET("api/v1/user")
@@ -30,23 +31,27 @@ interface ApiService {
         @Query("firebase_uid") id: String
     ) : Deferred<RemoteUser>
 
-    //получить баланс пользователя +
+    //получить баланс пользователя
     @GET("api/v1/user/balance")
     fun getUserBalanceAsync(): Deferred<RemoteUser>
 
-    //обновить данные пользователя +
+    //обновить данные пользователя
     @FormUrlEncoded
     @POST("api/v1/user")
     fun updateUserAsync(
         @FieldMap() field: Map<String, String>
     ): Deferred<ResponseBody>
 
-    //тут грузить фото/видео. пока не работает
+    @FormUrlEncoded
+    @POST("api/v1/user")
+    fun saveUserAsync(token: String, @FieldMap() user: User)
+
+    //тут грузить фото/видео //фото+, видео пока-
     @Multipart
     @POST("api/v1/user")
     fun uploadEmployeeDataAsync(
-        @PartMap map: HashMap<String, RequestBody>
-    ): Deferred<Response<ResponseBody>>
+        @Part body: MultipartBody.Part
+    ): Deferred<RemoteUser>
 
     //авторизовать пользователя, обратно приходит токен с бэка +
     @FormUrlEncoded
@@ -55,7 +60,7 @@ interface ApiService {
         @FieldMap params: HashMap<String, String?>
     ): Deferred<RemoteUser>
 
-    //начисление баланса пользователю +
+    //начисление баланса пользователю
     /** зачислилось 2 раза и перестало. Хз почему, надо разбираться*/
     @FormUrlEncoded
     @POST("api/v1/user/balance")
@@ -63,7 +68,7 @@ interface ApiService {
         @FieldMap balance: Map<String, String>
     ): Deferred<RemoteUser>
 
-    //включение подписки. меняет статус на _has_premium":[{"google":"2022-06-10 00:00:00"}] +
+    //включение подписки. меняет статус на _has_premium":[{"google":"2022-06-10 00:00:00"}]
     @FormUrlEncoded
     @POST("api/v1/user/subscribe")
     fun postSubscribeAsync(

@@ -4,27 +4,33 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
-import androidx.lifecycle.lifecycleScope
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.VideoDecoder
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
 import com.uzlov.dating.lavada.databinding.FragmentPersonalInfoBinding
-import com.uzlov.dating.lavada.domain.models.MALE
 import com.uzlov.dating.lavada.domain.models.User
 import com.uzlov.dating.lavada.storage.IStorage
-import com.uzlov.dating.lavada.storage.URIPathHelper
 import com.uzlov.dating.lavada.ui.fragments.BaseFragment
 import com.uzlov.dating.lavada.viemodels.UsersViewModel
 import com.uzlov.dating.lavada.viemodels.ViewModelFactory
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.ByteArrayOutputStream
 import javax.inject.Inject
+
 
 class PersonalInfoFragment :
     BaseFragment<FragmentPersonalInfoBinding>(FragmentPersonalInfoBinding::inflate) {
@@ -32,7 +38,7 @@ class PersonalInfoFragment :
 
     lateinit var list: List<Uri>
     private var userThis: User = User()
-    private var urlImage: String = ""
+    private var urlImage: Bitmap? = null
     // var blackList: MutableList<String> = mutableListOf("WJfUC7k7EVZDtJdJYXDFn8DfAoD3", "67r4Wd1H9JblvgKhScAX3Y42aFX2", "NelQeaw9g4dBWT8oPuCiNrRdK0m2")
 
     @Inject
@@ -50,21 +56,19 @@ class PersonalInfoFragment :
         requireContext().appComponent.inject(this)
     }
 
+    @RequiresApi(Build.VERSION_CODES.P)
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode == UploadVideoFragment.REQUEST_CODE) {
             if (data?.data != null) {
-                val uriPathHelper = URIPathHelper()
-                val imageFullPath =
-                    data.data?.let { context?.let { it1 -> uriPathHelper.getPath(it1, it) } }
-                if (imageFullPath != null) {
-                    val result = serverStorageService.uploadPhoto(imageFullPath)
-//                    result.first.addOnSuccessListener {
-//                        result.second.downloadUrl.addOnSuccessListener {
-//                            urlImage = it.toString()
-//                            loadImage(urlImage, viewBinding.ivProfile)
-//                        }
-//                    }
+                val imageUri: Uri = data.data!!
+                val source =
+                    context?.let { ImageDecoder.createSource(it.contentResolver, imageUri) }
+                val bitmap = source?.let { ImageDecoder.decodeBitmap(it) }
+                if (bitmap != null) {
+                    urlImage = bitmap
+                    urlImage?.let { sendFileRequest(it) }
+                    data.data!!.path?.let { loadImage(it, viewBinding.ivProfile) }
                 }
             }
         }
@@ -74,36 +78,37 @@ class PersonalInfoFragment :
         super.onViewCreated(view, savedInstanceState)
         model = factoryViewModel.create(UsersViewModel::class.java)
         checkPermission()
-        firebaseEmailAuthService.getUserUid()?.let { uid ->
-            lifecycleScope.launchWhenResumed {
-                model.getUser(uid).observe(viewLifecycleOwner) { result ->
-                    result?.let { user ->
-                        userThis = user
-                        with(viewBinding) {
-                            if (user.url_avatar.isNullOrEmpty()) {
-                                btnAddPhoto.visibility = View.VISIBLE
-                                ivEditPhoto.visibility = View.GONE
-                            } else {
-                                btnAddPhoto.visibility = View.GONE
-                                ivEditPhoto.visibility = View.VISIBLE
-                                loadImage(user.url_avatar.toString(), viewBinding.ivProfile)
+        firebaseEmailAuthService.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
+            model.authRemoteUser(hashMapOf("token" to tokenFb.token))
+                .observe(viewLifecycleOwner) { tokenBack ->
+                    model.getUser(tokenBack).observe(viewLifecycleOwner) { result ->
+                        result?.let { user ->
+                            userThis = user
+                            with(viewBinding) {
+                                if (user.url_avatar.isNullOrEmpty()) {
+                                    btnAddPhoto.visibility = View.VISIBLE
+                                    ivEditPhoto.visibility = View.GONE
+                                } else {
+                                    btnAddPhoto.visibility = View.GONE
+                                    ivEditPhoto.visibility = View.VISIBLE
+                                    loadImage(user.url_avatar.toString(), viewBinding.ivProfile)
+                                }
+                                tiEtName.setText(user.name)
+                                tiEtAboutMyself.setText(user.about)
+                                tiEtLocation.setText(user.location)
+                                when (user.male?.ordinal) {
+                                    0 -> radioGroup.check(R.id.rbMan)
+                                    1 -> radioGroup.check(R.id.rvWoman)
+                                    2 -> radioGroup.check(R.id.rbAnother)
+                                }
+                                tvAgeValue.text = user.age?.toString()
+                                slAge.value = user.age?.toFloat() ?: 18F
                             }
-                            tiEtName.setText(user.name)
-                            tiEtAboutMyself.setText(user.about)
-                            tiEtLocation.setText(user.location)
-                            when (user.male?.ordinal) {
-                                0 -> radioGroup.check(R.id.rbMan)
-                                1 -> radioGroup.check(R.id.rvWoman)
-                                2 -> radioGroup.check(R.id.rbAnother)
-                            }
-                            tvAgeValue.text = user.age?.toString()
-                            slAge.value = user.age?.toFloat() ?: 18F
                         }
                     }
                 }
-            }
-
         }
+
         initListeners()
     }
 
@@ -120,6 +125,24 @@ class PersonalInfoFragment :
             )
             false
         } else true
+    }
+
+    private fun sendFileRequest(image: Bitmap) {
+
+        val stream = ByteArrayOutputStream()
+        image.compress(Bitmap.CompressFormat.JPEG, 80, stream)
+        val byteArray = stream.toByteArray()
+        val body = MultipartBody.Part.createFormData(
+            "user_photo",
+            "user_photo",
+            byteArray.toRequestBody("image/jpg".toMediaTypeOrNull(), 0, byteArray.size)
+        )
+        firebaseEmailAuthService.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
+            model.authRemoteUser(hashMapOf("token" to tokenFb.token))
+                .observe(viewLifecycleOwner) { tokenBack ->
+                    model.updateRemoteData(tokenBack, body)
+                }
+        }
     }
 
     private fun initListeners() {
@@ -142,26 +165,32 @@ class PersonalInfoFragment :
             }
             radioGroup.setOnCheckedChangeListener { _, checkedId ->
                 val sex = when (checkedId) {
-                    R.id.rbMan -> MALE.MAN
-                    R.id.rvWoman -> MALE.WOMAN
-                    R.id.rbAnother -> MALE.ANOTHER
-                    else -> MALE.MAN
+                    R.id.rbMan -> "male"
+                    R.id.rvWoman -> "female"
+                    R.id.rbAnother -> "another"
+                    else -> "male"
                 }
-                userThis.male = sex
+                userThis.password = sex
             }
 
             btnCancel.setOnClickListener {
                 parentFragmentManager.popBackStack()
             }
             btnSave.setOnClickListener {
-//                model.updateUser(userThis.uid, "age", tvAgeValue.text.toString().toInt())
-//                userThis.male?.let { it1 -> model.updateUser(userThis.uid, "male", it1) }
-//                model.updateUser(userThis.uid, "name", tiEtName.text.toString())
-//                model.updateUser(userThis.uid, "about", tiEtAboutMyself.text.toString())
-//                if (urlImage.isNotEmpty()) {
-//                    model.updateUser(userThis.uid, "url_avatar", urlImage)
-//                }
-                parentFragmentManager.popBackStack()
+                firebaseEmailAuthService.getUser()?.getIdToken(true)
+                    ?.addOnSuccessListener { tokenFb ->
+                        model.authRemoteUser(hashMapOf("token" to tokenFb.token))
+                            .observe(viewLifecycleOwner) { tokenBack ->
+                                val body = mutableMapOf<String, String>()
+                                body["user_age"] = tvAgeValue.text.toString()
+                                body["user_gender"] = userThis.password.toString()
+                                body["user_nickname"] = tiEtName.text.toString()
+                                /**описание не подгружается пока. Надо разбираться с бэкендером*/
+                                body["user_description"] = tiEtAboutMyself.text.toString()
+                                model.updateUser(tokenBack, body)
+                                parentFragmentManager.popBackStack()
+                            }
+                    }
             }
         }
     }
@@ -178,7 +207,6 @@ class PersonalInfoFragment :
     }
 
     companion object {
-        private const val REQUEST_TAKE_PHOTO = 0
         private const val REQUEST_SELECT_IMAGE_IN_ALBUM = 1
         const val REQUEST_EXTERNAL_STORAGE = 1
         private val PERMISSIONS_STORAGE = arrayOf(
@@ -188,7 +216,6 @@ class PersonalInfoFragment :
     }
 
     private fun loadImage(image: String, container: ImageView) {
-
         val circularProgressDrawable = context?.let { CircularProgressDrawable(it) }
         circularProgressDrawable!!.strokeWidth = 5f
         circularProgressDrawable.centerRadius = 25f

@@ -7,13 +7,14 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
-import androidx.lifecycle.lifecycleScope
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.abedelazizshe.lightcompressorlibrary.CompressionListener
 import com.abedelazizshe.lightcompressorlibrary.VideoCompressor
 import com.abedelazizshe.lightcompressorlibrary.VideoQuality
@@ -60,17 +61,18 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
     private val shop by lazy {
         ShopFragment()
     }
-    private val selectVideoListener: FragmentSelectSourceVideo.OnSelectListener = object : FragmentSelectSourceVideo.OnSelectListener {
-        override fun fromCamera() {
-          //  (requireActivity() as LoginActivity).startCaptureVideoFragment(user)
-        }
+    private val selectVideoListener: FragmentSelectSourceVideo.OnSelectListener =
+        object : FragmentSelectSourceVideo.OnSelectListener {
+            override fun fromCamera() {
+                //  (requireActivity() as LoginActivity).startCaptureVideoFragment(user)
+            }
 
-        override fun fromDevice() {
-            if (checkPermission()) {
-                openGalleryForVideo()
+            override fun fromDevice() {
+                if (checkPermission()) {
+                    openGalleryForVideo()
+                }
             }
         }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,14 +82,18 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        firebaseEmailAuthService.getUserUid()?.let { it ->
-                model.getUser(it).observe(viewLifecycleOwner) { result ->
-                    user = result?.copy()!!
-                    viewBinding.tvLocation.text = result.location
-                    viewBinding.tvName.text = result.name + ", " + result.age
-                    viewBinding.btnCoins.text = result.balance.toString()
-                    result.url_avatar?.let { it1 -> loadImage(it1, viewBinding.ivProfile) }
+        firebaseEmailAuthService.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
+            model.authRemoteUser(hashMapOf("token" to tokenFb.token))
+                .observe(viewLifecycleOwner) { tokenBack ->
+                    model.getUser(tokenBack).observe(viewLifecycleOwner) { result ->
+                        user = result?.copy()!!
+                        viewBinding.tvLocation.text = result.location
+                        viewBinding.tvName.text = result.name + ", " + result.age
+                        result.url_avatar?.let { it1 -> loadImage(it1, viewBinding.ivProfile) }
+                    }
+                    model.getRemoteBalance(tokenBack).observe(viewLifecycleOwner){ balance ->
+                        viewBinding.btnCoins.text = balance.toString()
+                    }
                 }
         }
         with(viewBinding) {
@@ -104,7 +110,10 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
                     .commit()
             }
             btnChangeVideo.setOnClickListener {
-                FragmentSelectSourceVideo(selectVideoListener).show(childFragmentManager, FragmentSelectSourceVideo::class.java.simpleName)
+                FragmentSelectSourceVideo(selectVideoListener).show(
+                    childFragmentManager,
+                    FragmentSelectSourceVideo::class.java.simpleName
+                )
 
             }
             btnTopUp.setOnClickListener {
@@ -115,7 +124,10 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
             }
             clPremium.setOnClickListener {
                 val buyPremiumFragment = FragmentBuyPremium()
-                buyPremiumFragment.show(childFragmentManager, buyPremiumFragment.javaClass.simpleName)
+                buyPremiumFragment.show(
+                    childFragmentManager,
+                    buyPremiumFragment.javaClass.simpleName
+                )
             }
             flCard.setOnClickListener {
                 showCustomAlertToByPremium()
@@ -150,14 +162,21 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
     }
 
     private fun loadImage(image: String, container: ImageView) {
+        val circularProgressDrawable = context?.let { CircularProgressDrawable(it) }
+        circularProgressDrawable!!.strokeWidth = 5f
+        circularProgressDrawable.centerRadius = 25f
+        circularProgressDrawable.start()
+
         view?.let {
             Glide
                 .with(it.context)
                 .load(image)
+                .placeholder(circularProgressDrawable)
                 .error(R.drawable.ic_default_user)
                 .into(container)
         }
     }
+
     private fun checkPermission(): Boolean {
         val permission = ActivityCompat.checkSelfPermission(
             requireActivity(),
@@ -172,6 +191,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
             false
         } else true
     }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode == UploadVideoFragment.REQUEST_CODE) {
@@ -247,14 +267,14 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
     }
 
     fun startCompressing() {
-        with(viewBinding){
+        with(viewBinding) {
             btnChangeVideo.visibility = View.GONE
             progressCompressing.visibility = View.VISIBLE
         }
     }
 
     fun stopCompressing() {
-        with(viewBinding){
+        with(viewBinding) {
             btnChangeVideo.visibility = View.VISIBLE
             progressCompressing.visibility = View.GONE
         }
@@ -266,6 +286,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
         )
+
         fun newInstance() =
             ProfileFragment().apply {
                 arguments = Bundle().apply {
