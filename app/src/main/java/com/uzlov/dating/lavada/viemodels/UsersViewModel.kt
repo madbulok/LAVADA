@@ -1,7 +1,10 @@
 package com.uzlov.dating.lavada.viemodels
 
 import android.util.Log
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
 import com.uzlov.dating.lavada.data.convertDtoToModel
 import com.uzlov.dating.lavada.data.convertListDtoToModel
@@ -13,9 +16,15 @@ import com.uzlov.dating.lavada.domain.models.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import java.util.*
 import javax.inject.Inject
+import kotlin.collections.List
+import kotlin.collections.Map
+import kotlin.collections.mutableListOf
+import kotlin.collections.mutableMapOf
+import kotlin.collections.set
+import kotlin.collections.sortedBy
+import kotlin.collections.toMutableList
 
 class UsersViewModel @Inject constructor(
     private val usersUseCases: UserUseCases,
@@ -27,10 +36,11 @@ class UsersViewModel @Inject constructor(
     private val userById = MutableLiveData<User>()
     private var tokenResult = MutableLiveData<String>()
     private var listUsers = MutableLiveData<List<User>>()
-    private var response = Any()
-    private var user = RemoteUser()
+    private var response = MutableLiveData<RemoteUser>()
+    private var user = MutableLiveData<RemoteUser>()
     private var selfBalance = MutableLiveData<Int>()
     private var updatedBalance = MutableLiveData<User>()
+    private var updatedLike = MutableLiveData<RemoteUser>()
 
 
     /**
@@ -73,11 +83,10 @@ class UsersViewModel @Inject constructor(
      * @param token пользователя с бэка
      * @param field<String, String> - поле, которое нужно обновить
      */
-    fun updateUser(token: String, field: Map<String, String>): Any {
+    fun updateUser(token: String, field: Map<String, String>): LiveData<RemoteUser?>?{
         viewModelScope.launch(Dispatchers.IO) {
             serverCommunication.updateToken(token) // обновляем токен полученый с сервера
-            usersUseCases.updateUser(token, field)
-            response = serverCommunication.apiServiceWithToken?.updateUserAsync(field)!!
+            response.postValue(serverCommunication.apiServiceWithToken?.updateUserAsync(field)!!.await())
         }
         return response
     }
@@ -87,10 +96,13 @@ class UsersViewModel @Inject constructor(
      * @param token пользователя с бэка
      * @param field<MultipartBody.Part> - поле, которое нужно обновить. Принимает в себя файл
      */
-    fun updateRemoteData(token: String, field: MultipartBody.Part): RemoteUser? {
+    fun updateRemoteData(token: String, field: MultipartBody.Part): LiveData<RemoteUser?>? {
         viewModelScope.launch(Dispatchers.IO) {
             serverCommunication.updateToken(token) // обновляем токен полученый с сервера
-            user = serverCommunication.apiServiceWithToken?.uploadEmployeeDataAsync(field)!!.await()
+            viewModelScope.launch(Dispatchers.IO) {
+                user.postValue(serverCommunication.apiServiceWithToken?.uploadEmployeeDataAsync(field)?.await())
+
+            }
         }
         return user
     }
@@ -117,17 +129,16 @@ class UsersViewModel @Inject constructor(
                 val result = serverCommunication.apiServiceWithToken?.getUsersAsync()?.await()
                 val listUser = mutableListOf<User>()
                 if (result != null) {
-                    val ir = result.data?.rows
-                    if (ir != null) {
-                        for (i in ir) {
-                            listUser.add(convertListDtoToModel(i!!))
+                    val listUsers = result.data?.rows
+                    if (listUsers != null) {
+                        for (reUser in listUsers) {
+                            listUser.add(convertListDtoToModel(reUser!!))
                         }
                     }
                 }
                 val iterator = listUser.iterator()
                 while (iterator.hasNext()) {
                     val item = iterator.next()
-                    Log.e("ITERATOR", item.url_video.toString())
                     if (item.url_video.isNullOrEmpty()) {
                         iterator.remove()
                     }
@@ -155,7 +166,7 @@ class UsersViewModel @Inject constructor(
     /**
      * Обновляем баланс пользователя
      * @param token пользователя с бэка
-     * @param balance Map<String, String>, вида: balance[""] = "1000"
+     * @param balance String - сумма пополнения
      * какая-то херота с этим балансом творится. Подозреваю бэк
      */
     fun postRemoteBalance(token: String, balance: String): LiveData<User> {
@@ -167,7 +178,7 @@ class UsersViewModel @Inject constructor(
             body["amount"] = balance
             body["meta"] = "{}"
             body["status"] = "succeeded"
-          serverCommunication.apiServiceWithToken?.postBalanceAsync(body)?.await()
+            serverCommunication.apiServiceWithToken?.postBalanceAsync(body)?.await()
         }
         return updatedBalance
     }
@@ -188,19 +199,66 @@ class UsersViewModel @Inject constructor(
         return tokenResult
     }
 
-    // пользователи
+    /**
+     * Обновляем подписку пользователя
+     * @param token пользователя с бэка
+     * @param subscribe : String, вида "2022-05-10 00:00:00"
+     * @param amount : String - сумма оплаты
+     */
+    fun postSubscribe(token: String, subscribe: String, amount: String): LiveData<User> {
+        viewModelScope.launch(Dispatchers.IO) {
+            serverCommunication.updateToken(token) // обновляем токен полученый с сервера
+            val body = mutableMapOf<String, String>()
+            body["expiration_pay"] = subscribe
+            body["pay_system"] = "google"
+            body["trx_id"] = UUID.randomUUID().toString()
+            body["amount"] = amount
+            body["meta"] = "{}"
+            body["status"] = "succeeded"
+            serverCommunication.apiServiceWithToken?.postSubscribeAsync(body)?.await()
+        }
+        return updatedBalance
+    }
 
+    /**
+     * Ставим лайк
+     * @param token пользователя с бэка
+     * @param firebaseUid : String, uid пользователя, которому ставим лайк
+     * @param likeState : String; "1" - поставить лайк, "0" - снять лайк
+     */
+    fun setLike(token: String, firebaseUid: String, likeState: String): LiveData<RemoteUser> {
+        viewModelScope.launch(Dispatchers.IO) {
+            serverCommunication.updateToken(token)
+            val body = mutableMapOf<String, String>()
+            body["firebase_uid"] = firebaseUid
+            body["like_state"] = likeState
+          //  val reUser = serverCommunication.apiServiceWithToken?.setLikeAsync(body)?.await()
+            val reUser = serverCommunication.apiServiceWithToken?.setLike(firebaseUid, likeState)?.await()
+            updatedLike.let {
+                it.postValue(reUser)
+            }
 
-    suspend fun postSubscribe(token: String, subscribe: Map<String, String>) =
-        usersUseCases.postSubscribe(token, subscribe)
+        }
+        return updatedLike
+    }
 
+    /**
+     * Проверяем лайк на взаимность
+     * @param token пользователя с бэка
+     * @param firebaseUid : String, uid пользователя, которому ставим лайк
+     */
+    fun checkLike(token: String, firebaseUid: String): MutableLiveData<RemoteUser> {
+        viewModelScope.launch(Dispatchers.IO) {
+            serverCommunication.updateToken(token)
+            val reUser =
+                serverCommunication.apiServiceWithToken?.checkLikeAsync(firebaseUid)?.await()
+            updatedLike.let {
+                it.postValue(reUser)
+            }
 
-    //лайки
-    suspend fun setLike(token: String, requestBody: RequestBody) =
-        usersUseCases.setLike(token, requestBody)
-
-    suspend fun checkLike(token: String, firebaseUid: String) =
-        usersUseCases.checkLike(token, firebaseUid)
+        }
+        return updatedLike
+    }
 
 
     fun removeUser(token: String, id: String) {

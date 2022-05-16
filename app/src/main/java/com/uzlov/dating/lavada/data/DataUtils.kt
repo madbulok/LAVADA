@@ -15,8 +15,7 @@ fun convertDtoToModel(remoteUser: RemoteUser): User {
         "ANOTHER" -> MALE.ANOTHER
         else -> MALE.ANOTHER
     }
-    //что-то с премиумом нужно решить
-    val premium = false
+
     return User(
         uid = fact?.user_firebase_uid!!,
         email = fact.user_email,
@@ -29,11 +28,11 @@ fun convertDtoToModel(remoteUser: RemoteUser): User {
         lat = fact.user_location_lat?.toDouble(),
         lon = fact.user_location_lng?.toDouble(),
         location = fact.user_address,
-        premium = false,
+        premium = fact._has_premium,
     )
 }
 
-fun convertListDtoToModel(reUser: ReUser): User {
+fun convertListDtoToModel(reUser: ReUser?): User {
     val fact: ReUser? = reUser
     val male  = when (fact?.user_gender) {
         "MALE" -> MALE.MAN
@@ -41,8 +40,7 @@ fun convertListDtoToModel(reUser: ReUser): User {
         "ANOTHER" -> MALE.ANOTHER
         else -> MALE.ANOTHER
     }
-    //что-то с премиумом нужно решить
-    val premium = false
+
     return User(
         uid = fact?.user_firebase_uid!!,
         email = fact.user_email,
@@ -55,6 +53,6 @@ fun convertListDtoToModel(reUser: ReUser): User {
         lat = fact.user_location_lat?.toDouble(),
         lon = fact.user_location_lng?.toDouble(),
         location = fact.user_address,
-        premium = false
+        premium = fact._has_premium
     )
 }

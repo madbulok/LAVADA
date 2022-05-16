@@ -1,11 +1,11 @@
 package com.uzlov.dating.lavada.retrofit
 
-import com.uzlov.dating.lavada.domain.models.*
+import com.uzlov.dating.lavada.domain.models.RemoteUser
+import com.uzlov.dating.lavada.domain.models.RemoteUserList
+import com.uzlov.dating.lavada.domain.models.User
 import kotlinx.coroutines.Deferred
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import okhttp3.ResponseBody
-import retrofit2.Response
 import retrofit2.http.*
 
 
@@ -40,13 +40,13 @@ interface ApiService {
     @POST("api/v1/user")
     fun updateUserAsync(
         @FieldMap() field: Map<String, String>
-    ): Deferred<ResponseBody>
+    ): Deferred<RemoteUser>
 
     @FormUrlEncoded
     @POST("api/v1/user")
     fun saveUserAsync(token: String, @FieldMap() user: User)
 
-    //тут грузить фото/видео //фото+, видео пока-
+    //тут грузить фото/видео //фото+, видео +
     @Multipart
     @POST("api/v1/user")
     fun uploadEmployeeDataAsync(
@@ -145,15 +145,17 @@ interface ApiService {
     ): Deferred<ResponseBody>
 
 
-    /**лайки**/
+    /**лайки +
+     **/
 
     @PUT("api/v1/like")
-    fun setLikeAsync(
-        @Body requestBody: RequestBody
-    ): Deferred<ResponseBody>
+    fun setLike(
+        @Query("firebase_uid") uid: String,
+        @Query("like_state") like: String
+    ): Deferred<RemoteUser>
 
     @GET("api/v1/like/check")
     fun checkLikeAsync(
         @Query("firebase_uid") firebase_uid: String
-    ): Deferred<ResponseBody>
+    ): Deferred<RemoteUser>
 }

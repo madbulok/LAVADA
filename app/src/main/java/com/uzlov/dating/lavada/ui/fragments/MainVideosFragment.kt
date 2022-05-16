@@ -106,7 +106,6 @@ class MainVideosFragment :
 
                 override fun sendHeart(user: User) {
                     self.matches[user.uid] = false
-
                     val heartFragment = FragmentMatch.newInstance(user)
                     heartFragment.show(childFragmentManager, heartFragment.javaClass.simpleName)
                 }
@@ -199,12 +198,14 @@ class MainVideosFragment :
                         self = user?.copy()!!
                         testData = users
                         Log.e("USERS", users.toString())
+
                         /** пока без сортировки*/
                         mAdapter.updateList(
                             users
                         )
                     }
                 })
+
                 }
         }
 

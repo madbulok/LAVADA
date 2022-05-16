@@ -225,5 +225,6 @@
     <string name="go_to_shop">Go to shop</string>
     <string name="location_and_dist">%1$s, %2$s km to you"</string>
     <string name="name_and_age">%1$s, %2$s"</string>
+    <string name="your_message_will_be_here">Your message will be here</string>
 
 </resources>

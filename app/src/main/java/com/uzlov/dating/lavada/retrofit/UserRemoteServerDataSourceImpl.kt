@@ -5,7 +5,6 @@ import com.uzlov.dating.lavada.domain.models.RemoteUser
 import com.uzlov.dating.lavada.domain.models.RemoteUserList
 import com.uzlov.dating.lavada.domain.models.User
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import javax.inject.Inject
 
 
@@ -108,8 +107,8 @@ class UserRemoteServerDataSourceImpl @Inject constructor(
     }
 
     /**лайки*/
-    override suspend fun setLike(token: String, requestBody: RequestBody): Any {
-        return serverCommunication.apiServiceWithToken?.setLikeAsync(requestBody)!!.await()
+    override suspend fun setLike(token: String, like: String, status: String): Any {
+        return serverCommunication.apiServiceWithToken?.setLike(like, status)!!.await()
     }
 
     override suspend fun checkLike(token: String, firebaseUid: String): Any {
