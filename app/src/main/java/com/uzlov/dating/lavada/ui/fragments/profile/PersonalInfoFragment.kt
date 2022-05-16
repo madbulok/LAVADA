@@ -15,8 +15,10 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.VideoDecoder
 import com.uzlov.dating.lavada.R
+import com.uzlov.dating.lavada.app.Constants.Companion.ANOTHER
+import com.uzlov.dating.lavada.app.Constants.Companion.MAN
+import com.uzlov.dating.lavada.app.Constants.Companion.WOMAN
 import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
 import com.uzlov.dating.lavada.databinding.FragmentPersonalInfoBinding
@@ -60,15 +62,16 @@ class PersonalInfoFragment :
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode == UploadVideoFragment.REQUEST_CODE) {
-            if (data?.data != null) {
-                val imageUri: Uri = data.data!!
+
+            data?.data.let { uri ->
+                val imageUri: Uri? = uri
                 val source =
-                    context?.let { ImageDecoder.createSource(it.contentResolver, imageUri) }
+                    context?.let { ImageDecoder.createSource(it.contentResolver, imageUri!!) }
                 val bitmap = source?.let { ImageDecoder.decodeBitmap(it) }
                 if (bitmap != null) {
                     urlImage = bitmap
                     urlImage?.let { sendFileRequest(it) }
-                    data.data!!.path?.let { loadImage(it, viewBinding.ivProfile) }
+                    uri?.path?.let { loadImage(it, viewBinding.ivProfile) }
                 }
             }
         }
@@ -165,10 +168,10 @@ class PersonalInfoFragment :
             }
             radioGroup.setOnCheckedChangeListener { _, checkedId ->
                 val sex = when (checkedId) {
-                    R.id.rbMan -> "male"
-                    R.id.rvWoman -> "female"
-                    R.id.rbAnother -> "another"
-                    else -> "male"
+                    R.id.rbMan -> MAN
+                    R.id.rvWoman -> WOMAN
+                    R.id.rbAnother -> ANOTHER
+                    else -> MAN
                 }
                 userThis.password = sex
             }

@@ -2,7 +2,6 @@ package com.uzlov.dating.lavada.retrofit
 
 import com.uzlov.dating.lavada.domain.models.User
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 
 interface IServerDataSource<T> {
     /**пользователи*/
@@ -35,7 +34,7 @@ interface IServerDataSource<T> {
     suspend fun getListReceivedGifts(token: String, limit: String, offset: String): T
 
     /**лайки*/
-    suspend fun setLike(token: String, requestBody: RequestBody): T
+    suspend fun setLike(token: String, like: String, status: String): T
     suspend fun checkLike(token: String, firebaseUid: String): T
 
     fun setToken(token: String)

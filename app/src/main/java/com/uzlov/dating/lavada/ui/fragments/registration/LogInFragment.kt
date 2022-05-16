@@ -90,6 +90,8 @@ class LogInFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
                                     model.getUser(tokenBack)
                                         .observe(viewLifecycleOwner) { result ->
                                             self = result?.copy()!!
+                                           val savedSelf = preferenceRepository.readUser()
+                                            self.ready = savedSelf?.isReady ?: false
                                             val user = User(
                                                 uid = authService.auth.currentUser?.uid ?: "",
                                                 email = authService.auth.currentUser?.email
@@ -112,7 +114,6 @@ class LogInFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
                                             }
                                         }
                                 }
-                                (requireActivity() as LoginActivity).startHome()
                             }
                         }.addOnFailureListener { error ->
                             error.printStackTrace()
@@ -155,10 +156,11 @@ class LogInFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
                         )
                         authService.loginWithGoogleAccount()
                             .addOnSuccessListener(requireActivity()) { _ ->
+
                                 authService.getUser()?.getIdToken(true)
                                     ?.addOnSuccessListener { tokenFb ->
                                         model.authRemoteUser(hashMapOf("token" to tokenFb.token))
-                                            .observe(viewLifecycleOwner) { tokenBack ->
+                                            .observe(this) { tokenBack ->
                                                 model.getUser(tokenBack)
                                                     .observe(viewLifecycleOwner) { result ->
                                                         self = result?.copy()!!
@@ -217,7 +219,7 @@ class LogInFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
         val btSendPass = dialogView.findViewById<Button>(R.id.btnSendPasswordCustomDialog)
         btSendPass.setOnClickListener {
 
-            /*
+            /**
             вот эта штука присылает письмо на почту, оттуда редикретит
             на свой адрес и предлагает там ввести новый пароль. Варианта сделать это внутри приложения
             я чот не нашла(

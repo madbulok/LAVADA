@@ -2,7 +2,6 @@ package com.uzlov.dating.lavada.domain.models
 
 import android.os.Parcelable
 import com.google.gson.annotations.Expose
-import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 import java.util.*
 
@@ -68,10 +67,11 @@ data class ReUser(
     val user_age: String? = null,
     val user_gender: String? = null,
     val user_address: String? = null,
-    val _has_premium: List<String?>? = null,
+    val _has_premium: Boolean = false,
     val token: String? = null,
     val user_balance: String? = null,
     val user_description: String? = null,
+    val _mutual_like: String? = null
 ) : Parcelable
 
 @Parcelize

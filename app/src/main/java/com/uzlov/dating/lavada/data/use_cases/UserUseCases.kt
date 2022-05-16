@@ -2,10 +2,7 @@ package com.uzlov.dating.lavada.data.use_cases
 
 import com.uzlov.dating.lavada.domain.models.User
 import com.uzlov.dating.lavada.retrofit.IServerDataSource
-import okhttp3.Interceptor
 import okhttp3.MultipartBody
-import okhttp3.OkHttpClient
-import okhttp3.RequestBody
 import javax.inject.Inject
 
 class UserUseCases @Inject constructor(
@@ -29,7 +26,7 @@ class UserUseCases @Inject constructor(
 
     suspend fun postSubscribe(token: String, subscribe: Map<String, String>) = userRemoteDataSource.postSubscribe(token, subscribe)
     /**лайки*/
-    suspend fun setLike(token: String, requestBody: RequestBody) = userRemoteDataSource.setLike(token, requestBody)
+    suspend fun setLike(token: String, like: String, status: String) = userRemoteDataSource.setLike(token, like, status)
     suspend fun checkLike(token: String, firebaseUid: String) = userRemoteDataSource.checkLike(token, firebaseUid)
 
     fun setToken(token: String){

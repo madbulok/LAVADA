@@ -36,6 +36,11 @@ class Constants {
         //premium
         const val LOCAL_PREF_PREMIUM_VISIBLE = "PREMIUM_VISIBLE"
 
+        //male
+        const val MAN = "male"
+        const val WOMAN = "female"
+        const val ANOTHER = "another"
+
 
 
     }
