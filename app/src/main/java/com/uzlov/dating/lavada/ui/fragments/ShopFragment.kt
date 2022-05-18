@@ -1,9 +1,12 @@
 package com.uzlov.dating.lavada.ui.fragments
 
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.View
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
@@ -113,6 +116,7 @@ class ShopFragment : BaseFragment<FragmentShopBinding>(FragmentShopBinding::infl
         super.onViewCreated(view, savedInstanceState)
         initListeners()
         updateData()
+        loadImage(resources.getDrawable(R.drawable.price_sale), viewBinding.ivSale)
 
     }
 
@@ -123,6 +127,15 @@ class ShopFragment : BaseFragment<FragmentShopBinding>(FragmentShopBinding::infl
                     .observe(viewLifecycleOwner) { tokenBack ->
                         model.getRemoteBalance(tokenBack).observe(viewLifecycleOwner) { result ->
                             viewBinding.btnCoins.text = result.toString()
+                        }
+                        model.getUser(tokenBack).observe(viewLifecycleOwner){ reUser ->
+                            if (reUser!!.premium){
+                                viewBinding.cardBuyPremium.visibility = View.GONE
+                                viewBinding.cardHasPremium.visibility = View.VISIBLE
+                            } else{
+                                viewBinding.cardBuyPremium.visibility = View.VISIBLE
+                                viewBinding.cardHasPremium.visibility = View.GONE
+                            }
                         }
                     }
             }
@@ -142,12 +155,22 @@ class ShopFragment : BaseFragment<FragmentShopBinding>(FragmentShopBinding::infl
             tbBackAction.setOnClickListener {
                 parentFragmentManager.popBackStack()
             }
-            btnBuyCoins.setOnClickListener {
-                val buyCoinsFragment = FragmentBuyCoins(shopFragmentListener)
-                buyCoinsFragment.show(childFragmentManager, buyCoinsFragment.javaClass.simpleName)
-            }
+//            btnBuyCoins.setOnClickListener {
+//                val buyCoinsFragment = FragmentBuyCoins(shopFragmentListener)
+//                buyCoinsFragment.show(childFragmentManager, buyCoinsFragment.javaClass.simpleName)
+//            }
         }
 
+    }
+
+    private fun loadImage(image: Drawable, container: ImageView) {
+        view?.let {
+            Glide
+                .with(it.context)
+                .load(image)
+                .error(R.drawable.ic_default_user)
+                .into(container)
+        }
     }
 
     companion object {
