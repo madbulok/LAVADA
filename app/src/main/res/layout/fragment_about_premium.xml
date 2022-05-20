@@ -6,13 +6,24 @@
     android:layout_height="match_parent">
 
     <ImageView
+        android:id="@+id/tbBackAction"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="22dp"
+        android:layout_marginTop="18dp"
+        android:src="@drawable/close"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
         android:id="@+id/iv_about_premium"
         android:layout_width="303dp"
         android:layout_height="318dp"
-        android:layout_marginTop="18dp"
+        android:layout_marginTop="30dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/tbBackAction"
+        app:layout_constraintBottom_toTopOf="@id/tv_title_premium"/>
 
     <TextView
         android:id="@+id/tv_title_premium"
@@ -20,10 +31,32 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="29dp"
+        android:layout_marginTop="20dp"
         android:text="Premium"
         android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@+id/iv_about_premium" />
+        app:layout_constraintTop_toBottomOf="@+id/iv_about_premium"
+        app:layout_constraintBottom_toTopOf="@id/tv_desc_prem_zero"/>
+
+    <TextView
+        android:id="@+id/tv_desc_prem_zero"
+        style="@style/Regular"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="4dp"
+        android:text="For 1 month"
+        android:textColor="@color/Secondary_text"
+        app:layout_constraintTop_toBottomOf="@id/tv_title_premium"
+        app:layout_constraintBottom_toTopOf="@id/tv_desc_prem_one"/>
+
+    <ImageView
+        android:id="@+id/iv_price"
+        android:layout_width="104dp"
+        android:layout_height="82dp"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tv_title_premium"
+        app:layout_constraintBottom_toBottomOf="@id/tv_desc_prem_zero"/>
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tv_desc_prem_one"
@@ -35,7 +68,8 @@
         android:drawableStart="@drawable/ic_coin"
         android:drawablePadding="10dp"
         android:text="Ежедневное начисление коинов"
-        app:layout_constraintTop_toBottomOf="@id/tv_title_premium" />
+        app:layout_constraintTop_toBottomOf="@id/tv_desc_prem_zero"
+        app:layout_constraintBottom_toTopOf="@id/tv_desc_prem_two"/>
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tv_desc_prem_two"
@@ -47,6 +81,7 @@
         android:drawableStart="@drawable/heart_for_settings"
         android:drawablePadding="10dp"
         android:text="Просмотр тех, кто тебя лайкнул"
+        app:layout_constraintBottom_toTopOf="@id/tv_desc_prem_three"
         app:layout_constraintTop_toBottomOf="@id/tv_desc_prem_one" />
 
     <com.google.android.material.textview.MaterialTextView
@@ -59,6 +94,7 @@
         android:drawableStart="@drawable/chevron_up"
         android:drawablePadding="10dp"
         android:text="Анкета выше других в ленте"
+        app:layout_constraintBottom_toTopOf="@id/tv_desc_prem_four"
         app:layout_constraintTop_toBottomOf="@id/tv_desc_prem_two" />
 
     <com.google.android.material.textview.MaterialTextView
@@ -71,6 +107,7 @@
         android:drawableStart="@drawable/message_circle_for_ap"
         android:drawablePadding="10dp"
         android:text="Писать можно первым, не дожидаясь взаимки"
+        app:layout_constraintBottom_toTopOf="@id/tv_desc_prem_five"
         app:layout_constraintTop_toBottomOf="@id/tv_desc_prem_three" />
 
     <com.google.android.material.textview.MaterialTextView
@@ -83,6 +120,7 @@
         android:drawableStart="@drawable/smile"
         android:drawablePadding="10dp"
         android:text="Золотая рамка аватарки"
+        app:layout_constraintBottom_toTopOf="@id/tv_desc_prem_six"
         app:layout_constraintTop_toBottomOf="@id/tv_desc_prem_four" />
 
     <com.google.android.material.textview.MaterialTextView
@@ -92,10 +130,12 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="12dp"
         android:layout_marginEnd="20dp"
+        android:layout_marginBottom="30dp"
         android:drawableStart="@drawable/tiktok_for_ap"
         android:drawablePadding="10dp"
         android:text="Просмотр соц сетей людей, не дожидаясь взаимки"
-        app:layout_constraintTop_toBottomOf="@id/tv_desc_prem_five" />
+        app:layout_constraintTop_toBottomOf="@id/tv_desc_prem_five"
+        app:layout_constraintBottom_toTopOf="@id/btn_buy_premium"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_buy_premium"
@@ -103,12 +143,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="30dp"
         android:layout_marginEnd="20dp"
-        android:layout_marginBottom="36dp"
+        android:layout_marginBottom="30dp"
         android:text="Buy premium"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_desc_prem_six" />
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>

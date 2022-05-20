@@ -13,6 +13,10 @@ class AboutPremiumFragment: BaseFragment<FragmentAboutPremiumBinding>(FragmentAb
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
        loadImage(resources.getDrawable(R.drawable.about_premium), viewBinding.ivAboutPremium)
+        loadImage(resources.getDrawable(R.drawable.price_sale), viewBinding.ivPrice)
+        viewBinding.tbBackAction.setOnClickListener {
+            parentFragmentManager.popBackStack()
+        }
         viewBinding.btnBuyPremium.setOnClickListener {
             val buyPremiumFragment = FragmentBuyPremium()
             buyPremiumFragment.show(childFragmentManager, buyPremiumFragment.javaClass.simpleName)

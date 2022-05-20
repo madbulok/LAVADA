@@ -1,8 +1,6 @@
 package com.uzlov.dating.lavada.retrofit
 
-import com.uzlov.dating.lavada.domain.models.RemoteUser
-import com.uzlov.dating.lavada.domain.models.RemoteUserList
-import com.uzlov.dating.lavada.domain.models.User
+import com.uzlov.dating.lavada.domain.models.*
 import kotlinx.coroutines.Deferred
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
@@ -76,44 +74,52 @@ interface ApiService {
     ): Deferred<RemoteUser>
 
     /**чаты**/
+    //создать сообщение -
     @FormUrlEncoded
     @POST("api/v1/chat/message")
     fun createMessageAsync(
         @FieldMap map: Map<String, String>
-    ): Deferred<ResponseBody>
+    ): Deferred<ReChat>
 
+
+    // получить список сообщений - не успела проверить
     @GET("v1/chat/message/list")
     fun getMessagesAsync(
         @Query("chat_id") id: String
     ): Deferred<ResponseBody>
 
+    //обновить статус - прочитано/не прочитано - не могу проверить, потому что не могу создать сообщение
     @FormUrlEncoded
     @POST("api/v1/chat/message/status")
     fun updateStatusAsync(
         @FieldMap subscribe: Map<String, String>
     ): Deferred<ResponseBody>
 
+    //получить список чатов +
     @GET("api/v1/chat/list")
     fun getListChatsAsync(
         @Query("offset") offset: String,
         @Query("limit") limit: String
-    ): Deferred<ResponseBody>
+    ): Deferred<RemoteChatList>
 
+    // создать чат +
     @FormUrlEncoded
     @POST("api/v1/chat")
     fun createChatAsync(
         @FieldMap subscribe: Map<String, String>
-    ): Deferred<ResponseBody>
+    ): Deferred<ReChat>
 
+    //получить чат по id - не успела проверить
     @GET("api/v1/chat")
     fun getChatByIdAsync(
         @Query("chat_id") chat_id: String
-    ): Deferred<ResponseBody>
+    ): Deferred<ReChat>
 
+    //проверить, существует ли чат +
     @GET("api/v1/chat/check")
     fun checkChatAsync(
         @Query("firebase_uid") firebase_uid: String
-    ): Deferred<ResponseBody>
+    ): Deferred<ReChat>
 
     /**подарки**/
     @FormUrlEncoded

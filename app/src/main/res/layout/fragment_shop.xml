@@ -40,9 +40,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
-
                 android:layout_marginEnd="20dp"
-                android:text="Coins balance"
+                android:text="Lavcoins"
                 android:textStyle="bold"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -54,31 +53,23 @@
                 android:layout_marginEnd="20dp"
                 android:drawableEnd="@drawable/ic_coin"
                 android:drawablePadding="@dimen/default_margin_8"
-                android:text="1233"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@id/tv_balance"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/tv_balance" />
-
-            <TextView
-                android:id="@+id/tv_about_coins"
-                style="@style/Regular"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="@dimen/default_margin_8"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="@dimen/default_margin_8"
-                android:text="About coins"
-                app:layout_constraintTop_toBottomOf="@id/tv_balance" />
+                app:layout_constraintTop_toTopOf="@id/tv_balance"
+                tools:text="1233" />
 
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/card_buy_coins"
+                android:id="@+id/card_buy_premium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
+                android:backgroundTint="#FFEE52"
+                android:visibility="gone"
                 android:elevation="8dp"
                 app:cardCornerRadius="@dimen/default_margin_16"
-                app:layout_constraintTop_toBottomOf="@id/tv_about_coins">
+                app:layout_constraintTop_toBottomOf="@id/btn_coins"
+                app:layout_constraintBottom_toTopOf="@id/card_super_box">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -90,104 +81,93 @@
                         style="@style/Large"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Premium"
+                        android:text="Premium account"
                         android:textStyle="bold"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
                         android:id="@+id/tv_about_premium_label"
-                        style="@style/Large"
+                        style="@style/Small"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="@dimen/default_margin_16"
-                        android:gravity="end"
-                        android:text="About"
-                        android:textColor="@color/Link_text"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/tv_label_time_one"
-                        style="@style/Large"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="1 month"
-                        android:textStyle="bold"
-                        app:layout_constraintTop_toTopOf="@id/btn_price_one" />
-
-                    <TextView
-                        android:id="@+id/tv_desc_time_one"
-                        style="@style/Regular"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="+10 coins every day"
-                        app:layout_constraintBottom_toBottomOf="@id/btn_price_one" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_price_one"
-                        style="@style/DefaultButtons"
-                        android:layout_width="wrap_content"
-                        android:layout_height="40dp"
-                        android:layout_marginTop="25dp"
-                        android:layout_marginEnd="@dimen/default_margin_16"
-                        android:text="590 ₽"
-                        app:layout_constraintEnd_toEndOf="parent"
+                        android:text="Выделение и поднятие анкеты \nНачисление лавкоинов \nПросмотр лайков и соцсетей"
                         app:layout_constraintTop_toBottomOf="@id/tv_premium_label" />
 
                     <TextView
-                        android:id="@+id/tv_label_time_two"
+                        android:id="@+id/tv_about_premium_time"
+                        style="@style/Small"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/default_margin_16"
+                        android:text="For 1 month"
+                        android:textColor="@color/Secondary_text"
+                        app:layout_constraintTop_toBottomOf="@id/tv_about_premium_label" />
+
+                    <ImageView
+                        android:id="@+id/iv_sale"
+                        android:layout_width="79dp"
+                        android:layout_height="71dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/tv_premium_label" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_has_premium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:elevation="8dp"
+                android:visibility="gone"
+                app:cardCornerRadius="@dimen/default_margin_16"
+                app:layout_constraintTop_toBottomOf="@id/btn_coins"
+                app:layout_constraintBottom_toTopOf="@id/card_super_box">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="@dimen/default_margin_16">
+
+                    <TextView
+                        android:id="@+id/tv_premium_label_1"
                         style="@style/Large"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="6 month"
+                        android:text="Premium account"
                         android:textStyle="bold"
-                        app:layout_constraintTop_toTopOf="@id/btn_price_two" />
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        android:id="@+id/tv_desc_time_two"
+                        android:id="@+id/tv_about_coins_label_1"
+                        style="@style/Regular"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="+100 "
+                        android:drawableEnd="@drawable/ic_coin"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        />
+                    <TextView
+                        android:id="@+id/tv_about_premium_label_1"
                         style="@style/Regular"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="+100 coins every day"
-                        app:layout_constraintBottom_toBottomOf="@id/btn_price_two" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_price_two"
-                        style="@style/DefaultButtons"
-                        android:layout_width="wrap_content"
-                        android:layout_height="40dp"
-                        android:layout_marginTop="25dp"
-                        android:layout_marginEnd="@dimen/default_margin_16"
-                        android:text="3590 ₽"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/btn_price_one" />
+                        android:textColor="@color/Secondary_text"
+                        android:text="until 31.02.2022"
+                        app:layout_constraintTop_toBottomOf="@id/tv_premium_label_1" />
 
                     <TextView
-                        android:id="@+id/tv_label_time_three"
-                        style="@style/Large"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="6 month"
-                        android:textStyle="bold"
-                        app:layout_constraintTop_toTopOf="@id/btn_price_three" />
-
-                    <TextView
-                        android:id="@+id/tv_desc_time_three"
-                        style="@style/Regular"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="+100 coins every day"
-                        app:layout_constraintBottom_toBottomOf="@id/btn_price_three" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_price_three"
-                        style="@style/DefaultButtons"
+                        android:id="@+id/tv_about_premium_time_1"
+                        style="@style/Small"
                         android:layout_width="wrap_content"
-                        android:layout_height="40dp"
-                        android:layout_marginTop="25dp"
-                        android:layout_marginEnd="@dimen/default_margin_16"
-                        android:text="3590 ₽"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/btn_price_two" />
+                        android:layout_height="wrap_content"
+                        android:text="every day"
+                        android:textColor="@color/Secondary_text"
+                        app:layout_constraintTop_toBottomOf="@id/tv_premium_label_1"
+                        app:layout_constraintEnd_toEndOf="parent"/>
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -198,7 +178,7 @@
                 android:layout_margin="20dp"
                 android:elevation="8dp"
                 app:cardCornerRadius="@dimen/default_margin_16"
-                app:layout_constraintTop_toBottomOf="@id/card_buy_coins">
+                app:layout_constraintBottom_toTopOf="@id/tv_coin_box">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -210,7 +190,7 @@
                         style="@style/Large"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Super coins box"
+                        android:text="Super Lavcoins"
                         android:textStyle="bold"
                         app:layout_constraintTop_toTopOf="parent" />
 
@@ -231,19 +211,34 @@
                         android:layout_height="40dp"
                         android:layout_marginTop="25dp"
                         android:layout_marginEnd="@dimen/default_margin_16"
-                        android:text="590 ₽"
+                        android:text="2990 ₽"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/quantity" />
 
                     <androidx.cardview.widget.CardView
-                        android:id="@+id/iv_scb"
-                        android:layout_width="116dp"
-                        android:layout_height="116dp"
-                        android:backgroundTint="@color/Disable_text"
-                        android:elevation="0dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         app:cardCornerRadius="@dimen/default_margin_16"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toTopOf="@id/tv_super_box">
+
+                        <ImageView
+                            android:id="@+id/iv_scb"
+                            android:layout_width="142dp"
+                            android:layout_height="91dp"
+                            android:background="@color/Secondary_text"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+                    </androidx.cardview.widget.CardView>
+
+                    <TextView
+                        style="@style/Tiny"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="*can only be purchased once"
+                        android:textColor="@color/Secondary_text"
+                        app:layout_constraintBottom_toBottomOf="@id/btn_price_super_box"
+                        app:layout_constraintEnd_toEndOf="parent" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -256,7 +251,7 @@
                 android:layout_marginTop="24dp"
                 android:layout_marginEnd="20dp"
                 android:layout_marginBottom="@dimen/default_margin_8"
-                android:text="About coins"
+                android:text="Lavcoins box"
                 android:textStyle="bold"
                 app:layout_constraintTop_toBottomOf="@id/card_super_box" />
 
@@ -271,17 +266,19 @@
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintTop_toBottomOf="@id/tv_coin_box"
                 tools:listitem="@layout/card_buy_coin" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_coin_box_2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="@dimen/default_margin_16"
+                android:layout_marginEnd="20dp"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintTop_toBottomOf="@id/rv_coin_box"
+                tools:listitem="@layout/card_buy_coin" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_buy_coins"
-        style="@style/DefaultButtons"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="34dp"
-        android:text="Buy coins"
-        app:layout_constraintBottom_toBottomOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
