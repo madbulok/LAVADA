@@ -93,6 +93,12 @@ class MainVideosFragment :
             // double click send love
             mAdapter.setOnItemClickListener(object : ProfileRecyclerAdapter.OnItemClickListener {
                 override fun onItemClick(position: Int, model: User?) {
+                    /**
+                     * тут, же дублируется отправка сердечка просто?
+                     * - отправляем лайк,
+                     * - проверяем его на взаимность,
+                     * - если взаимен, открываем фрагмент matches;
+                     * - если нет - тост "вы отправили симпатию"*/
                     Toast.makeText(requireContext(), "Вы отправили симпатию", Toast.LENGTH_SHORT)
                         .show()
                 }
@@ -105,6 +111,12 @@ class MainVideosFragment :
                 }
 
                 override fun sendHeart(user: User) {
+                    /**
+                     * тут, я так понимаю, будет так
+                     * - отправляем лайк,
+                     * - проверяем его на взаимность,
+                     * - если взаимен, открываем фрагмент matches;
+                     * - если нет - тост "вы отправили симпатию"*/
                     self.matches[user.uid] = false
                     val heartFragment = FragmentMatch.newInstance(user)
                     heartFragment.show(childFragmentManager, heartFragment.javaClass.simpleName)
@@ -112,6 +124,12 @@ class MainVideosFragment :
 
                 override fun sendMessage(user: User) {
                     //check likes?
+                    /**
+                     * тут будет так
+                     * - проверяем лайк,
+                     * - если взаимен, открываем сообщения
+                     * - если нет, проверяем премиум
+                     * - если премиум, то открываем сообщения, если нет, открываем алерт с прежложением купить премиум*/
                     if (self.premium) {
                         authService.getUserUid()?.let {
                             self.chats[user.uid] = self.uid
@@ -204,6 +222,10 @@ class MainVideosFragment :
                             users
                         )
                     }
+                            //тестовый метод для чатов
+//                            messageChatViewModel.getChatById(tokenBack, "1").observe(viewLifecycleOwner){
+//                                Log.e("MESSAGE_SEND!!!", it.toString())
+//                            }
                 })
 
                 }

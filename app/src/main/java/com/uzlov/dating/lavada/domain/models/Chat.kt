@@ -1,9 +1,9 @@
 package com.uzlov.dating.lavada.domain.models
 
 import android.os.Parcelable
+import com.google.gson.annotations.Expose
 import kotlinx.parcelize.Parcelize
 import java.util.*
-import kotlin.collections.ArrayList
 
 @Parcelize
 data class Chat(
@@ -12,4 +12,31 @@ data class Chat(
     var messages: MutableList<ChatMessage> = mutableListOf()
 ) : Parcelable
 
+@Parcelize
+data class ReChat(
+    @Expose val status: String? = null,
+    @Expose val data: ReMessage? = null,
+) :Parcelable
 
+@Parcelize
+data class  ReMessage(
+    val chat_id: String? = null,
+    val chat_user_id: String? = null,
+    val chat_to_user_id: String? = null,
+    val chat_status: String? = null,
+    val created_at: String? = null,
+    val _count_messages: String? = null,
+    val has_chat: String? = null
+) : Parcelable
+
+@Parcelize
+data class RemoteChatList(
+    @Expose val status: String? = null,
+    @Expose val data: DataChat? = DataChat(),
+) : Parcelable
+
+@Parcelize
+data class DataChat(
+    var rows: List<ReMessage?>? = null,
+    var count_rows: Int? = null
+) : Parcelable
