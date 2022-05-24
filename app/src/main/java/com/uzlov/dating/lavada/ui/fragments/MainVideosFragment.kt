@@ -1,5 +1,6 @@
 package com.uzlov.dating.lavada.ui.fragments
 
+import GiftsViewModels
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -46,6 +47,10 @@ class MainVideosFragment :
 
     private val messageChatViewModel: MessageChatViewModel by lazy {
         factoryViewModel.create(MessageChatViewModel::class.java)
+    }
+
+    private val giftsViewModels: GiftsViewModels by lazy {
+        factoryViewModel.create(GiftsViewModels::class.java)
     }
 
     private var self = User()
@@ -208,26 +213,21 @@ class MainVideosFragment :
             Log.e("TOKEN_FB", tokenFb.token.toString())
             model.authRemoteUser(hashMapOf("token" to tokenFb.token))
                 .observe(viewLifecycleOwner) { tokenBack ->
-                        model.getUsers(tokenBack).observe(this, { users ->
-                    Log.e("MV_TOKEN_BACK", tokenBack)
-                    model.getUser(tokenBack).observe(viewLifecycleOwner) { user ->
-                        Log.e("TAG", "updateData: $user")
-                        user?.url_avatar?.let { it -> loadImage(it, viewBinding.ivProfile) }
-                        self = user?.copy()!!
-                        testData = users
-                        Log.e("USERS", users.toString())
+                    model.getUsers(tokenBack).observe(this, { users ->
+                        Log.e("MV_TOKEN_BACK", tokenBack)
+                        model.getUser(tokenBack).observe(viewLifecycleOwner) { user ->
+                            Log.e("TAG", "updateData: $user")
+                            user?.url_avatar?.let { it -> loadImage(it, viewBinding.ivProfile) }
+                            self = user?.copy()!!
+                            testData = users
+                            Log.e("USERS", users.toString())
 
-                        /** пока без сортировки*/
-                        mAdapter.updateList(
-                            users
-                        )
-                    }
-                            //тестовый метод для чатов
-//                            messageChatViewModel.getChatById(tokenBack, "1").observe(viewLifecycleOwner){
-//                                Log.e("MESSAGE_SEND!!!", it.toString())
-//                            }
-                })
-
+                            /** пока без сортировки*/
+                            mAdapter.updateList(
+                                users
+                            )
+                        }
+                    })
                 }
         }
 
