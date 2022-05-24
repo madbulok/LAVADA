@@ -1,6 +1,5 @@
 package com.uzlov.dating.lavada.ui.fragments
 
-import GiftsViewModels
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -47,10 +46,6 @@ class MainVideosFragment :
 
     private val messageChatViewModel: MessageChatViewModel by lazy {
         factoryViewModel.create(MessageChatViewModel::class.java)
-    }
-
-    private val giftsViewModels: GiftsViewModels by lazy {
-        factoryViewModel.create(GiftsViewModels::class.java)
     }
 
     private var self = User()
@@ -226,6 +221,10 @@ class MainVideosFragment :
                             mAdapter.updateList(
                                 users
                             )
+
+                            messageChatViewModel.getListMessages(tokenBack, "1").observe(viewLifecycleOwner){
+                                Log.e("GET_LIST_MESSAGE", it.toString())
+                            }
                         }
                     })
                 }

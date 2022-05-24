@@ -1,3 +1,5 @@
+package com.uzlov.dating.lavada.viemodels
+
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -7,7 +9,6 @@ import com.uzlov.dating.lavada.di.modules.ServerCommunication
 import com.uzlov.dating.lavada.domain.models.CategoryGifts
 import com.uzlov.dating.lavada.domain.models.ReGift
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -19,7 +20,6 @@ class GiftsViewModels @Inject constructor(
     private val resultById = MutableLiveData<CategoryGifts?>()
     private val reGift = MutableLiveData<ReGift>()
 
-    @ExperimentalCoroutinesApi
     fun getCategoryByID(id: String): MutableLiveData<CategoryGifts?> {
         viewModelScope.launch {
             giftsRepository.getCategoryByID(id)

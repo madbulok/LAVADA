@@ -85,12 +85,12 @@ class SingleChatActivity : AppCompatActivity() {
 
     private fun initChat() {
         showLoading()
-        messageChatViewModel.createChat(selfUid, companionId)
-            .observe(this, {
-                chatId = it
-                loadMessagesHistory()
-
-            })
+//        messageChatViewModel.createChat(selfUid, companionId)
+//            .observe(this, {
+//                chatId = it
+//                loadMessagesHistory()
+//
+//            })
     }
 
     private fun showLoading() {
@@ -131,10 +131,10 @@ class SingleChatActivity : AppCompatActivity() {
                                 mediaUrl = ""
                             )
                         )
-                        messageChatViewModel.sendMessage(
-                            uidChat = chatId,
-                            chat = it
-                        )
+//                        messageChatViewModel.sendMessage(
+//                            uidChat = chatId,
+//                            chat = it
+//                        )
                     }
                     viewBinding.textInputLayout.setText("")
                 }
@@ -192,18 +192,18 @@ class SingleChatActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadMessagesHistory() {
-        messageChatViewModel.retrieveMessages(chatId).observe(this, {
-            if (it != null) {
-                chatOpen = it.copy()
-                messagesAdapter.setMessages(it.messages)
-
-            } else {
-                Toast.makeText(this, "Messages is null", Toast.LENGTH_SHORT).show()
-            }
-            hideLoading()
-        })
-    }
+//    private fun loadMessagesHistory() {
+//        messageChatViewModel.retrieveMessages(chatId).observe(this, {
+//            if (it != null) {
+//                chatOpen = it.copy()
+//                messagesAdapter.setMessages(it.messages)
+//
+//            } else {
+//                Toast.makeText(this, "Messages is null", Toast.LENGTH_SHORT).show()
+//            }
+//            hideLoading()
+//        })
+//    }
 
     private fun updateUiCompanion(user: User){
         with(viewBinding){
