@@ -5,6 +5,18 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+
+
+    <View
+        android:id="@+id/fl_background"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/background_welcome_layout"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <com.google.android.material.progressindicator.LinearProgressIndicator
         android:id="@+id/progressRegistration"
         android:layout_width="0dp"
@@ -13,17 +25,7 @@
         android:layout_marginTop="27dp"
         android:layout_marginEnd="20dp"
         android:max="100"
-        android:progress="70"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <View
-        android:id="@+id/fl_background"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="@drawable/background_welcome_layout"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:progress="75"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

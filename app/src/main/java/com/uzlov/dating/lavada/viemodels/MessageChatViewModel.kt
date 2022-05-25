@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.uzlov.dating.lavada.data.convertDtoToModel
 import com.uzlov.dating.lavada.data.data_sources.interfaces.IMessageDataSource
 import com.uzlov.dating.lavada.data.use_cases.ChatUseCase
 import com.uzlov.dating.lavada.data.use_cases.UserUseCases
@@ -12,9 +11,7 @@ import com.uzlov.dating.lavada.di.modules.ServerCommunication
 import com.uzlov.dating.lavada.domain.models.*
 import com.uzlov.dating.lavada.service.NewMessageService
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
-import java.util.*
 import javax.inject.Inject
 
 class MessageChatViewModel @Inject constructor(
@@ -30,19 +27,13 @@ class MessageChatViewModel @Inject constructor(
     private val createdChat = MutableLiveData<String>() // store uid created chat
     private val selfUser = MutableLiveData<User>()
     private val reChat = MutableLiveData<ReChat>()
+    private val reMessage = MutableLiveData<ReMessage>()
     private val reChatList = MutableLiveData<RemoteChatList>()
-
-
-    // получить все чаты пользователя
-    fun getChats(userId: String): LiveData<List<Chat>> {
-        viewModelScope.launch(Dispatchers.IO) {
-
-        }
-        return chats
-    }
+    private val mappedResult = MutableLiveData<List<MappedChat>>()
 
     /**
-     * работает
+     * получить список чатов пользователя
+     * @param token токен от бэка
      * */
     fun getRemoteChats(token: String): LiveData<RemoteChatList> {
         viewModelScope.launch(Dispatchers.IO) {
@@ -58,53 +49,48 @@ class MessageChatViewModel @Inject constructor(
         return reChatList
     }
 
-    private val mappedResult = MutableLiveData<List<MappedChat>>()
-
-    fun getChats(userId: String, selfId: String): LiveData<List<MappedChat>> {
-        viewModelScope.launch(Dispatchers.IO) {
-
-        }
-        return mappedResult
-    }
-
-    // создать чат с конкретным пользователем
-    fun createChat(selfId: String, companionId: String): LiveData<String> {
-        viewModelScope.launch(Dispatchers.IO) {
-
-        }
-        return createdChat
-    }
-
     /**
-     * работает
+     * создать чат
+     * @param token токен от бэка
+     * @param uidUser id юзера (внутренний, бэковский id пользователя, с которым хотим создать чат)
      * */
-    fun createRemoteChat(token: String, uidChat: String): LiveData<ReChat?> {
+    fun createRemoteChat(token: String, uidUser: String): LiveData<ReChat?> {
         val body = mutableMapOf<String, String>()
-        body["to_user_id"] = uidChat
+        body["to_user_id"] = uidUser
         viewModelScope.launch(Dispatchers.IO) {
             serverCommunication.updateToken(token) // обновляем токен полученый с сервера
             reChat.postValue(
                 serverCommunication.apiServiceWithToken?.createChatAsync(body)?.await()
             )
-
         }
         return reChat
     }
 
-
-    fun sendMessage(uidChat: String, chat: Chat) {
-        viewModelScope.launch(Dispatchers.IO) {
-
-        }
-    }
-
-    //не работает
-    fun sendRemoteMessage(token: String, uidChat: String): LiveData<ReChat?> {
+    /**
+     * отправить сообщение. возвращает статус "ок" и id сообщения
+     * @param
+     * @param
+     * @param
+     */
+    fun sendRemoteMessage(token: String, uidChat: String, textMessage: String): LiveData<ReChat?> {
         val body = mutableMapOf<String, String>()
-        body["chat_id"] = "1"
-        body["text"] = "some text"
+        body["chat_id"] = uidChat
+        body["text"] = textMessage
+        // TODO: 24.05.2022 разобраться с передачей файла
         //      body["file"] = ""
-        //      body["ug_id"] = "1"
+        viewModelScope.launch(Dispatchers.IO) {
+            serverCommunication.updateToken(token) // обновляем токен полученый с сервера
+            reChat.postValue(
+                serverCommunication.apiServiceWithToken?.createMessageAsync(body)?.await()
+            )
+        }
+        return reChat
+    }
+    fun sendRemoteMessage(token: String, uidChat: String, textMessage: String, ugId: String): LiveData<ReChat?> {
+        val body = mutableMapOf<String, String>()
+        body["chat_id"] = uidChat
+        body["text"] = textMessage
+        body["ug_id"] = ugId
         viewModelScope.launch(Dispatchers.IO) {
             serverCommunication.updateToken(token) // обновляем токен полученый с сервера
             reChat.postValue(
@@ -115,18 +101,40 @@ class MessageChatViewModel @Inject constructor(
     }
 
     /**
-     * работает
+     * проверить, существует ли чат с другим пользователем
+     * @param token токен от бэка
+     * @param firebaseUid uid firebase
      * */
-    fun checkChat(token: String, firebase_uid: String): LiveData<ReChat?> {
+    fun checkChat(token: String, firebaseUid: String): LiveData<ReChat?> {
         viewModelScope.launch(Dispatchers.IO) {
             serverCommunication.updateToken(token) // обновляем токен полученый с сервера
             reChat.postValue(
-                serverCommunication.apiServiceWithToken?.checkChatAsync(firebase_uid)?.await()
+                serverCommunication.apiServiceWithToken?.checkChatAsync(firebaseUid)?.await()
             )
         }
         return reChat
     }
 
+    /**
+     * получить список сообщений из конкретного чата
+     * @param token токен от бэка
+     * @param chatId id чата от бэка
+     * */
+    fun getListMessages(token: String, chatId: String): LiveData<ReMessage>{
+        viewModelScope.launch(Dispatchers.IO) {
+            serverCommunication.updateToken(token) // обновляем токен полученый с сервера
+           reMessage.postValue(
+                serverCommunication.apiServiceWithToken?.getMessagesAsync(chatId)?.await()
+            )
+        }
+        return reMessage
+    }
+
+    /**
+     * получить чат по Id
+     * @param token токен от бэка
+     * @param chatId id чата от бэка
+     * */
     fun getChatById(token: String, chatId: String): LiveData<ReChat?> {
         viewModelScope.launch(Dispatchers.IO) {
             serverCommunication.updateToken(token) // обновляем токен полученый с сервера
@@ -137,14 +145,6 @@ class MessageChatViewModel @Inject constructor(
         return reChat
     }
 
-    // получать сообщения из конкретного чата
-    @ExperimentalCoroutinesApi
-    fun retrieveMessages(uid: String): LiveData<Chat> {
-        viewModelScope.launch(Dispatchers.IO) {
-
-        }
-        return chatMessages
-    }
 
     fun observeMessage(
         uid: String,

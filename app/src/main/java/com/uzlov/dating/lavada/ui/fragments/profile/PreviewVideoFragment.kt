@@ -86,8 +86,8 @@ class PreviewVideoFragment :
         super.onViewCreated(view, savedInstanceState)
         with(viewBinding) {
 
-            tvLocationProfile.text = user.name
-
+            tvNameProfile.text = user.name + ", " + user.age
+            tvLocationProfile.text = user.location
             btnBack.setOnClickListener {
                 if (request == 1) {
                     (requireActivity() as HostActivity).rollbackFragment()

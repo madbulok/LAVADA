@@ -15,11 +15,11 @@ data class Chat(
 @Parcelize
 data class ReChat(
     @Expose val status: String? = null,
-    @Expose val data: ReMessage? = null,
+    @Expose val data: RemoteChat? = null,
 ) :Parcelable
 
 @Parcelize
-data class  ReMessage(
+data class  RemoteChat(
     val chat_id: String? = null,
     val chat_user_id: String? = null,
     val chat_to_user_id: String? = null,
@@ -37,6 +37,6 @@ data class RemoteChatList(
 
 @Parcelize
 data class DataChat(
-    var rows: List<ReMessage?>? = null,
+    var rows: List<RemoteChat?>? = null,
     var count_rows: Int? = null
 ) : Parcelable

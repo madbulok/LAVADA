@@ -139,6 +139,28 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent=".5" />
 
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_location"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        app:boxCornerRadiusBottomEnd="@dimen/default_margin_16"
+        app:boxCornerRadiusBottomStart="@dimen/default_margin_16"
+        app:boxCornerRadiusTopEnd="@dimen/default_margin_16"
+        app:boxCornerRadiusTopStart="@dimen/default_margin_16"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:enabled="false"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/sl_age">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/ti_et_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/location"
+            android:inputType="text" />
+    </com.google.android.material.textfield.TextInputLayout>
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_back"
         style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
@@ -163,6 +185,7 @@
         android:layout_marginStart="4dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
+        android:layout_marginTop="20dp"
         android:backgroundTint="@color/Brand_fill"
         android:enabled="false"
         android:text="Next"
@@ -172,5 +195,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/center_horizontal"
-        app:layout_constraintTop_toBottomOf="@+id/sl_age" />
+        app:layout_constraintTop_toBottomOf="@+id/til_location" />
 </androidx.constraintlayout.widget.ConstraintLayout>

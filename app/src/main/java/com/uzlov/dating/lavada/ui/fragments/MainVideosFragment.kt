@@ -208,26 +208,25 @@ class MainVideosFragment :
             Log.e("TOKEN_FB", tokenFb.token.toString())
             model.authRemoteUser(hashMapOf("token" to tokenFb.token))
                 .observe(viewLifecycleOwner) { tokenBack ->
-                        model.getUsers(tokenBack).observe(this, { users ->
-                    Log.e("MV_TOKEN_BACK", tokenBack)
-                    model.getUser(tokenBack).observe(viewLifecycleOwner) { user ->
-                        Log.e("TAG", "updateData: $user")
-                        user?.url_avatar?.let { it -> loadImage(it, viewBinding.ivProfile) }
-                        self = user?.copy()!!
-                        testData = users
-                        Log.e("USERS", users.toString())
+                    model.getUsers(tokenBack).observe(this, { users ->
+                        Log.e("MV_TOKEN_BACK", tokenBack)
+                        model.getUser(tokenBack).observe(viewLifecycleOwner) { user ->
+                            Log.e("TAG", "updateData: $user")
+                            user?.url_avatar?.let { it -> loadImage(it, viewBinding.ivProfile) }
+                            self = user?.copy()!!
+                            testData = users
+                            Log.e("USERS", users.toString())
 
-                        /** пока без сортировки*/
-                        mAdapter.updateList(
-                            users
-                        )
-                    }
-                            //тестовый метод для чатов
-//                            messageChatViewModel.getChatById(tokenBack, "1").observe(viewLifecycleOwner){
-//                                Log.e("MESSAGE_SEND!!!", it.toString())
-//                            }
-                })
+                            /** пока без сортировки*/
+                            mAdapter.updateList(
+                                users
+                            )
 
+                            messageChatViewModel.getListMessages(tokenBack, "1").observe(viewLifecycleOwner){
+                                Log.e("GET_LIST_MESSAGE", it.toString())
+                            }
+                        }
+                    })
                 }
         }
 

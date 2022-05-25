@@ -115,20 +115,20 @@ class ChatsFragment :
     }
 
     private fun loadChat(companionId: String) {
-        auth.getUserUid()?.let {
-            messageChatViewModel.createChat(selfId = it, companionId = companionId)
-
-        }
+//        auth.getUserUid()?.let {
+//            messageChatViewModel.createChat(selfId = it, companionId = companionId)
+//
+//        }
     }
 
     private fun loadAllChats() {
-        auth.getUserUid()?.let {
-            messageChatViewModel.getChats(it, auth.getUserUid() ?: "")
-                .observe(viewLifecycleOwner, { result ->
-                    renderUi(result)
-                    Log.e("TAG", "loadAllChats: $result")
-                })
-        }
+//        auth.getUserUid()?.let {
+//            messageChatViewModel.getChats(it, auth.getUserUid() ?: "")
+//                .observe(viewLifecycleOwner, { result ->
+//                    renderUi(result)
+//                    Log.e("TAG", "loadAllChats: $result")
+//                })
+//        }
     }
 
 //   mapper [chat1(userTom, self), chat2(userArtem, self)]    --->    [ userTom(chat1), userArtem(chat2).....user_K(chat_N) ]

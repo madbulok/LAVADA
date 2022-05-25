@@ -74,7 +74,7 @@ interface ApiService {
     ): Deferred<RemoteUser>
 
     /**чаты**/
-    //создать сообщение -
+    //создать сообщение +
     @FormUrlEncoded
     @POST("api/v1/chat/message")
     fun createMessageAsync(
@@ -82,11 +82,11 @@ interface ApiService {
     ): Deferred<ReChat>
 
 
-    // получить список сообщений - не успела проверить
-    @GET("v1/chat/message/list")
+    // получить список сообщений +
+    @GET("api/v1/chat/message/list")
     fun getMessagesAsync(
         @Query("chat_id") id: String
-    ): Deferred<ResponseBody>
+    ): Deferred<ReMessage>
 
     //обновить статус - прочитано/не прочитано - не могу проверить, потому что не могу создать сообщение
     @FormUrlEncoded
@@ -109,7 +109,7 @@ interface ApiService {
         @FieldMap subscribe: Map<String, String>
     ): Deferred<ReChat>
 
-    //получить чат по id - не успела проверить
+    //получить чат по id + (работает возможно неправильно со стороны бэка)
     @GET("api/v1/chat")
     fun getChatByIdAsync(
         @Query("chat_id") chat_id: String
@@ -122,34 +122,40 @@ interface ApiService {
     ): Deferred<ReChat>
 
     /**подарки**/
+
+    //подарить подарок +
     @FormUrlEncoded
     @POST("api/v1/gift/send")
     fun sendGiftAsync(
         @FieldMap subscribe: Map<String, String>
-    ): Deferred<ResponseBody>
+    ): Deferred<ReGift>
 
+
+    // получить список подарков +
     @GET("api/v1/gift/all")
-    fun getAllGiftsAsync(): Deferred<ResponseBody>
+    fun getAllGiftsAsync(): Deferred<ReGift>
 
+    //купить подарок +
     @FormUrlEncoded
     @POST("api/v1/gift/purchase")
     fun postPurchaseAsync(
         @FieldMap subscribe: Map<String, String>
-    ): Deferred<ResponseBody>
+    ): Deferred<ReGift>
 
+    //список купленных подарков +
     @GET("api/v1/gift/purchased")
     fun getListGiftsAsync(
         @Query("limit") limit: String,
         @Query("offset") offset: String,
         @Query("status") status: String
-    ): Deferred<ResponseBody>
+    ): Deferred<ReGift>
 
+    //список подарков, которые подарили пользователю +
     @GET("api/v1/gift/donated")
     fun getListReceivedGiftsAsync(
         @Query("limit") limit: String,
         @Query("offset") offset: String
-    ): Deferred<ResponseBody>
-
+    ): Deferred<ReGift>
 
     /**лайки +
      **/

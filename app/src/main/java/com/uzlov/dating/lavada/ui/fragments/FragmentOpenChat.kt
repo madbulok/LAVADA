@@ -60,27 +60,27 @@ class FragmentOpenChat :
             viewBinding.tvProfileName.text = it.getString(CHAT_ID) ?: "Error chat!"
         }
 
-        loadMessagesHistory()
+      //  loadMessagesHistory()
     }
 
 
-    private fun loadMessagesHistory() {
-        messageChatViewModel.retrieveMessages(chatId).observe(viewLifecycleOwner, {
-            if (it != null) {
-                chatOpen = it.copy()
-                messagesAdapter.setMessages(it.messages)
-                val companionUid = it.getCompanionUid(selfUid)
-                lifecycleScope.launchWhenResumed {
-                    userViewModel.getUser(companionUid).observe(viewLifecycleOwner) { user ->
-                       updateUiCompanion(user!!)
-                    }
-                }
-
-            } else {
-                Toast.makeText(requireContext(), "response is null", Toast.LENGTH_SHORT).show()
-            }
-        })
-    }
+//    private fun loadMessagesHistory() {
+//        messageChatViewModel.retrieveMessages(chatId).observe(viewLifecycleOwner, {
+//            if (it != null) {
+//                chatOpen = it.copy()
+//                messagesAdapter.setMessages(it.messages)
+//                val companionUid = it.getCompanionUid(selfUid)
+//                lifecycleScope.launchWhenResumed {
+//                    userViewModel.getUser(companionUid).observe(viewLifecycleOwner) { user ->
+//                       updateUiCompanion(user!!)
+//                    }
+//                }
+//
+//            } else {
+//                Toast.makeText(requireContext(), "response is null", Toast.LENGTH_SHORT).show()
+//            }
+//        })
+//    }
 
     private fun updateUiCompanion(user: User){
         with(viewBinding){
@@ -107,10 +107,10 @@ class FragmentOpenChat :
                                 mediaUrl = "link1"
                             )
                         )
-                        messageChatViewModel.sendMessage(
-                            uidChat = chatId,
-                            chat = it
-                        )
+//                        messageChatViewModel.sendMessage(
+//                            uidChat = chatId,
+//                            chat = it
+//                        )
                     }
                     textInputLayout.setText("")
                 }
