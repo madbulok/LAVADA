@@ -35,4 +35,20 @@ data class GeoPoint(
 
         return result
     }
+
+    fun getCity(): String{
+        var result = ""
+
+        if (address == null) {
+            result = ""
+            return result
+        }
+
+        if (!address.city.isNullOrEmpty()) {
+            result += address.city
+        } else if (!address.state.isNullOrEmpty()) {
+            result += address.state
+        }
+        return result
+    }
 }

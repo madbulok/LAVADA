@@ -193,6 +193,7 @@ class RegistrationFragment :
     }
 
 
+
     //подтягивает аккаунт facebook к firebase auth
     private fun handleFacebookAccessToken(token: AccessToken) {
         Log.d(TAG, "handleFacebookAccessToken:$token")

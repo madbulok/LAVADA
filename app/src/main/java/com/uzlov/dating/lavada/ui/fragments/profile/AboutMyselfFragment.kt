@@ -60,8 +60,8 @@ class AboutMyselfFragment :
         }
 
         addTextChangedListener()
+        showLocation()
         initListeners()
-
         (requireContext() as LoginActivity).clearFragments()
     }
 
@@ -69,9 +69,18 @@ class AboutMyselfFragment :
         with(viewBinding) {
             radioGroup.setOnCheckedChangeListener { _, checkedId ->
                 when (checkedId) {
-                    R.id.rbMan -> user.male = MALE.MAN
-                    R.id.rvWoman -> user.male = MALE.WOMAN
-                    R.id.rbAnother -> user.male = MALE.ANOTHER
+                    R.id.rbMan -> {
+                        user.male = MALE.MAN
+                        progressRegistration.setProgressCompat(40, true)
+                    }
+                    R.id.rvWoman -> {
+                        user.male = MALE.WOMAN
+                        progressRegistration.setProgressCompat(40, true)
+                    }
+                    R.id.rbAnother -> {
+                        user.male = MALE.ANOTHER
+                        progressRegistration.setProgressCompat(40, true)
+                    }
                 }
             }
 
@@ -98,44 +107,48 @@ class AboutMyselfFragment :
             }
             swEnableLocation.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
-                    if (checkPermission()) {
-                        lifecycleScope.launchWhenResumed {
-                            try {
-                                val location = locationRepository.getLocation()
-                                btnNext.isEnabled = true
-                                swEnableLocation.isChecked = true
-                                if (location != null) {
-                                    startGeocoding(location)
-                                } else {
-                                    val l = locationRepository.requestLocation()
-                                    startGeocoding(l)
-                                }
-                            } catch (e: RuntimeException) {
-                                Toast.makeText(
-                                    requireContext(),
-                                    e.localizedMessage,
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            } catch (e: RuntimeExecutionException) {
-                                Toast.makeText(
-                                    requireContext(),
-                                    "Ваше устройство не поддерживает Google Services",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
-                        }
-
-                        user.location = tiEtLocation.text.toString()
-                    }
+                    btnNext.isEnabled = true
+                    showLocation()
                 } else {
                     viewBinding.tiEtLocation.setText("")
+                    btnNext.isEnabled = false
                 }
             }
         }
     }
 
-    private fun startGeocoding(location: Location) {
+    private fun showLocation(){
+        if (checkPermission()) {
+            lifecycleScope.launchWhenResumed {
+                try {
+                    val location = locationRepository.getLocation()
+                    viewBinding.btnNext.isEnabled = true
+                    viewBinding.swEnableLocation.isChecked = true
+                    if (location != null) {
+                        startGeocoding(location)
+                    } else {
+                        val l = locationRepository.requestLocation()
+                        startGeocoding(l)
+                    }
+                } catch (e: RuntimeException) {
+                    Toast.makeText(
+                        requireContext(),
+                        e.localizedMessage,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } catch (e: RuntimeExecutionException) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Ваше устройство не поддерживает Google Services",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+            user.location = viewBinding.tiEtLocation.text.toString()
+        }
+    }
 
+    private fun startGeocoding(location: Location) {
         geocodingViewModel.fetchGeocoding(
             location.latitude.toString(),
             location.longitude.toString()
@@ -188,11 +201,11 @@ class AboutMyselfFragment :
 
     private fun verifyEditText() {
         with(viewBinding) {
-            btnNext.isEnabled = !tiEtName.text.isNullOrBlank()
+            btnNext.isEnabled = !tiEtName.text.isNullOrBlank() && swEnableLocation.isChecked
             if (!tiEtName.text.isNullOrBlank()) {
-                progressRegistration.setProgressCompat(20, true)
+                progressRegistration.setProgressCompat(30, true)
             } else {
-                progressRegistration.setProgressCompat(10, true)
+                progressRegistration.setProgressCompat(20, true)
             }
         }
     }
