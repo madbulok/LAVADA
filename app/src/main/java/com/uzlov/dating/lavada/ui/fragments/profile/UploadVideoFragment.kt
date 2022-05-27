@@ -6,25 +6,22 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.view.View
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.os.bundleOf
-import com.abedelazizshe.lightcompressorlibrary.CompressionListener
-import com.abedelazizshe.lightcompressorlibrary.VideoCompressor
-import com.abedelazizshe.lightcompressorlibrary.VideoQuality
-import com.abedelazizshe.lightcompressorlibrary.config.Configuration
+import com.gowtham.library.utils.LogMessage
+import com.gowtham.library.utils.TrimType
+import com.gowtham.library.utils.TrimVideo
 import com.uzlov.dating.lavada.databinding.FragmentUploadVideoBinding
 import com.uzlov.dating.lavada.domain.models.User
 import com.uzlov.dating.lavada.storage.URIPathHelper
 import com.uzlov.dating.lavada.ui.activities.LoginActivity
 import com.uzlov.dating.lavada.ui.fragments.BaseFragment
 import com.uzlov.dating.lavada.ui.fragments.dialogs.FragmentSelectSourceVideo
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
-import java.io.File
+
 
 class UploadVideoFragment :
     BaseFragment<FragmentUploadVideoBinding>(FragmentUploadVideoBinding::inflate) {
@@ -34,17 +31,37 @@ class UploadVideoFragment :
     private var path: String? = null
     private var user: User = User()
 
-    private val selectVideoListener: FragmentSelectSourceVideo.OnSelectListener = object : FragmentSelectSourceVideo.OnSelectListener {
-        override fun fromCamera() {
-            (requireActivity() as LoginActivity).startCaptureVideoFragment(user)
-        }
+    private val startForResult =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+            if (result.resultCode == Activity.RESULT_OK &&
+                result.data != null
+            ) {
+                val uri = Uri.parse(TrimVideo.getTrimmedVideoPath(result.data))
+                path = uri.path
+                /**
+                 * может тут на экран превью видео надо сразу?)
+                 * */
+                stopTrimming()
 
-        override fun fromDevice() {
-            if (checkPermission()) {
-                openGalleryForVideo()
+            } else {
+                LogMessage.v("videoTrimResultLauncher data is null")
+                Toast.makeText(context, "Что-то пошло не так, попробуйте еще", Toast.LENGTH_SHORT)
+                    .show()
             }
         }
-    }
+
+    private val selectVideoListener: FragmentSelectSourceVideo.OnSelectListener =
+        object : FragmentSelectSourceVideo.OnSelectListener {
+            override fun fromCamera() {
+                (requireActivity() as LoginActivity).startCaptureVideoFragment(user)
+            }
+
+            override fun fromDevice() {
+                if (checkPermission()) {
+                    openGalleryForVideo()
+                }
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,7 +76,10 @@ class UploadVideoFragment :
         checkPermission()
 
         viewBinding.btnSelectVideo.setOnClickListener {
-            FragmentSelectSourceVideo(selectVideoListener).show(childFragmentManager, FragmentSelectSourceVideo::class.java.simpleName)
+            FragmentSelectSourceVideo(selectVideoListener).show(
+                childFragmentManager,
+                FragmentSelectSourceVideo::class.java.simpleName
+            )
         }
 
         viewBinding.btnNext.setOnClickListener {
@@ -73,21 +93,27 @@ class UploadVideoFragment :
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE) {
-            if (data?.data != null) {
-                val uriPathHelper = URIPathHelper()
-                val videoFullPath =
-                    data.data?.let { uriPathHelper.getPath(requireContext(), it) }
-                list = listOf(data.data) as List<Uri>
-                if (videoFullPath != null) {
-
-                    compressVideo()
+    private val startForResultOpenVideo =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                if (result.data?.data != null) {
+                    val uriPathHelper = URIPathHelper()
+                    val videoFullPath =
+                        result.data!!.data?.let { uriPathHelper.getPath(requireContext(), it) }
+                    list = listOf(result!!.data?.data) as List<Uri>
+                    if (videoFullPath != null) {
+                        TrimVideo.activity(list[0].toString())
+                            .setHideSeekBar(true)
+                            .setTrimType(TrimType.MIN_MAX_DURATION)
+                            .setAccurateCut(true)
+                            .setMinToMax(1, 5)
+                            .start(this@UploadVideoFragment, startForResult)
+                        viewBinding.progressRegistration.setProgressCompat(100, true)
+                        viewBinding.btnSelectVideo.text = "Видео выбрано. Нажмите чтоб выбрать другое"
+                    }
                 }
             }
         }
-    }
 
     private fun checkPermission(): Boolean {
         val permission = ActivityCompat.checkSelfPermission(
@@ -109,70 +135,11 @@ class UploadVideoFragment :
             type = "video/*"
             action = Intent.ACTION_PICK
         }
-        startActivityForResult(Intent.createChooser(intent, "Select Video"), REQUEST_CODE)
+        startForResultOpenVideo.launch(intent)
     }
 
-    private fun compressVideo() {
-        //нужно обновить UI (вопрос что там обновлять), работает на корутинах, не в основном потомке
-
-        VideoCompressor.start(
-            context = requireContext(), // => This is required
-            uris = list, // => Source can be provided as content uris
-            isStreamable = true,
-            saveAt = Environment.DIRECTORY_MOVIES, // => the directory to save the compressed video(s)
-            listener = object : CompressionListener {
-                override fun onProgress(index: Int, percent: Float) {
-                    // Update UI with progress value
-                    viewBinding.progressRegistration.setProgressCompat(percent.toInt(), true)
-                }
-
-                override fun onStart(index: Int) {
-                    // Compression start
-                    viewBinding.progressRegistration.setProgressCompat(0, true)
-                    startCompressing()
-                }
-
-                override fun onSuccess(index: Int, size: Long, path: String?) {
-                    this@UploadVideoFragment.path = path
-                    stopCompressing()
-                    viewBinding.progressRegistration.setProgressCompat(100, true)
-                    viewBinding.btnSelectVideo.text = "Видео выбрано. Нажмите чтоб выбрать другое"
-                }
-
-                override fun onFailure(index: Int, failureMessage: String) {
-                    // On Failure
-                    Toast.makeText(requireContext(), failureMessage, Toast.LENGTH_SHORT).show()
-                    stopCompressing()
-                }
-
-                override fun onCancelled(index: Int) {
-                    // On Cancelled
-                    stopCompressing()
-                }
-
-            },
-            configureWith = Configuration(
-                quality = VideoQuality.MEDIUM,
-                frameRate = 24, /*Int, ignore, or null*/
-                isMinBitrateCheckEnabled = false,
-                videoBitrate = 3677198, /*Int, ignore, or null*/
-                disableAudio = false, /*Boolean, or ignore*/
-                keepOriginalResolution = true, /*Boolean, or ignore*/
-            )
-        )
-    }
-
-    fun startCompressing() {
-        with(viewBinding){
-            btnBack.isEnabled = false
-            btnNext.isEnabled = false
-            btnSelectVideo.visibility = View.GONE
-            progressCompressing.visibility = View.VISIBLE
-        }
-    }
-
-    fun stopCompressing() {
-        with(viewBinding){
+    private fun stopTrimming() {
+        with(viewBinding) {
             btnBack.isEnabled = true
             btnNext.isEnabled = true
             btnSelectVideo.visibility = View.VISIBLE

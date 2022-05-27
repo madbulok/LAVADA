@@ -6,13 +6,10 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.core.os.bundleOf
-import com.google.android.exoplayer2.DefaultLoadControl
-import com.google.android.exoplayer2.DefaultRenderersFactory
-import com.google.android.exoplayer2.ExoPlayerFactory
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.source.ExtractorMediaSource
+import com.google.android.exoplayer2.*
+import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
+import com.google.android.exoplayer2.upstream.DefaultDataSource
 import com.uzlov.dating.lavada.app.Constants.Companion.ANOTHER
 import com.uzlov.dating.lavada.app.Constants.Companion.MAN
 import com.uzlov.dating.lavada.app.Constants.Companion.WOMAN
@@ -32,9 +29,10 @@ import com.uzlov.dating.lavada.viemodels.UsersViewModel
 import com.uzlov.dating.lavada.viemodels.ViewModelFactory
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 import javax.inject.Inject
+
 
 class PreviewVideoFragment :
     BaseFragment<FragmentPreviewVideoBinding>(FragmentPreviewVideoBinding::inflate) {
@@ -51,20 +49,21 @@ class PreviewVideoFragment :
     @Inject
     lateinit var model: ViewModelFactory
 
-    lateinit var userViewModel: UsersViewModel
-    var resp: RemoteUser? = null
+    private lateinit var userViewModel: UsersViewModel
+    private var resp: RemoteUser? = null
     private var user: User = User()
-    private var self: User = User()
     private var path: String = "" // local path
     private var request: Int = 0
-
     private val player by lazy {
-        ExoPlayerFactory.newSimpleInstance(
-            requireContext(),
-            DefaultRenderersFactory(requireContext()),
-            DefaultTrackSelector(), DefaultLoadControl()
-        )
-    };
+        val renderer = DefaultRenderersFactory(requireContext())
+        val taskSElector = DefaultTrackSelector(requireContext())
+        val loadControl = DefaultLoadControl()
+        ExoPlayer.Builder(requireContext(), renderer)
+            .setTrackSelector(taskSElector)
+            .setLoadControl(loadControl)
+            .build()
+
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,7 +76,7 @@ class PreviewVideoFragment :
         requireArguments().getString("path")?.let {
             path = it
         }
-        requireArguments().getInt("request")?.let {
+        requireArguments().getInt("request").let {
             request = it
         }
     }
@@ -97,34 +96,31 @@ class PreviewVideoFragment :
             }
 
             btnNext.setOnClickListener {
-                     if (request == 1) {
-                   firebaseEmailAuthService.getUserUid()?.let { uid ->
-                   userViewModel.getUser(uid).observe(viewLifecycleOwner) { resultSelf ->
-                    self = resultSelf?.copy()!!
-                startLoading()
-                try {
-
-                        createMultipartBodyPart(path)
-
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    endWithErrorLoading()
-                }
-
-
-                  }
-                       }
-
+                if (request == 1) {
+                    firebaseEmailAuthService.getUser()?.getIdToken(true)
+                        ?.addOnSuccessListener { tokenFb ->
+                            userViewModel.authRemoteUser(hashMapOf("token" to tokenFb.token))
+                                .observe(viewLifecycleOwner) { tokenBack ->
+                                    userViewModel.getUser(tokenBack).observe(viewLifecycleOwner) {
+                                        Log.e("УШЛО УСПЕШНО", it.toString())
+                                    }
+                                }
+                            startLoading()
+                            try {
+                                createMultipartBodyPart(path)
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                                endWithErrorLoading()
+                            }
+                        }
                 } else {
                     startLoading()
                     try {
-              //          user.url_video = it.toString()
                         user.ready = true
-              //          userViewModel.addUser(user)
                         try {
                             val map = mutableMapOf<String, String>()
                             map["user_nickname"] = user.name.toString()
-                            map["user_gender"] = when(user.male){
+                            map["user_gender"] = when (user.male) {
                                 MALE.MAN -> MAN
                                 MALE.WOMAN -> WOMAN
                                 MALE.ANOTHER -> ANOTHER
@@ -134,14 +130,16 @@ class PreviewVideoFragment :
                             map["user_location_lat"] = user.lat.toString()
                             map["user_location_lng"] = user.lon.toString()
                             map["user_address"] = user.location.toString()
-                            firebaseEmailAuthService.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
-                                userViewModel.authRemoteUser(hashMapOf("token" to tokenFb.token))
-                                    .observe(viewLifecycleOwner) { tokenBack ->
-                                        userViewModel.updateUser(tokenBack, map)?.observe(viewLifecycleOwner) {
-                                            Log.e("УШЛО УСПЕШНО", it.toString())
+                            firebaseEmailAuthService.getUser()?.getIdToken(true)
+                                ?.addOnSuccessListener { tokenFb ->
+                                    userViewModel.authRemoteUser(hashMapOf("token" to tokenFb.token))
+                                        .observe(viewLifecycleOwner) { tokenBack ->
+                                            userViewModel.updateUser(tokenBack, map)
+                                                ?.observe(viewLifecycleOwner) {
+                                                    Log.e("УШЛО УСПЕШНО", it.toString())
+                                                }
                                         }
-                                    }
-                            }
+                                }
 
                         } catch (e: Exception) {
                             e.printStackTrace()
@@ -168,7 +166,7 @@ class PreviewVideoFragment :
                         }
                         createMultipartBodyPart(path)
 
-                    }catch (e: java.lang.Exception){
+                    } catch (e: java.lang.Exception) {
                         e.printStackTrace()
                         endWithErrorLoading()
                     }
@@ -182,15 +180,15 @@ class PreviewVideoFragment :
 
     private fun createMultipartBodyPart(path: String): RemoteUser? {
         val videoFile = File(path)
-        val requestBody = RequestBody.create("multipart/form-data".toMediaTypeOrNull(), videoFile)
+        val requestBody = videoFile.asRequestBody("multipart/form-data".toMediaTypeOrNull())
         val body = MultipartBody.Part.createFormData("user_video", videoFile.name, requestBody)
         firebaseEmailAuthService.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
             userViewModel.authRemoteUser(hashMapOf("token" to tokenFb.token))
                 .observe(this) { tokenBack ->
-                    userViewModel.updateRemoteData(tokenBack, body)?.observe(this){
+                    userViewModel.updateRemoteData(tokenBack, body)?.observe(this) {
                         resp = it
                         endLoading()
-                        if (request == 1){
+                        if (request == 1) {
                             (requireActivity() as HostActivity).rollbackFragment()
                         } else {
                             (requireActivity() as LoginActivity).routeToMainScreen()
@@ -211,14 +209,19 @@ class PreviewVideoFragment :
         val pathVideo = Uri.fromFile(videoFile).toString()
 
         val uri = Uri.parse(pathVideo)
-        val mediaSource = ExtractorMediaSource.Factory(
-            DefaultDataSourceFactory(
-                requireActivity(), "exo-local"
+
+
+        player.playWhenReady = true
+        val mediaItem =
+            MediaItem.fromUri(uri)
+        val mediaSource = ProgressiveMediaSource.Factory(
+            DefaultDataSource.Factory(
+                requireActivity()
             )
-        ).createMediaSource(uri)
+        ).createMediaSource(mediaItem)
 
-
-        player.prepare(mediaSource)
+        player.setMediaSource(mediaSource)
+        player.prepare()
         player.repeatMode = Player.REPEAT_MODE_ALL
         player.playWhenReady = true
     }
@@ -249,7 +252,7 @@ class PreviewVideoFragment :
 
     override fun onDestroyView() {
         super.onDestroyView()
-        player.stop(false)
+        player.stop()
         player.release()
     }
 
@@ -261,8 +264,8 @@ class PreviewVideoFragment :
             return fragment
         }
 
-        fun newInstance(_path: String, request: Int): PreviewVideoFragment {
-            val args = bundleOf("request" to request, "path" to _path)
+        fun newInstance(_path: String, request: Int, user: User): PreviewVideoFragment {
+            val args = bundleOf("request" to request, "path" to _path, "user" to user)
             val fragment = PreviewVideoFragment()
             fragment.arguments = args
             return fragment

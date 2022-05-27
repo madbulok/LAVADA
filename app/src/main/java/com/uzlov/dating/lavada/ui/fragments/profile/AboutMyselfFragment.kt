@@ -107,10 +107,17 @@ class AboutMyselfFragment :
             }
             swEnableLocation.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
-                    btnNext.isEnabled = true
-                    showLocation()
+
+                    //какая-то тут фигня происходит. надо править
+                    checkPermission()
+                    if (checkPermission()){
+                        showLocation()
+                        swEnableLocation.isChecked = true
+                        btnNext.isEnabled = true
+                    }
                 } else {
                     viewBinding.tiEtLocation.setText("")
+                    swEnableLocation.isChecked = false
                     btnNext.isEnabled = false
                 }
             }
@@ -123,7 +130,7 @@ class AboutMyselfFragment :
                 try {
                     val location = locationRepository.getLocation()
                     viewBinding.btnNext.isEnabled = true
-                    viewBinding.swEnableLocation.isChecked = true
+                    viewBinding.swEnableLocation.isChecked = checkPermission()
                     if (location != null) {
                         startGeocoding(location)
                     } else {
