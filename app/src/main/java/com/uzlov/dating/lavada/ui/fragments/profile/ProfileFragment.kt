@@ -6,21 +6,20 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
-import com.abedelazizshe.lightcompressorlibrary.CompressionListener
-import com.abedelazizshe.lightcompressorlibrary.VideoCompressor
-import com.abedelazizshe.lightcompressorlibrary.VideoQuality
-import com.abedelazizshe.lightcompressorlibrary.config.Configuration
 import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.gowtham.library.utils.LogMessage
+import com.gowtham.library.utils.TrimType
+import com.gowtham.library.utils.TrimVideo
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
@@ -61,10 +60,26 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
     private val shop by lazy {
         ShopFragment()
     }
+
+    private val startForResult =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+            if (result.resultCode == Activity.RESULT_OK &&
+                result.data != null
+            ) {
+                val uri = Uri.parse(TrimVideo.getTrimmedVideoPath(result.data))
+                path = uri.path
+                (requireActivity() as HostActivity).showPreviewVideo(path ?: "", 1, user)
+            } else {
+                LogMessage.v("videoTrimResultLauncher data is null")
+                Toast.makeText(context, "Что-то пошло не так, попробуйте еще", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        }
+
     private val selectVideoListener: FragmentSelectSourceVideo.OnSelectListener =
         object : FragmentSelectSourceVideo.OnSelectListener {
             override fun fromCamera() {
-                //  (requireActivity() as LoginActivity).startCaptureVideoFragment(user)
+                (requireActivity() as HostActivity).startCaptureVideoFragment(1, user)
             }
 
             override fun fromDevice() {
@@ -91,7 +106,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
                         viewBinding.tvName.text = result.name + ", " + result.age
                         result.url_avatar?.let { it1 -> loadImage(it1, viewBinding.ivProfile) }
                     }
-                    model.getRemoteBalance(tokenBack).observe(viewLifecycleOwner){ balance ->
+                    model.getRemoteBalance(tokenBack).observe(viewLifecycleOwner) { balance ->
                         viewBinding.btnCoins.text = balance.toString()
                     }
                 }
@@ -192,92 +207,32 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
         } else true
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK && requestCode == UploadVideoFragment.REQUEST_CODE) {
-            if (data?.data != null) {
-                val uriPathHelper = URIPathHelper()
-                val videoFullPath =
-                    data.data?.let { uriPathHelper.getPath(requireContext(), it) }
-                list = listOf(data.data) as List<Uri>
-                if (videoFullPath != null) {
-                    compressVideo()
+    private val startForResultOpenVideo =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                if (result.data?.data != null) {
+                    val uriPathHelper = URIPathHelper()
+                    val videoFullPath =
+                        result.data!!.data?.let { uriPathHelper.getPath(requireContext(), it) }
+                    list = listOf(result.data!!.data) as List<Uri>
+                    if (videoFullPath != null) {
+                        TrimVideo.activity(list[0].toString())
+                            .setHideSeekBar(true)
+                            .setTrimType(TrimType.MIN_MAX_DURATION)
+                            .setAccurateCut(true)
+                            .setMinToMax(1, 5)
+                            .start(this@ProfileFragment, startForResult)
+                    }
                 }
             }
         }
-    }
 
-    private fun openGalleryForVideo() {
+    fun openGalleryForVideo() {
         val intent = Intent().apply {
             type = "video/*"
             action = Intent.ACTION_PICK
         }
-        startActivityForResult(
-            Intent.createChooser(intent, "Select Video"),
-            UploadVideoFragment.REQUEST_CODE
-        )
-    }
-
-    private fun compressVideo() {
-        //нужно обновить UI (вопрос что там обновлять), работает на корутинах, не в основном потомке
-
-        VideoCompressor.start(
-            context = requireContext(), // => This is required
-            uris = list, // => Source can be provided as content uris
-            isStreamable = true,
-            saveAt = Environment.DIRECTORY_MOVIES, // => the directory to save the compressed video(s)
-            listener = object : CompressionListener {
-                override fun onProgress(index: Int, percent: Float) {
-                    // Update UI with progress value
-                }
-
-                override fun onStart(index: Int) {
-                    // Compression start
-                    startCompressing()
-                }
-
-                override fun onSuccess(index: Int, size: Long, path: String?) {
-                    this@ProfileFragment.path = path
-                    stopCompressing()
-                    path?.let {
-                        (requireActivity() as HostActivity).showPreviewVideo(path, 1)
-                    }
-
-                }
-
-                override fun onFailure(index: Int, failureMessage: String) {
-                    // On Failure
-                    Toast.makeText(requireContext(), failureMessage, Toast.LENGTH_SHORT).show()
-                }
-
-                override fun onCancelled(index: Int) {
-                    // On Cancelled
-                }
-
-            },
-            configureWith = Configuration(
-                quality = VideoQuality.MEDIUM,
-                frameRate = 24, /*Int, ignore, or null*/
-                isMinBitrateCheckEnabled = false,
-                videoBitrate = 3677198, /*Int, ignore, or null*/
-                disableAudio = false, /*Boolean, or ignore*/
-                keepOriginalResolution = true, /*Boolean, or ignore*/
-            )
-        )
-    }
-
-    fun startCompressing() {
-        with(viewBinding) {
-            btnChangeVideo.visibility = View.GONE
-            progressCompressing.visibility = View.VISIBLE
-        }
-    }
-
-    fun stopCompressing() {
-        with(viewBinding) {
-            btnChangeVideo.visibility = View.VISIBLE
-            progressCompressing.visibility = View.GONE
-        }
+        startForResultOpenVideo.launch(intent)
     }
 
     companion object {

@@ -17,15 +17,15 @@ import androidx.camera.video.*
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
+import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.databinding.FragmentVideoCaptureBinding
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import com.uzlov.dating.lavada.R
-import com.uzlov.dating.lavada.ui.activities.LoginActivity
 
-class VideoCaptureFragment(private var videoCaptureListener: VideoRecordingListener? = null) : BaseFragment<FragmentVideoCaptureBinding>(FragmentVideoCaptureBinding::inflate){
+class VideoCaptureFragment(private var videoCaptureListener: VideoRecordingListener? = null) :
+    BaseFragment<FragmentVideoCaptureBinding>(FragmentVideoCaptureBinding::inflate) {
 
     private lateinit var cameraExecutor: ExecutorService
 
@@ -40,7 +40,10 @@ class VideoCaptureFragment(private var videoCaptureListener: VideoRecordingListe
 
     private val timer = object : CountDownTimer(5000, 1) {
         override fun onTick(p0: Long) {
-            viewBinding.progressVideoState.setProgressCompat(5000-p0.toInt(), true)
+            /**
+             * тут валится с нулпоинтером, если остановить запись видео
+             * */
+            viewBinding.progressVideoState.setProgressCompat(5000 - p0.toInt(), true)
         }
 
         override fun onFinish() {
@@ -57,7 +60,8 @@ class VideoCaptureFragment(private var videoCaptureListener: VideoRecordingListe
             startCamera()
         } else {
             ActivityCompat.requestPermissions(
-                requireActivity(), REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
+                requireActivity(), REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS
+            )
         }
         cameraExecutor = Executors.newSingleThreadExecutor()
     }
@@ -103,29 +107,36 @@ class VideoCaptureFragment(private var videoCaptureListener: VideoRecordingListe
         recording = videoCapture.output
             .prepareRecording(requireContext(), mediaStoreOutputOptions)
             .apply {
-                if (PermissionChecker.checkSelfPermission(requireContext(),
-                        Manifest.permission.RECORD_AUDIO) ==
-                    PermissionChecker.PERMISSION_GRANTED)
-                {
+                if (PermissionChecker.checkSelfPermission(
+                        requireContext(),
+                        Manifest.permission.RECORD_AUDIO
+                    ) ==
+                    PermissionChecker.PERMISSION_GRANTED
+                ) {
                     withAudioEnabled()
                 }
             }
             .start(ContextCompat.getMainExecutor(requireContext())) { recordEvent ->
-                when(recordEvent) {
+                when (recordEvent) {
                     is VideoRecordEvent.Start -> {
                         viewBinding.videoCaptureButton.apply {
                             text = getString(R.string.stop_capture)
                             isEnabled = true
+
                         }
                         videoCaptureListener?.start()
                     }
                     is VideoRecordEvent.Finalize -> {
                         if (!recordEvent.hasError()) {
                             videoCaptureListener?.finish(recordEvent.outputResults)
+
                         } else {
                             recording?.close()
                             recording = null
-                            videoCaptureListener?.error(recordEvent.cause?.localizedMessage ?: "Video capture ends with unknown error")
+                            videoCaptureListener?.error(
+                                recordEvent.cause?.localizedMessage
+                                    ?: "Video capture ends with unknown error"
+                            )
                         }
                         viewBinding.videoCaptureButton.apply {
                             text = getString(R.string.start_capture)
@@ -135,6 +146,7 @@ class VideoCaptureFragment(private var videoCaptureListener: VideoRecordingListe
                 }
             }
     }
+
 
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
@@ -156,7 +168,10 @@ class VideoCaptureFragment(private var videoCaptureListener: VideoRecordingListe
             videoCapture = VideoCapture.withOutput(recorder)
 
             // Select back camera as a default
-            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+            /**
+             * тут нужно дать возможность выбрать камеру
+             * */
+            val cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
 
             try {
                 // Unbind use cases before rebinding
@@ -165,7 +180,7 @@ class VideoCaptureFragment(private var videoCaptureListener: VideoRecordingListe
                 // Bind use cases to camera
                 cameraProvider
                     .bindToLifecycle(this, cameraSelector, preview, videoCapture)
-            } catch(exc: Exception) {
+            } catch (exc: Exception) {
                 Log.e(TAG, "Use case binding failed", exc)
             }
 
@@ -174,7 +189,8 @@ class VideoCaptureFragment(private var videoCaptureListener: VideoRecordingListe
 
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(
-            requireContext(), it) == PackageManager.PERMISSION_GRANTED
+            requireContext(), it
+        ) == PackageManager.PERMISSION_GRANTED
     }
 
     override fun onDestroy() {
@@ -184,15 +200,18 @@ class VideoCaptureFragment(private var videoCaptureListener: VideoRecordingListe
 
     override fun onRequestPermissionsResult(
         requestCode: Int, permissions: Array<String>, grantResults:
-        IntArray) {
+        IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
             if (allPermissionsGranted()) {
                 startCamera()
             } else {
-                Toast.makeText(requireContext(),
+                Toast.makeText(
+                    requireContext(),
                     "Permissions not granted by the user.",
-                    Toast.LENGTH_SHORT).show()
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }

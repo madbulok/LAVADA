@@ -9,54 +9,56 @@ import androidx.databinding.BindingAdapter
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.ui.PlayerView
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 
 // extension function for show toast
-fun Context.toast(text: String){
+fun Context.toast(text: String) {
     Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
 }
 
 class PlayerViewAdapter {
 
-    companion object{
+    companion object {
         // for hold all players generated
-        private var playersMap: MutableMap<Int, SimpleExoPlayer>  = mutableMapOf()
-        private val progressiveMediaSource = ProgressiveMediaSource.Factory(DefaultHttpDataSourceFactory("Demo"))
+        private var playersMap: MutableMap<Int, ExoPlayer> = mutableMapOf()
+        private val progressiveMediaSource =
+            ProgressiveMediaSource.Factory(DefaultHttpDataSource.Factory())
+
         // for hold current player
-        private var currentPlayingVideo: Pair<Int, SimpleExoPlayer>? = null
-        fun releaseAllPlayers(){
+        private var currentPlayingVideo: Pair<Int, ExoPlayer>? = null
+        fun releaseAllPlayers() {
             playersMap.forEach {
                 it.value.release()
             }
         }
 
-        fun pauseAllPlayers(){
+        fun pauseAllPlayers() {
             playersMap.forEach {
-                it.value.stop(false)
+                it.value.stop()
             }
         }
 
         // call when item recycled to improve performance
-        fun releaseRecycledPlayers(index: Int){
+        fun releaseRecycledPlayers(index: Int) {
             playersMap[index]?.release()
         }
 
         // call when scroll to pause any playing player
-        fun pauseCurrentPlayingVideo(){
-            if (currentPlayingVideo != null){
+        fun pauseCurrentPlayingVideo() {
+            if (currentPlayingVideo != null) {
                 currentPlayingVideo?.second?.seekTo(0)
                 currentPlayingVideo?.second?.playWhenReady = false
             }
         }
 
         // call when scroll to pause any playing player
-        fun playCurrentPlayingVideo(){
-            if (currentPlayingVideo != null){
+        fun playCurrentPlayingVideo() {
+            if (currentPlayingVideo != null) {
                 currentPlayingVideo?.second?.playWhenReady = true
             }
         }
 
-        fun playIndexThenPausePreviousPlayer(index: Int){
+        fun playIndexThenPausePreviousPlayer(index: Int) {
             if (playersMap[index]?.playWhenReady == false) {
                 pauseCurrentPlayingVideo()
                 playersMap[index]?.playWhenReady = true
@@ -66,10 +68,19 @@ class PlayerViewAdapter {
         }
 
         @JvmStatic
-        @BindingAdapter(value = ["video_url", "on_state_change", "progressbar", "item_index", "autoPlay"], requireAll = false)
-        fun PlayerView.loadVideo(url: String, callback: PlayerStateCallback, progressbar: ProgressBar, item_index: Int? = null, autoPlay: Boolean = false) {
+        @BindingAdapter(
+            value = ["video_url", "on_state_change", "progressbar", "item_index", "autoPlay"],
+            requireAll = false
+        )
+        fun PlayerView.loadVideo(
+            url: String,
+            callback: PlayerStateCallback,
+            progressbar: ProgressBar,
+            item_index: Int? = null,
+            autoPlay: Boolean = false
+        ) {
             if (url.isNullOrEmpty()) return
-            val player = SimpleExoPlayer.Builder(context).build()
+            val player = ExoPlayer.Builder(context).build()
 
             player.playWhenReady = autoPlay
             player.repeatMode = Player.REPEAT_MODE_ALL
@@ -78,9 +89,11 @@ class PlayerViewAdapter {
             // We'll show the controller, change to true if want controllers as pause and start
             this.useController = false
             // Provide url to load the video from here
-            val mediaSource = progressiveMediaSource.createMediaSource(Uri.parse(url))
-
-            player.prepare(mediaSource)
+            val mediaItem =
+                MediaItem.fromUri(Uri.parse(url))
+            val mediaSource = progressiveMediaSource.createMediaSource(mediaItem)
+            player.addMediaSource(mediaSource)
+            player.prepare()
 
             this.player = player
 
@@ -90,30 +103,33 @@ class PlayerViewAdapter {
             if (item_index != null)
                 playersMap[item_index] = player
 
-            this.player?.addListener(object : Player.EventListener {
+            this.player?.addListener(object : Player.Listener {
 
-                override fun onPlayerError(error: ExoPlaybackException) {
+                override fun onPlayerError(error: PlaybackException) {
                     super.onPlayerError(error)
                     this@loadVideo.context.toast("Oops! Error ${error.message}")
                 }
 
                 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-                    super.onPlayerStateChanged(playWhenReady, playbackState)
+                    super.onPlayWhenReadyChanged(playWhenReady, playbackState)
 
-                    if (playbackState == Player.STATE_BUFFERING){
+                    if (playbackState == Player.STATE_BUFFERING) {
                         callback.onVideoBuffering(player)
                         // Buffering..
                         // set progress bar visible here
                         progressbar.visibility = View.VISIBLE
                     }
 
-                    if (playbackState == Player.STATE_READY){
+                    if (playbackState == Player.STATE_READY) {
                         // [PlayerView] has fetched the video duration so this is the block to hide the buffering progress bar
                         progressbar.visibility = View.GONE
-                        callback.onVideoDurationRetrieved(this@loadVideo.player?.duration ?: 0, player)
+                        callback.onVideoDurationRetrieved(
+                            this@loadVideo.player?.duration ?: 0,
+                            player
+                        )
                     }
 
-                    if (playbackState == Player.STATE_READY && player.playWhenReady){
+                    if (playbackState == Player.STATE_READY && player.playWhenReady) {
                         // [PlayerView] has started playing/resumed the video
                         callback.onStartedPlaying(player)
                     }
