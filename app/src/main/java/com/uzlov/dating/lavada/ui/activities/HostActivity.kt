@@ -47,7 +47,7 @@ class HostActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             openFragment()
         }
-        setFullscreen()
+  //      setFullscreen()
         startService(Intent(baseContext, MatchesService::class.java))
         startService(Intent(baseContext, NewMessageService::class.java))
         val filter = IntentFilter()
