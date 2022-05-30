@@ -8,6 +8,7 @@ import android.provider.MediaStore
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.video.OutputResults
+import androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.databinding.LoginActivityBinding
 import com.uzlov.dating.lavada.domain.models.User
@@ -122,6 +123,8 @@ class LoginActivity : AppCompatActivity() {
 
     fun rollbackFragment() = supportFragmentManager.popBackStack()
 
+    fun rollbackFragmentWithFlag() = supportFragmentManager.popBackStack("uploadVideo", POP_BACK_STACK_INCLUSIVE)
+
     fun startHome() {
         startActivity(Intent(this@LoginActivity, HostActivity::class.java))
         finish()
@@ -145,7 +148,7 @@ class LoginActivity : AppCompatActivity() {
         supportFragmentManager.apply {
             beginTransaction()
                 .replace(R.id.fullScreen_container, PreviewVideoFragment.newInstance(_path, user))
-                .addToBackStack("null")
+                .addToBackStack("uploadVideo")
                 .commit()
         }
     }
@@ -188,7 +191,7 @@ class LoginActivity : AppCompatActivity() {
 
         supportFragmentManager.beginTransaction()
             .replace(R.id.fullScreen_container, VideoCaptureFragment(videoCaptureCallback))
-            .addToBackStack(("null"))
+            .addToBackStack(("uploadVideo"))
             .commit()
     }
 
