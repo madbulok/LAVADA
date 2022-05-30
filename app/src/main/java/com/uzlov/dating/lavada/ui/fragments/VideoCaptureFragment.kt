@@ -54,11 +54,9 @@ class VideoCaptureFragment(private var videoCaptureListener: VideoRecordingListe
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         // Request camera permissions
-        if (allPermissionsGranted()) {
-            startCamera()
-        } else {
+        startCamera()
+        if (!allPermissionsGranted()) {
             ActivityCompat.requestPermissions(
                 requireActivity(), REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS
             )
@@ -70,7 +68,17 @@ class VideoCaptureFragment(private var videoCaptureListener: VideoRecordingListe
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         // Set up the listeners for take photo and video capture buttons
-        viewBinding.videoCaptureButton.setOnClickListener { captureVideo() }
+
+        viewBinding.videoCaptureButton.setOnClickListener {
+            if (!allPermissionsGranted()) {
+                viewBinding.videoCaptureButton.isEnabled = false
+                /**
+                 * здесь нужно или отправлять назад, или перезапрашивать разрешение
+                 * */
+                Toast.makeText(context, "вы запретили снимать видео", Toast.LENGTH_SHORT).show()
+            } else captureVideo()
+        }
+
     }
 
 
@@ -101,7 +109,10 @@ class VideoCaptureFragment(private var videoCaptureListener: VideoRecordingListe
         }
 
         val mediaStoreOutputOptions = MediaStoreOutputOptions
-            .Builder(requireActivity().contentResolver, MediaStore.Video.Media.EXTERNAL_CONTENT_URI)
+            .Builder(
+                requireActivity().contentResolver,
+                MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+            )
             .setContentValues(contentValues)
             .build()
         recording = videoCapture.output
