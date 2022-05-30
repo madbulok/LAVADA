@@ -58,7 +58,7 @@ class AboutMyselfFragment :
                 user = _user.copy()
             }
         }
-
+        user.age = viewBinding.slAge.value.toInt()
         addTextChangedListener()
         showLocation()
         initListeners()
@@ -72,20 +72,24 @@ class AboutMyselfFragment :
                     R.id.rbMan -> {
                         user.male = MALE.MAN
                         progressRegistration.setProgressCompat(40, true)
+                        verifyEditText()
                     }
                     R.id.rvWoman -> {
                         user.male = MALE.WOMAN
                         progressRegistration.setProgressCompat(40, true)
+                        verifyEditText()
                     }
                     R.id.rbAnother -> {
                         user.male = MALE.ANOTHER
                         progressRegistration.setProgressCompat(40, true)
+                        verifyEditText()
                     }
                 }
             }
 
             slAge.addOnChangeListener { _, value, _ ->
                 user.age = value.toInt()
+                verifyEditText()
             }
             btnNext.setOnClickListener {
                 user.name = tiEtName.text.toString()
@@ -208,7 +212,10 @@ class AboutMyselfFragment :
 
     private fun verifyEditText() {
         with(viewBinding) {
-            btnNext.isEnabled = !tiEtName.text.isNullOrBlank() && swEnableLocation.isChecked
+            btnNext.isEnabled = !tiEtName.text.isNullOrBlank()
+                    && swEnableLocation.isChecked
+                    && slAge.value >= 18F
+                    && radioGroup.checkedRadioButtonId != -1
             if (!tiEtName.text.isNullOrBlank()) {
                 progressRegistration.setProgressCompat(30, true)
             } else {

@@ -91,7 +91,7 @@ class PreviewVideoFragment :
                 if (request == 1) {
                     (requireActivity() as HostActivity).rollbackFragment()
                 } else {
-                    (requireActivity() as LoginActivity).rollbackFragment()
+                    (requireActivity() as LoginActivity).rollbackFragmentWithFlag()
                 }
             }
 

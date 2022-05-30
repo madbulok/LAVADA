@@ -76,6 +76,8 @@ class LogInFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
 
     private fun addClickListeners() {
         viewBinding.btnLogin.setOnClickListener {
+            viewBinding.btnLogin.visibility = View.GONE
+            viewBinding.progressBar.visibility = View.VISIBLE
             if (!viewBinding.tiEtEmail.text.isNullOrEmpty()) {
                 val email = viewBinding.tiEtEmail.text.toString()
                 val password = viewBinding.textInputPassword.text.toString()
