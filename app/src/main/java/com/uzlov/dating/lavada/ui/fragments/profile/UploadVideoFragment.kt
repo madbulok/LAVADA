@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -100,16 +101,30 @@ class UploadVideoFragment :
                     val uriPathHelper = URIPathHelper()
                     val videoFullPath =
                         result.data!!.data?.let { uriPathHelper.getPath(requireContext(), it) }
-                    list = listOf(result!!.data?.data) as List<Uri>
+                    list = listOf(result.data?.data) as List<Uri>
                     if (videoFullPath != null) {
-                        TrimVideo.activity(list[0].toString())
-                            .setHideSeekBar(true)
-                            .setTrimType(TrimType.MIN_MAX_DURATION)
-                            .setAccurateCut(true)
-                            .setMinToMax(1, 5)
-                            .start(this@UploadVideoFragment, startForResult)
-                        viewBinding.progressRegistration.setProgressCompat(100, true)
-                        viewBinding.btnSelectVideo.text = "Видео выбрано. Нажмите чтоб выбрать другое"
+                        val uri = Uri.parse(videoFullPath)
+                        var durationTime: Long
+                        MediaPlayer.create(context, uri).also {
+                            durationTime = (it.duration / 1000).toLong()
+                            it.reset()
+                            it.release()
+                            if (durationTime > 5 && durationTime != 0L) {
+//                                trimVideo()
+                                Toast.makeText(
+                                    context,
+                                    "Ваше видео длиннее 5 секунд, выберите другое",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            } else {
+                                path = uri.path
+                                stopTrimming()
+                                viewBinding.progressRegistration.setProgressCompat(100, true)
+                                viewBinding.btnSelectVideo.text =
+                                    "Видео выбрано. Нажмите чтоб выбрать другое"
+                            }
+                        }
+
                     }
                 }
             }
@@ -136,6 +151,18 @@ class UploadVideoFragment :
             action = Intent.ACTION_PICK
         }
         startForResultOpenVideo.launch(intent)
+    }
+
+    //обрезка видео, временно не используется
+    private fun trimVideo() {
+        TrimVideo.activity(list[0].toString())
+            .setHideSeekBar(true)
+            .setTrimType(TrimType.MIN_MAX_DURATION)
+            .setAccurateCut(true)
+            .setMinToMax(1, 5)
+            .start(this@UploadVideoFragment, startForResult)
+        viewBinding.progressRegistration.setProgressCompat(100, true)
+        viewBinding.btnSelectVideo.text = "Видео выбрано. Нажмите чтоб выбрать другое"
     }
 
     private fun stopTrimming() {
