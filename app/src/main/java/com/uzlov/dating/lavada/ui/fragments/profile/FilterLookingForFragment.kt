@@ -120,7 +120,7 @@ class FilterLookingForFragment :
                     }
                 } catch (e: RuntimeException) {
                     Toast.makeText(
-                        requireContext(),
+                        context,
                         e.localizedMessage,
                         Toast.LENGTH_SHORT
                     ).show()
