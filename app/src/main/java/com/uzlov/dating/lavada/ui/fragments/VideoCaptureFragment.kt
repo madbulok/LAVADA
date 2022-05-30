@@ -40,10 +40,7 @@ class VideoCaptureFragment(private var videoCaptureListener: VideoRecordingListe
 
     private val timer = object : CountDownTimer(5000, 1) {
         override fun onTick(p0: Long) {
-            /**
-             * тут валится с нулпоинтером, если остановить запись видео
-             * */
-            viewBinding.progressVideoState.setProgressCompat(5000 - p0.toInt(), true)
+               viewBinding.progressVideoState.setProgressCompat(5000 - p0.toInt(), true)
         }
 
         override fun onFinish() {
@@ -139,6 +136,7 @@ class VideoCaptureFragment(private var videoCaptureListener: VideoRecordingListe
                     }
                     is VideoRecordEvent.Finalize -> {
                         if (!recordEvent.hasError()) {
+                            timer.cancel()
                             videoCaptureListener?.finish(recordEvent.outputResults)
 
                         } else {
