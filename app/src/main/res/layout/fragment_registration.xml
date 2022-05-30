@@ -125,8 +125,18 @@
         android:text="and Privacy Policy."
         android:layout_marginBottom="@dimen/default_margin_16"
         android:textColor="@color/Link_text"
-        app:layout_constraintBottom_toTopOf="@+id/btnLogin"
+        app:layout_constraintBottom_toTopOf="@+id/progressBar"
         app:layout_constraintStart_toStartOf="@+id/tv_before" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/til_password"
+        app:layout_constraintStart_toStartOf="@+id/til_password"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnLogin"
@@ -136,9 +146,12 @@
         android:layout_margin="20dp"
         android:layout_marginBottom="46dp"
         android:enabled="false"
+        android:visibility="visible"
         android:text="@string/sign_up"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/til_password"
         app:layout_constraintStart_toStartOf="@+id/til_password" />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

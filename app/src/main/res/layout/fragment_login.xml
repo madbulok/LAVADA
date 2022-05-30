@@ -137,7 +137,18 @@
         android:layout_marginBottom="46dp"
         android:enabled="false"
         android:text="@string/log_in_to_your_account"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/tv_sing_in_another"
         app:layout_constraintStart_toStartOf="@+id/tv_sing_in_another" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_marginBottom="30dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/tv_sing_in_another"
+        app:layout_constraintStart_toStartOf="@+id/tv_sing_in_another"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -111,7 +111,8 @@ class RegistrationFragment :
     private fun initListeners() {
         with(viewBinding) {
             btnLogin.setOnClickListener {
-
+                btnLogin.visibility = View.GONE
+                progressBar.visibility = View.VISIBLE
                 val email = tiEtEmail.text.toString()
                 val password = textInputPassword.text.toString()
                 user = User(uid = "", email = email)
