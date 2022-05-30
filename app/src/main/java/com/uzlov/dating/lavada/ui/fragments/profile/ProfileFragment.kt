@@ -7,6 +7,8 @@ import android.content.pm.PackageManager
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
@@ -16,6 +18,10 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
+import com.abedelazizshe.lightcompressorlibrary.CompressionListener
+import com.abedelazizshe.lightcompressorlibrary.VideoCompressor
+import com.abedelazizshe.lightcompressorlibrary.VideoQuality
+import com.abedelazizshe.lightcompressorlibrary.config.Configuration
 import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.gowtham.library.utils.LogMessage
@@ -231,8 +237,8 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
                                     Toast.LENGTH_SHORT
                                 ).show()
                             } else {
-                                path = uri.path
-                                (requireActivity() as HostActivity).showPreviewVideo(path ?: "", 1, user)
+                                compressVideo()
+                                //           (requireActivity() as HostActivity).showPreviewVideo(path ?: "", 1, user)
                             }
                         }
 
@@ -250,26 +256,87 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
             .start(this@ProfileFragment, startForResult)
     }
 
-    fun openGalleryForVideo() {
-        val intent = Intent().apply {
-            type = "video/*"
-            action = Intent.ACTION_PICK
-        }
-        startForResultOpenVideo.launch(intent)
-    }
+    private fun compressVideo() {
+        //нужно обновить UI (вопрос что там обновлять), работает на корутинах, не в основном потомке
 
-    companion object {
-        const val REQUEST_EXTERNAL_STORAGE = 1
-        private val PERMISSIONS_STORAGE = arrayOf(
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-        )
+        VideoCompressor.start(
+            context = requireContext(), // => This is required
+            uris = list, // => Source can be provided as content uris
+            isStreamable = true,
+            saveAt = Environment.DIRECTORY_MOVIES, // => the directory to save the compressed video(s)
+            listener = object : CompressionListener {
+                override fun onProgress(index: Int, percent: Float) {
+                    // Update UI with progress value
+                }
 
-        fun newInstance() =
-            ProfileFragment().apply {
-                arguments = Bundle().apply {
+                override fun onStart(index: Int) {
+                    // Compression start
+                    startCompressing()
+                }
+
+                override fun onSuccess(index: Int, size: Long, path: String?) {
+                    this@ProfileFragment.path = path
+                    stopCompressing()
+                    path?.let {
+                        (requireActivity() as HostActivity).showPreviewVideo(path, 1, user)
+                    }
 
                 }
-            }
+
+                override fun onFailure(index: Int, failureMessage: String) {
+                    // On Failure
+                    Toast.makeText(requireContext(), failureMessage, Toast.LENGTH_SHORT).show()
+                }
+
+                override fun onCancelled(index: Int) {
+                    // On Cancelled
+                }
+
+            },
+            configureWith = Configuration(
+                quality = VideoQuality.MEDIUM,
+                frameRate = 24, /*Int, ignore, or null*/
+                isMinBitrateCheckEnabled = false,
+                videoBitrate = 3677198, /*Int, ignore, or null*/
+                disableAudio = false, /*Boolean, or ignore*/
+                keepOriginalResolution = true, /*Boolean, or ignore*/
+            )
+        )
     }
-}
+
+    fun startCompressing() {
+        with(viewBinding) {
+            btnChangeVideo.visibility = View.GONE
+            progressCompressing.visibility = View.VISIBLE
+        }
+    }
+
+    fun stopCompressing() {
+        with(viewBinding) {
+            btnChangeVideo.visibility = View.VISIBLE
+            progressCompressing.visibility = View.GONE
+        }
+    }
+        fun openGalleryForVideo() {
+            val intent = Intent().apply {
+                type = "video/*"
+                action = Intent.ACTION_PICK
+            }
+            startForResultOpenVideo.launch(intent)
+        }
+
+        companion object {
+            const val REQUEST_EXTERNAL_STORAGE = 1
+            private val PERMISSIONS_STORAGE = arrayOf(
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            )
+
+            fun newInstance() =
+                ProfileFragment().apply {
+                    arguments = Bundle().apply {
+
+                    }
+                }
+        }
+    }
