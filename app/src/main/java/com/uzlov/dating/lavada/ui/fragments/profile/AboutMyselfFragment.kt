@@ -58,6 +58,7 @@ class AboutMyselfFragment :
                 user = _user.copy()
             }
         }
+        user.age = viewBinding.slAge.value.toInt()
         addTextChangedListener()
         showLocation()
         initListeners()
