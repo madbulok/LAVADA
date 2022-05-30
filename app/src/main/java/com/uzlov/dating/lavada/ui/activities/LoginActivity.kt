@@ -115,9 +115,9 @@ class LoginActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        super.onBackPressed()
-        supportFragmentManager.popBackStack()
-        showBenefits()
+        supportFragmentManager
+            .popBackStack()
+   //     showBenefits()
     }
 
     fun rollbackFragment() = supportFragmentManager.popBackStack()
