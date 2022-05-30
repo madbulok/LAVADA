@@ -89,7 +89,7 @@ class PreviewVideoFragment :
             tvLocationProfile.text = user.location
             btnBack.setOnClickListener {
                 if (request == 1) {
-                    (requireActivity() as HostActivity).rollbackFragment()
+                    (requireActivity() as HostActivity).rollbackFragmentWithFlag()
                 } else {
                     (requireActivity() as LoginActivity).rollbackFragmentWithFlag()
                 }

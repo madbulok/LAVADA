@@ -17,6 +17,7 @@ import androidx.camera.video.*
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
+import androidx.lifecycle.Lifecycle
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.databinding.FragmentVideoCaptureBinding
 import java.text.SimpleDateFormat
@@ -142,15 +143,20 @@ class VideoCaptureFragment(private var videoCaptureListener: VideoRecordingListe
                         } else {
                             recording?.close()
                             recording = null
-                            videoCaptureListener?.error(
-                                recordEvent.cause?.localizedMessage
-                                    ?: "Video capture ends with unknown error"
-                            )
+                            if (lifecycle.currentState == Lifecycle.State.STARTED){
+                                videoCaptureListener?.error(
+                                    recordEvent.cause?.localizedMessage
+                                        ?: "Video capture ends with unknown error"
+                                )
+                            }
                         }
-                        viewBinding.videoCaptureButton.apply {
-                            text = getString(R.string.start_capture)
-                            isEnabled = true
+                        if (lifecycle.currentState == Lifecycle.State.STARTED){
+                            viewBinding.videoCaptureButton.apply {
+                                text = getString(R.string.start_capture)
+                                isEnabled = true
+                            }
                         }
+
                     }
                 }
             }
@@ -203,6 +209,7 @@ class VideoCaptureFragment(private var videoCaptureListener: VideoRecordingListe
     }
 
     override fun onDestroy() {
+        timer.cancel()
         super.onDestroy()
         cameraExecutor.shutdown()
     }
