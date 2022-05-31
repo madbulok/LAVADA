@@ -3,27 +3,29 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
+
     <data>
+
         <variable
             name="dataModel"
-            type="com.uzlov.dating.lavada.domain.models.User"/>
+            type="com.uzlov.dating.lavada.domain.models.User" />
 
         <variable
             name="callback"
-            type="com.uzlov.dating.lavada.ui.adapters.PlayerStateCallback"/>
+            type="com.uzlov.dating.lavada.ui.adapters.PlayerStateCallback" />
 
         <variable
             name="index"
-            type="int"/>
+            type="int" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/parent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="#FFF"
         android:orientation="vertical"
-        android:weightSum="100"
-        android:id="@+id/parent"
-        android:background="#FFF">
+        android:weightSum="100">
 
 
         <com.google.android.exoplayer2.ui.PlayerView
@@ -43,33 +45,33 @@
             app:resize_mode="fill"
             app:surface_type="texture_view"
             app:video_url="@{dataModel.url_video}"
-            tools:background="@color/Primary_text"/>
+            tools:background="@color/Primary_text" />
 
         <ProgressBar
             android:id="@+id/progressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            tools:visibile="visible"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibile="visible" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/center_vertical"
-            app:layout_constraintGuide_percent="0.5"
-            android:orientation="horizontal"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.5" />
 
         <!--    action left -->
         <ImageView
             android:id="@+id/ivMessageTo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="18dp"
             android:layout_marginTop="27dp"
+            android:layout_marginEnd="18dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/ivHeartTo"
             app:srcCompat="@drawable/message_selector"
@@ -97,45 +99,58 @@
             app:tint="@color/Surface" />
 
         <!--    bottom random profile bar-->
-
+        <View
+            android:id="@+id/view_for_tap"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tvDescriptionProfile"/>
         <ImageView
             android:id="@+id/ivInstagramProfile"
-            app:srcCompat="@drawable/instagram"
-            app:tint="@color/Surface"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/default_margin_16"
             android:layout_marginBottom="@dimen/default_margin_32"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:srcCompat="@drawable/instagram"
+            app:tint="@color/Surface" />
+
 
         <ImageView
             android:id="@+id/ivTikTokProfile"
-            app:srcCompat="@drawable/tiktok"
-            app:tint="@color/Surface"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toEndOf="@id/ivInstagramProfile"
             android:layout_marginStart="@dimen/default_margin_16"
-            app:layout_constraintBottom_toBottomOf="@id/ivInstagramProfile"/>
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/ivInstagramProfile"
+            app:layout_constraintStart_toEndOf="@id/ivInstagramProfile"
+            app:srcCompat="@drawable/tiktok"
+            app:tint="@color/Surface" />
 
         <ImageView
             android:id="@+id/ivFacebookProfile"
-            app:srcCompat="@drawable/fb"
-            app:tint="@color/Surface"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/default_margin_16"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/ivInstagramProfile"
             app:layout_constraintStart_toEndOf="@id/ivTikTokProfile"
-            app:layout_constraintBottom_toBottomOf="@id/ivInstagramProfile"/>
+            app:srcCompat="@drawable/fb"
+            app:tint="@color/Surface" />
 
         <TextView
             android:id="@+id/tvDescriptionProfile"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:lineSpacingExtra="5sp"
             android:layout_marginBottom="@dimen/default_margin_16"
+            android:lineSpacingExtra="5sp"
             android:textColor="@color/Inverse_text"
+            android:maxLines="1"
+            android:ellipsize="end"
             app:layout_constraintBottom_toTopOf="@+id/ivInstagramProfile"
             app:layout_constraintEnd_toEndOf="@+id/ivGiftTo"
             app:layout_constraintStart_toStartOf="@+id/ivInstagramProfile"
@@ -146,44 +161,43 @@
             android:layout_width="@dimen/size_image_profile"
             android:layout_height="@dimen/size_image_profile"
             android:layout_marginBottom="@dimen/default_margin_8"
-            app:srcCompat="@drawable/test_avatar"
             app:layout_constraintBottom_toTopOf="@+id/tvDescriptionProfile"
             app:layout_constraintStart_toStartOf="@+id/tvDescriptionProfile"
             app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent"
+            app:srcCompat="@drawable/test_avatar"
             tools:background="@tools:sample/avatars" />
 
         <TextView
             android:id="@+id/tvLocationProfile"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textColor="@color/Inverse_text"
             android:layout_marginStart="@dimen/default_margin_16"
-            app:layout_constraintStart_toEndOf="@+id/ivRandomProfile"
+            android:textColor="@color/Inverse_text"
             app:layout_constraintBottom_toBottomOf="@id/ivRandomProfile"
             app:layout_constraintEnd_toEndOf="@id/ivGiftTo"
-            tools:text="California, 350 km from you"/>
-+
+            app:layout_constraintStart_toEndOf="@+id/ivRandomProfile"
+            tools:text="California, 350 km from you" />
+
         <ImageView
             android:id="@+id/ivComplain"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="@+id/tvNameProfile"
             app:layout_constraintBottom_toBottomOf="@id/tvLocationProfile"
             app:layout_constraintEnd_toEndOf="@id/ivGiftTo"
-            app:srcCompat="@drawable/complain"/>
+            app:layout_constraintTop_toTopOf="@+id/tvNameProfile"
+            app:srcCompat="@drawable/complain" />
 
         <TextView
             android:id="@+id/tvNameProfile"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:textColor="@color/Inverse_text"
             android:layout_marginStart="@dimen/default_margin_16"
+            android:textColor="@color/Inverse_text"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="@id/ivGiftTo"
             app:layout_constraintStart_toEndOf="@+id/ivRandomProfile"
             app:layout_constraintTop_toTopOf="@id/ivRandomProfile"
-            app:layout_constraintEnd_toEndOf="@id/ivGiftTo"
             tools:text="Josiah Zayner, 35" />
-
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -71,7 +71,7 @@ class MainVideosFragment :
     private var testData = listOf<User>()
 
     private val mAdapter: ProfileRecyclerAdapter by lazy {
-        ProfileRecyclerAdapter(testData)
+        ProfileRecyclerAdapter(testData, self)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -219,7 +219,7 @@ class MainVideosFragment :
 
                             /** пока без сортировки*/
                             mAdapter.updateList(
-                                users
+                                users, self
                             )
 
                             messageChatViewModel.getListMessages(tokenBack, "1").observe(viewLifecycleOwner){
