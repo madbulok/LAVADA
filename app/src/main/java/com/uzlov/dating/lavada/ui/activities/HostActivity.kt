@@ -15,6 +15,7 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.video.OutputResults
+import androidx.fragment.app.FragmentManager
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.data.repository.PreferenceRepository
 import com.uzlov.dating.lavada.databinding.HostActivityBinding
@@ -87,6 +88,10 @@ class HostActivity : AppCompatActivity() {
 
     fun rollbackFragment() = supportFragmentManager.popBackStack()
 
+    fun rollbackFragmentWithFlag() = supportFragmentManager.popBackStack("uploadVideo",
+        FragmentManager.POP_BACK_STACK_INCLUSIVE
+    )
+
     fun startShopFragment() {
         supportFragmentManager.apply {
             beginTransaction()
@@ -100,7 +105,7 @@ class HostActivity : AppCompatActivity() {
         supportFragmentManager.apply {
             beginTransaction()
                 .replace(R.id.container, PreviewVideoFragment.newInstance(_path, request, user))
-                .addToBackStack("null")
+                .addToBackStack("uploadVideo")
                 .commit()
         }
     }
@@ -127,7 +132,7 @@ class HostActivity : AppCompatActivity() {
 
         supportFragmentManager.beginTransaction()
             .replace(R.id.container, VideoCaptureFragment(videoCaptureCallback))
-            .addToBackStack(("null"))
+            .addToBackStack(("uploadVideo"))
             .commit()
     }
 
