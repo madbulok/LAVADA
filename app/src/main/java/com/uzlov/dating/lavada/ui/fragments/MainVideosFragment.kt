@@ -103,6 +103,27 @@ class MainVideosFragment :
                         .show()
                 }
             })
+
+            model.likes.observe(viewLifecycleOwner) {
+                Log.e("javaClass.simpleName", "likes recieve")
+                it.data?.let { user->
+                    if (user._mutual_like == "0"){
+                        Toast.makeText(
+                            requireContext(),
+                            "Вы отправили лайк пользователю",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else if(user._mutual_like == "1"){
+//                        self.matches[user.uid] = false
+//                        val heartFragment = FragmentMatch.newInstance(user)
+//                        heartFragment.show(
+//                            childFragmentManager,
+//                            heartFragment.javaClass.simpleName
+//                        )
+                    }
+                }
+            }
+
             mAdapter.setOnActionClickListener(object : ProfileRecyclerAdapter.OnActionListener {
                 override fun sendGift(user: User) {
                     val giftFragment = GiftsBottomSheetDialogFragment()
@@ -118,30 +139,8 @@ class MainVideosFragment :
                      * - если взаимен, открываем фрагмент matches;
                      * - если нет - тост "вы отправили симпатию"*/
                     authService.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
-                        Log.e("TOKEN_FB", tokenFb.token.toString())
-
-//                        model.authRemoteUser(hashMapOf("token" to tokenFb.token))
-//                            .observe(viewLifecycleOwner) { tokenBack ->
-//                                model.setLike(tokenBack, user.uid, "1")
-//                                    .observe(viewLifecycleOwner) {
-//                                        if (it.data?._mutual_like == "0") {
-//                                            Toast.makeText(
-//                                                context,
-//                                                "Вы отправили лайк пользователю",
-//                                                Toast.LENGTH_SHORT
-//                                            ).show()
-//                                        }
-//                                        if (it.data?._mutual_like == "1") {
-//                                            self.matches[user.uid] = false
-//                                            val heartFragment = FragmentMatch.newInstance(user)
-//                                            heartFragment.show(
-//                                                childFragmentManager,
-//                                                heartFragment.javaClass.simpleName
-//                                            )
-//                                        }
-//                                    }
-//
-//                            }
+                        model.setLike(tokenFb.token ?: "", user.uid, "1")
+                        Log.e("javaClass.simpleName", "sendHeart: ")
                     }
 
 
