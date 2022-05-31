@@ -117,9 +117,34 @@ class MainVideosFragment :
                      * - проверяем его на взаимность,
                      * - если взаимен, открываем фрагмент matches;
                      * - если нет - тост "вы отправили симпатию"*/
-                    self.matches[user.uid] = false
-                    val heartFragment = FragmentMatch.newInstance(user)
-                    heartFragment.show(childFragmentManager, heartFragment.javaClass.simpleName)
+                    authService.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
+                        Log.e("TOKEN_FB", tokenFb.token.toString())
+
+//                        model.authRemoteUser(hashMapOf("token" to tokenFb.token))
+//                            .observe(viewLifecycleOwner) { tokenBack ->
+//                                model.setLike(tokenBack, user.uid, "1")
+//                                    .observe(viewLifecycleOwner) {
+//                                        if (it.data?._mutual_like == "0") {
+//                                            Toast.makeText(
+//                                                context,
+//                                                "Вы отправили лайк пользователю",
+//                                                Toast.LENGTH_SHORT
+//                                            ).show()
+//                                        }
+//                                        if (it.data?._mutual_like == "1") {
+//                                            self.matches[user.uid] = false
+//                                            val heartFragment = FragmentMatch.newInstance(user)
+//                                            heartFragment.show(
+//                                                childFragmentManager,
+//                                                heartFragment.javaClass.simpleName
+//                                            )
+//                                        }
+//                                    }
+//
+//                            }
+                    }
+
+
                 }
 
                 override fun sendMessage(user: User) {
