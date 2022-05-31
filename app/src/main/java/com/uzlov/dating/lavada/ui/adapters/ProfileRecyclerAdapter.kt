@@ -112,10 +112,13 @@ class ProfileRecyclerAdapter(
                     )
                 }
             })
-           Glide.with(binding.root)
-                .load(model.url_avatar)
-                .error(R.drawable.ic_default_user)
-                .into(binding.ivRandomProfile)
+            binding.root.let {
+                Glide
+                    .with(it.context)
+                    .load(model.url_avatar)
+                    .error(R.drawable.ic_default_user)
+                    .into(binding.ivRandomProfile)
+            }
 
             //было бы неплохо уточнить, какие именно цифры показываем
             binding.tvNameProfile. text = model.name + ", " + model.age
