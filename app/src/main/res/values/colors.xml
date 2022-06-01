@@ -7,11 +7,11 @@
     <color name="Placeholder_text">#4D000D1A</color>
     <color name="Link_text">#0065D0</color>
     <color name="Disable_text">#1A00274D</color>
-    <color name="Surface_1">#1AF7F9FA</color>
+    <color name="Surface_1">#F0F5F8</color>
     <color name="Surface">#FFFFFF</color>
     <color name="Surface_inverse">#1A000D1A</color>
-    <color name="Brand_fill">#EFDAFF</color>
-    <color name="Brand_hover">#DEBDF8</color>
+    <color name="Brand_fill">#E4C1FF</color>
+    <color name="Brand_hover">#C98AFA</color>
     <color name="Premium_fill">#FFC700</color>
     <color name="Error">#FF5247</color>
     <color name="transparent">#00FFFFFF</color>

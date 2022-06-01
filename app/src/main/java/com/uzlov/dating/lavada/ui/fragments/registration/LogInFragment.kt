@@ -75,6 +75,9 @@ class LogInFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
     }
 
     private fun addClickListeners() {
+        viewBinding.btnBack.setOnClickListener {
+            (requireActivity() as LoginActivity).showBenefits()
+        }
         viewBinding.btnLogin.setOnClickListener {
             viewBinding.btnLogin.visibility = View.GONE
             viewBinding.progressBar.visibility = View.VISIBLE

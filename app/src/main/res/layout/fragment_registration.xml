@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ui.activities.LoginActivity">
 
     <View
@@ -12,22 +12,22 @@
         android:layout_height="497dp"
         android:background="@drawable/background_welcome_layout"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.progressindicator.LinearProgressIndicator
         android:id="@+id/progressRegistration"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="27dp"
         android:layout_marginStart="20dp"
+        android:layout_marginTop="27dp"
         android:layout_marginEnd="20dp"
-        android:progress="10"
         android:max="100"
-        app:layout_constraintStart_toStartOf="parent"
+        android:progress="10"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_label_welcome"
@@ -57,14 +57,17 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/til_email"
-        android:layout_margin="20dp"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        style="@style/MyOutlinedBoxStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="36dp"
+        android:layout_marginBottom="@dimen/default_margin_8"
         app:boxCornerRadiusBottomEnd="@dimen/default_margin_16"
         app:boxCornerRadiusBottomStart="@dimen/default_margin_16"
         app:boxCornerRadiusTopEnd="@dimen/default_margin_16"
         app:boxCornerRadiusTopStart="@dimen/default_margin_16"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/tv_label_login">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -77,19 +80,22 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/til_password"
-        android:layout_margin="20dp"
-        app:endIconDrawable="@drawable/show_password_selector"
-        app:endIconMode="password_toggle"
-        app:helperText=" "
-        app:errorIconDrawable="@drawable/eye"
-        app:helperTextEnabled="true"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        style="@style/MyOutlinedBoxStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="@dimen/default_margin_8"
+        android:layout_marginBottom="20dp"
         app:boxCornerRadiusBottomEnd="@dimen/default_margin_16"
         app:boxCornerRadiusBottomStart="@dimen/default_margin_16"
         app:boxCornerRadiusTopEnd="@dimen/default_margin_16"
         app:boxCornerRadiusTopStart="@dimen/default_margin_16"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        app:endIconDrawable="@drawable/show_password_selector"
+        app:endIconMode="password_toggle"
+        app:errorEnabled="true"
+        app:helperText=" "
+        app:helperTextEnabled="true"
         app:layout_constraintTop_toBottomOf="@id/til_email">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -122,8 +128,8 @@
         android:id="@+id/tv_policy"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="and Privacy Policy."
         android:layout_marginBottom="@dimen/default_margin_16"
+        android:text="and Privacy Policy."
         android:textColor="@color/Link_text"
         app:layout_constraintBottom_toTopOf="@+id/progressBar"
         app:layout_constraintStart_toStartOf="@+id/tv_before" />
@@ -132,26 +138,50 @@
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="invisible"
         android:layout_marginBottom="20dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/til_password"
-        app:layout_constraintStart_toStartOf="@+id/til_password"/>
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnLogin"
-        style="@style/DefaultButtons"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:layout_marginBottom="46dp"
-        android:enabled="false"
-        android:visibility="visible"
-        android:text="@string/sign_up"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/til_password"
         app:layout_constraintStart_toStartOf="@+id/til_password" />
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent=".5" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnBack"
+        style="@style/DefaultButtons"
+        android:layout_width="0dp"
+        android:layout_height="55dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginEnd="4dp"
+        android:backgroundTint="@color/Surface_1"
+        android:text="@string/back"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/center_horizontal"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnLogin"
+        style="@style/DefaultButtons"
+        android:layout_width="0dp"
+        android:layout_height="55dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginStart="4dp"
+        android:enabled="false"
+        android:text="@string/sign_up"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/center_horizontal" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

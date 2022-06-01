@@ -111,6 +111,7 @@ class RegistrationFragment :
     private fun initListeners() {
         with(viewBinding) {
             btnLogin.setOnClickListener {
+                btnBack.visibility = View.GONE
                 btnLogin.visibility = View.GONE
                 progressBar.visibility = View.VISIBLE
                 val email = tiEtEmail.text.toString()
@@ -128,6 +129,10 @@ class RegistrationFragment :
                         Toast.makeText(requireContext(), task.exception?.localizedMessage ?: "Ошибка регистрации! Возможно такой аккаунт уже существует.", Toast.LENGTH_SHORT).show()
                     }
                 }
+            }
+
+            btnBack.setOnClickListener {
+                (requireActivity() as LoginActivity).showBenefits()
             }
 
             tvPolicy.setOnClickListener {
@@ -285,6 +290,11 @@ class RegistrationFragment :
         viewBinding.textInputPassword.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
                 verifyEditText()
+                viewBinding.tilPassword.isEndIconVisible =
+                    !viewBinding.textInputPassword.text.isNullOrEmpty()
+                if (!isValidPassword(viewBinding.textInputPassword.text.toString())) {
+                    viewBinding.tilPassword.error = getString(R.string.error)
+                } else viewBinding.tilPassword.isErrorEnabled = false
             }
 
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
@@ -297,12 +307,12 @@ class RegistrationFragment :
             btnLogin.isEnabled = isValidEmail(viewBinding.tiEtEmail.text.toString()) &&
                     isValidPassword(viewBinding.textInputPassword.text.toString())
 
-            if (!isValidPassword(viewBinding.textInputPassword.text.toString())){
-                viewBinding.tilPassword.helperText = "Пароль должен быть длиной более 8 симоволов и включать в себя символы нижнего и верхнего регистра."
-            } else {
-                viewBinding.tilPassword.error = null
-                viewBinding.tilPassword.helperText = null
-            }
+//            if (!isValidPassword(viewBinding.textInputPassword.text.toString())){
+//                viewBinding.tilPassword.helperText = "Пароль должен быть длиной более 8 симоволов и включать в себя символы нижнего и верхнего регистра."
+//            } else {
+//                viewBinding.tilPassword.error = null
+//                viewBinding.tilPassword.helperText = null
+//            }
         }
     }
 }
