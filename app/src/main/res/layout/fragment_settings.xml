@@ -143,11 +143,10 @@
         android:id="@+id/btn_log_out"
         style="@style/DefaultButtons"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="55dp"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="34dp"
-        android:background="@color/Surface_1"
         android:text="@string/log_out"
         app:layout_constraintBottom_toBottomOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
