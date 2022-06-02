@@ -171,6 +171,11 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
         dialogView.findViewById<TextView>(R.id.header).text =
             getString(R.string.only_available_to_premium_accounts)
 
+
+        val btnCancel = dialogView.findViewById<TextView>(R.id.btDismissCustomDialog)
+        btnCancel.setOnClickListener {
+            customDialog?.dismiss()
+        }
         val btSendPass = dialogView.findViewById<Button>(R.id.btnSendPasswordCustomDialog)
         btSendPass.text = getString(R.string.go_to_shop)
         btSendPass.setOnClickListener {
