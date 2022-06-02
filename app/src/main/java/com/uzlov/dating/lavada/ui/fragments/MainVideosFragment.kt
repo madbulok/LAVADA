@@ -210,7 +210,10 @@ class MainVideosFragment :
 
         dialogView.findViewById<TextView>(R.id.header).text =
             getString(R.string.only_available_to_premium_accounts)
-
+        val btDismiss = dialogView.findViewById<TextView>(R.id.btDismissCustomDialog)
+        btDismiss.setOnClickListener {
+            customDialog?.dismiss()
+        }
         val btSendPass = dialogView.findViewById<Button>(R.id.btnSendPasswordCustomDialog)
         btSendPass.text = getString(R.string.go_to_shop)
         btSendPass.setOnClickListener {
