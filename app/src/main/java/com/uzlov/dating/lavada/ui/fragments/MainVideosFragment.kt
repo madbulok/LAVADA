@@ -259,9 +259,7 @@ class MainVideosFragment :
     private val profileFragment by lazy {
         ProfileFragment()
     }
-    private val filterSearchPeopleFragment by lazy {
-        FilterSearchPeopleFragment()
-    }
+
 
     private fun setOnClickListener() {
         with(viewBinding) {
@@ -279,12 +277,7 @@ class MainVideosFragment :
                 PlayerViewAdapter.pauseCurrentPlayingVideo()
             }
             ivFilter.setOnClickListener {
-                parentFragmentManager.beginTransaction()
-                    .add(R.id.container, filterSearchPeopleFragment)
-                    .hide(this@MainVideosFragment)
-                    .show(filterSearchPeopleFragment)
-                    .addToBackStack(null)
-                    .commit()
+                openFilterSearch(self)
                 PlayerViewAdapter.pauseCurrentPlayingVideo()
             }
             refreshDataLayout.setOnRefreshListener {
@@ -300,6 +293,14 @@ class MainVideosFragment :
             putExtra(SingleChatActivity.COMPANION_ID, companionId)
         }
         startActivity(intent)
+    }
+
+    private fun openFilterSearch(user: User){
+        val fragment = FilterSearchPeopleFragment.newInstance(user)
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.container, fragment)
+            .addToBackStack(null)
+            .commit()
     }
 
     private fun openChatFragment(chatId: String?) {

@@ -7,8 +7,10 @@ import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
 import com.uzlov.dating.lavada.data.repository.PreferenceRepository
 import com.uzlov.dating.lavada.databinding.FragmentFiletSearchPeopleBinding
+import com.uzlov.dating.lavada.domain.models.User
 import com.uzlov.dating.lavada.domain.models.UserFilter
 import com.uzlov.dating.lavada.ui.activities.HostActivity
+import com.uzlov.dating.lavada.ui.fragments.profile.FilterLookingForFragment
 import javax.inject.Inject
 
 class FilterSearchPeopleFragment :
@@ -20,6 +22,7 @@ class FilterSearchPeopleFragment :
     @Inject
     lateinit var preferenceRepository: PreferenceRepository
 
+    private lateinit var self: User
     private var userFilter = UserFilter()
 
     var ageStart = 0
@@ -34,6 +37,12 @@ class FilterSearchPeopleFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        arguments?.let {
+            it.getParcelable<User>(NEW_USER)?.let { _user ->
+                self = _user.copy()
+            }
+        }
+        viewBinding.tiEtLocation.setText(self.location)
         initListeners()
         updateUiFilter()
     }
@@ -53,7 +62,11 @@ class FilterSearchPeopleFragment :
     private fun initListeners() {
         with(viewBinding) {
             slAge.valueFrom = 18F
-            slAge.valueTo = 70F
+            slAge.valueTo = 90F
+            reset.setOnClickListener {
+                slAge.values = listOf(30F, 50F)
+                radioGroup.clearCheck()
+            }
             btnNext.setOnClickListener {
                 saveLocalFilter()
                 (requireActivity() as HostActivity).openFragment()
@@ -64,6 +77,7 @@ class FilterSearchPeopleFragment :
             slAge.addOnChangeListener { rangeSlider, _, _ ->
                 ageStart = rangeSlider.values[0].toInt()
                 ageEnd = rangeSlider.values[1].toInt()
+                tvAgeValue.text = ageStart.toString() + " - " + ageEnd.toString()
             }
         }
     }
@@ -87,9 +101,12 @@ class FilterSearchPeopleFragment :
     }
 
     companion object {
-        fun newInstance() =
+        private const val NEW_USER = "user"
+
+        fun newInstance(user: User) =
             FilterSearchPeopleFragment().apply {
                 arguments = Bundle().apply {
+                    putParcelable(NEW_USER, user)
                 }
             }
     }

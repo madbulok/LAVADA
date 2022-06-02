@@ -40,6 +40,8 @@ class FilterLookingForFragment :
 
     private var user = User()
     private var userFilter = UserFilter()
+    var ageStart = 0
+    var ageEnd = 0
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,12 +66,10 @@ class FilterLookingForFragment :
 
     private fun updateUiFilter() {
         with(viewBinding) {
-            slAge.valueFrom = userFilter.ageStart.toFloat()
-            slAge.valueTo = userFilter.ageEnd.toFloat()
             when (userFilter.sex) {
                 0 -> radioGroup.check(R.id.rbMan)
                 1 -> radioGroup.check(R.id.rvWoman)
-                2 -> radioGroup.check(R.id.rbAnother)
+  //              2 -> radioGroup.check(R.id.rbAnother)
             }
 
             btnNext.isEnabled = true
@@ -78,8 +78,6 @@ class FilterLookingForFragment :
 
     private fun initListeners() {
         with(viewBinding) {
-            slAge.valueFrom = 18F
-            slAge.valueTo = 22F
             btnNext.setOnClickListener {
                 saveLocalFilter()
                 (requireActivity() as LoginActivity).startSelectVideo(user)
@@ -87,6 +85,11 @@ class FilterLookingForFragment :
 
             btnBack.setOnClickListener {
                 (requireActivity() as LoginActivity).rollbackFragment()
+            }
+            slAge.addOnChangeListener { rangeSlider, _, _ ->
+                ageStart = rangeSlider.values[0].toInt()
+                ageEnd = rangeSlider.values[1].toInt()
+                tvAgeValue.text = ageStart.toString() + " - " + ageEnd.toString()
             }
         }
     }
