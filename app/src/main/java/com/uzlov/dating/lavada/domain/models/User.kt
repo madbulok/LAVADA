@@ -1,7 +1,6 @@
 package com.uzlov.dating.lavada.domain.models
 
 import android.os.Parcelable
-import com.google.gson.annotations.Expose
 import kotlinx.parcelize.Parcelize
 import java.util.*
 
@@ -36,14 +35,14 @@ data class User(
 
 @Parcelize
 data class RemoteUser(
-    @Expose val status: String? = null,
-    @Expose val data: ReUser? = null,
+    val status: String? = null,
+    val data: ReUser? = null,
 ) : Parcelable
 
 @Parcelize
 data class RemoteUserList(
-    @Expose val status: String? = null,
-    @Expose val data: Data? = Data(),
+    val status: String? = null,
+    val data: Data? = Data(),
 ) : Parcelable
 
 @Parcelize

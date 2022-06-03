@@ -79,11 +79,11 @@ class AboutMyselfFragment :
                         progressRegistration.setProgressCompat(40, true)
                         verifyEditText()
                     }
-                    R.id.rbAnother -> {
-                        user.male = MALE.ANOTHER
-                        progressRegistration.setProgressCompat(40, true)
-                        verifyEditText()
-                    }
+//                    R.id.rbAnother -> {
+//                        user.male = MALE.ANOTHER
+//                        progressRegistration.setProgressCompat(40, true)
+//                        verifyEditText()
+//                    }
                 }
             }
 

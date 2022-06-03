@@ -16,6 +16,7 @@ import kotlin.math.roundToInt
 
 class ProfileRecyclerAdapter(
     private var modelList: List<User>,
+    private var self: User,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(),
     PlayerStateCallback {
     private var mItemClickListener: OnItemClickListener? = null
@@ -28,10 +29,12 @@ class ProfileRecyclerAdapter(
         fun complain(user: User)
     }
 
-    fun updateList(modelList: List<User>) {
+    fun updateList(modelList: List<User>, self: User) {
         this.modelList = modelList
+        this.self = self
         notifyDataSetChanged()
     }
+
 
     override fun onCreateViewHolder(
         viewGroup: ViewGroup,
@@ -109,16 +112,29 @@ class ProfileRecyclerAdapter(
                     )
                 }
             })
-           Glide.with(binding.root)
-                .load(model.url_avatar)
-                .error(R.drawable.ic_default_user)
-                .into(binding.ivRandomProfile)
+            binding.root.let {
+                Glide
+                    .with(it.context)
+                    .load(model.url_avatar)
+                    .error(R.drawable.ic_default_user)
+                    .into(binding.ivRandomProfile)
+            }
 
             //было бы неплохо уточнить, какие именно цифры показываем
             binding.tvNameProfile. text = model.name + ", " + model.age
             binding.tvLocationProfile.text = "В " + model.dist?.roundToInt().toString() + " км от вас"
             binding.tvDescriptionProfile.text = model.about
+            if (self.premium){
+                binding.ivTikTokProfile.visibility = View.VISIBLE
+                binding.ivInstagramProfile.visibility = View.VISIBLE
+                binding.ivFacebookProfile.visibility = View.VISIBLE
+            }
+            binding.viewForTap.setOnClickListener {
+                if (binding.tvDescriptionProfile.maxLines == 1){
+                    binding.tvDescriptionProfile.maxLines = Int.MAX_VALUE
+                } else binding.tvDescriptionProfile.maxLines = 1
 
+            }
             binding.ivHeartTo.setOnClickListener {
                 actionListener?.sendHeart(model)
             }

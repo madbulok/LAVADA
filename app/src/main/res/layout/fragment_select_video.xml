@@ -95,7 +95,7 @@
         android:text="Back"
         android:textAllCaps="false"
         android:textColor="@color/Primary_text"
-        app:backgroundTint="#F0F5F8"
+        app:backgroundTint="@color/Surface_1"
         app:cornerRadius="@dimen/default_margin_16"
         app:layout_constraintEnd_toStartOf="@+id/center_horizontal"
         app:layout_constraintStart_toStartOf="parent"

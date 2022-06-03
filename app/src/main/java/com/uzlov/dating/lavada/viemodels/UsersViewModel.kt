@@ -41,6 +41,7 @@ class UsersViewModel @Inject constructor(
     private var selfBalance = MutableLiveData<Int>()
     private var updatedBalance = MutableLiveData<User>()
     private var updatedLike = MutableLiveData<RemoteUser>()
+    val likes get() : LiveData<RemoteUser> = updatedLike
 
 
     /**
@@ -220,26 +221,35 @@ class UsersViewModel @Inject constructor(
         return updatedBalance
     }
 
+
+
     /**
      * Ставим лайк
-     * @param token пользователя с бэка
+     * @param tokenFB пользователя с firebase
      * @param firebaseUid : String, uid пользователя, которому ставим лайк
      * @param likeState : String; "1" - поставить лайк, "0" - снять лайк
      */
-    fun setLike(token: String, firebaseUid: String, likeState: String): LiveData<RemoteUser> {
+    fun setLike(tokenFB: String, firebaseUid: String, likeState: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            serverCommunication.updateToken(token)
-            val body = mutableMapOf<String, String>()
-            body["firebase_uid"] = firebaseUid
-            body["like_state"] = likeState
-          //  val reUser = serverCommunication.apiServiceWithToken?.setLikeAsync(body)?.await()
-            val reUser = serverCommunication.apiServiceWithToken?.setLike(firebaseUid, likeState)?.await()
-            updatedLike.let {
-                it.postValue(reUser)
-            }
 
+            // запускаем наш токен
+            usersUseCases.authRemoteUser(hashMapOf("token" to tokenFB)).let {
+                // получаем токен с бэка
+                val result = serverCommunication.apiServiceWithToken?.authUserAsync(hashMapOf("token" to tokenFB))
+                result?.await()?.data?.token?.let { tokenToo ->
+                    // прописываем его в запросы
+                    serverCommunication.updateToken(tokenToo)
+                    val body = mutableMapOf<String, String>()
+                    body["firebase_uid"] = firebaseUid
+                    body["like_state"] = likeState
+                    //  val reUser = serverCommunication.apiServiceWithToken?.setLikeAsync(body)?.await()
+                        // ставим лайк
+                    serverCommunication.apiServiceWithToken?.setLike(firebaseUid, likeState)?.await()?.let { reUser ->
+                        updatedLike.postValue(reUser)
+                    }
+                }
+            }
         }
-        return updatedLike
     }
 
     /**

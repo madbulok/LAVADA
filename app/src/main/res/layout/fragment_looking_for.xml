@@ -61,8 +61,8 @@
         android:id="@+id/tv_sex"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="sex"
         android:layout_marginTop="@dimen/default_margin_16"
+        android:text="sex"
         android:textColor="@color/Secondary_text"
         app:layout_constraintEnd_toEndOf="@+id/tv_recommend"
         app:layout_constraintStart_toStartOf="@+id/tv_recommend"
@@ -73,27 +73,25 @@
         android:id="@+id/radioGroup"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/default_margin_8"
+        android:layout_marginTop="@dimen/default_margin_16"
+        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="@+id/tv_sex"
         app:layout_constraintStart_toStartOf="@+id/tv_sex"
         app:layout_constraintTop_toBottomOf="@id/tv_sex">
 
         <RadioButton
             android:id="@+id/rbMan"
-            android:text="Man"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:button="@drawable/ic_man" />
 
         <RadioButton
             android:id="@+id/rvWoman"
-            android:text="Woman"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <RadioButton
-            android:id="@+id/rbAnother"
-            android:text="Другое"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/default_margin_16"
+            android:button="@drawable/ic_woman" />
 
     </RadioGroup>
 
@@ -114,11 +112,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
+        android:text="30-50"
         android:textColor="@color/Primary_text"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="@+id/tv_sex"
-        app:layout_constraintTop_toBottomOf="@+id/radioGroup"
-        tools:text="25" />
+        app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
 
     <com.google.android.material.slider.RangeSlider
         android:id="@+id/sl_age"
@@ -127,10 +125,11 @@
         android:stepSize="1"
         android:valueFrom="18"
         android:valueTo="70"
-        app:values="@array/initial_slider_values"
         app:layout_constraintEnd_toEndOf="@+id/tv_age"
         app:layout_constraintStart_toStartOf="@+id/tv_age"
-        app:layout_constraintTop_toBottomOf="@id/tv_age" />
+        app:layout_constraintTop_toBottomOf="@id/tv_age"
+        app:tickVisible="false"
+        app:values="@array/initial_slider_values" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/center_horizontal"
@@ -142,14 +141,14 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/til_location"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        app:boxCornerRadiusBottomEnd="@dimen/default_margin_16"
-        app:boxCornerRadiusBottomStart="@dimen/default_margin_16"
-        app:boxCornerRadiusTopEnd="@dimen/default_margin_16"
-        app:boxCornerRadiusTopStart="@dimen/default_margin_16"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
         android:enabled="false"
+        app:boxCornerRadiusBottomEnd="@dimen/default_margin_16"
+        app:boxCornerRadiusBottomStart="@dimen/default_margin_16"
+        app:boxCornerRadiusTopEnd="@dimen/default_margin_16"
+        app:boxCornerRadiusTopStart="@dimen/default_margin_16"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/sl_age">
 
@@ -183,9 +182,9 @@
         android:layout_width="0dp"
         android:layout_height="55dp"
         android:layout_marginStart="4dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
-        android:layout_marginTop="20dp"
         android:backgroundTint="@color/Brand_fill"
         android:enabled="false"
         android:text="Next"

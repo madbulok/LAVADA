@@ -9,6 +9,8 @@ import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.widget.ImageView
 import androidx.annotation.RequiresApi
@@ -111,7 +113,7 @@ class PersonalInfoFragment :
                     }
                 }
         }
-
+        addTextChangedListener()
         initListeners()
     }
 
@@ -188,7 +190,6 @@ class PersonalInfoFragment :
                                 body["user_age"] = tvAgeValue.text.toString()
                                 body["user_gender"] = userThis.password.toString()
                                 body["user_nickname"] = tiEtName.text.toString()
-                                /**описание не подгружается пока. Надо разбираться с бэкендером*/
                                 body["user_description"] = tiEtAboutMyself.text.toString()
                                 model.updateUser(tokenBack, body)
                                 parentFragmentManager.popBackStack()
@@ -196,6 +197,20 @@ class PersonalInfoFragment :
                     }
             }
         }
+    }
+
+    private fun addTextChangedListener() {
+        viewBinding.tiEtAboutMyself.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable) {
+                verifyText()
+            }
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
+        })
+    }
+
+    private fun verifyText() {
+        viewBinding.btnSave.isEnabled = viewBinding.tiEtAboutMyself.length() <= 200
     }
 
     private fun selectImageInAlbum() {

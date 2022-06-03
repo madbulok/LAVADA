@@ -71,7 +71,7 @@ class MainVideosFragment :
     private var testData = listOf<User>()
 
     private val mAdapter: ProfileRecyclerAdapter by lazy {
-        ProfileRecyclerAdapter(testData)
+        ProfileRecyclerAdapter(testData, self)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -103,6 +103,27 @@ class MainVideosFragment :
                         .show()
                 }
             })
+
+            model.likes.observe(viewLifecycleOwner) {
+                Log.e("javaClass.simpleName", "likes recieve")
+                it.data?.let { user->
+                    if (user._mutual_like == "0"){
+                        Toast.makeText(
+                            requireContext(),
+                            "Вы отправили лайк пользователю",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else if(user._mutual_like == "1"){
+//                        self.matches[user.uid] = false
+//                        val heartFragment = FragmentMatch.newInstance(user)
+//                        heartFragment.show(
+//                            childFragmentManager,
+//                            heartFragment.javaClass.simpleName
+//                        )
+                    }
+                }
+            }
+
             mAdapter.setOnActionClickListener(object : ProfileRecyclerAdapter.OnActionListener {
                 override fun sendGift(user: User) {
                     val giftFragment = GiftsBottomSheetDialogFragment()
@@ -117,9 +138,12 @@ class MainVideosFragment :
                      * - проверяем его на взаимность,
                      * - если взаимен, открываем фрагмент matches;
                      * - если нет - тост "вы отправили симпатию"*/
-                    self.matches[user.uid] = false
-                    val heartFragment = FragmentMatch.newInstance(user)
-                    heartFragment.show(childFragmentManager, heartFragment.javaClass.simpleName)
+                    authService.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
+                        model.setLike(tokenFb.token ?: "", user.uid, "1")
+                        Log.e("javaClass.simpleName", "sendHeart: ")
+                    }
+
+
                 }
 
                 override fun sendMessage(user: User) {
@@ -186,7 +210,10 @@ class MainVideosFragment :
 
         dialogView.findViewById<TextView>(R.id.header).text =
             getString(R.string.only_available_to_premium_accounts)
-
+        val btDismiss = dialogView.findViewById<TextView>(R.id.btDismissCustomDialog)
+        btDismiss.setOnClickListener {
+            customDialog?.dismiss()
+        }
         val btSendPass = dialogView.findViewById<Button>(R.id.btnSendPasswordCustomDialog)
         btSendPass.text = getString(R.string.go_to_shop)
         btSendPass.setOnClickListener {
@@ -219,7 +246,7 @@ class MainVideosFragment :
 
                             /** пока без сортировки*/
                             mAdapter.updateList(
-                                users
+                                users, self
                             )
 
                             messageChatViewModel.getListMessages(tokenBack, "1").observe(viewLifecycleOwner){
@@ -235,9 +262,7 @@ class MainVideosFragment :
     private val profileFragment by lazy {
         ProfileFragment()
     }
-    private val filterSearchPeopleFragment by lazy {
-        FilterSearchPeopleFragment()
-    }
+
 
     private fun setOnClickListener() {
         with(viewBinding) {
@@ -255,12 +280,7 @@ class MainVideosFragment :
                 PlayerViewAdapter.pauseCurrentPlayingVideo()
             }
             ivFilter.setOnClickListener {
-                parentFragmentManager.beginTransaction()
-                    .add(R.id.container, filterSearchPeopleFragment)
-                    .hide(this@MainVideosFragment)
-                    .show(filterSearchPeopleFragment)
-                    .addToBackStack(null)
-                    .commit()
+                openFilterSearch(self)
                 PlayerViewAdapter.pauseCurrentPlayingVideo()
             }
             refreshDataLayout.setOnRefreshListener {
@@ -276,6 +296,14 @@ class MainVideosFragment :
             putExtra(SingleChatActivity.COMPANION_ID, companionId)
         }
         startActivity(intent)
+    }
+
+    private fun openFilterSearch(user: User){
+        val fragment = FilterSearchPeopleFragment.newInstance(user)
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.container, fragment)
+            .addToBackStack(null)
+            .commit()
     }
 
     private fun openChatFragment(chatId: String?) {

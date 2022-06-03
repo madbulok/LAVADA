@@ -59,6 +59,8 @@
         android:id="@+id/radioGroup"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/default_margin_8"
+        android:layout_marginTop="@dimen/default_margin_16"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="@+id/tv_sex"
         app:layout_constraintStart_toStartOf="@+id/tv_sex"
@@ -68,21 +70,14 @@
             android:id="@+id/rbMan"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingEnd="@dimen/default_margin_32"
-            android:text="Man" />
+            android:button="@drawable/ic_man" />
 
         <RadioButton
             android:id="@+id/rvWoman"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingEnd="@dimen/default_margin_32"
-            android:text="Woman" />
-
-        <RadioButton
-            android:id="@+id/rbAnother"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Другое" />
+            android:layout_marginStart="@dimen/default_margin_16"
+            android:button="@drawable/ic_woman" />
 
     </RadioGroup>
 
@@ -103,11 +98,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
+        android:text="30-50"
         android:textColor="@color/Primary_text"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="@+id/tv_sex"
-        app:layout_constraintTop_toBottomOf="@+id/radioGroup"
-        tools:text="25" />
+        app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
 
     <com.google.android.material.slider.RangeSlider
         android:id="@+id/sl_age"
@@ -119,6 +114,7 @@
         app:layout_constraintEnd_toEndOf="@+id/tv_age"
         app:layout_constraintStart_toStartOf="@+id/tv_age"
         app:layout_constraintTop_toBottomOf="@id/tv_age"
+        app:tickVisible="false"
         app:values="@array/initial_slider_values" />
 
 
@@ -127,6 +123,7 @@
         style="@style/MyOutlinedBoxStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:enabled="false"
         android:layout_margin="20dp"
         app:layout_constraintTop_toBottomOf="@id/sl_age">
 
@@ -162,8 +159,7 @@
         app:layout_constraintBottom_toBottomOf="@id/sw_premium"
         app:layout_constraintEnd_toStartOf="@id/sw_premium"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/sw_premium"
-        />
+        app:layout_constraintTop_toTopOf="@id/sw_premium" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_next"

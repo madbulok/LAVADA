@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/transparent">
 
     <View
@@ -12,35 +12,35 @@
         android:layout_height="0dp"
         android:background="@drawable/background_welcome_layout"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.progressindicator.LinearProgressIndicator
         android:id="@+id/progressRegistration"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="27dp"
         android:layout_marginStart="20dp"
+        android:layout_marginTop="27dp"
         android:layout_marginEnd="20dp"
-        android:progress="20"
         android:max="100"
-        app:layout_constraintStart_toStartOf="parent"
+        android:progress="20"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_about_myself"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
-        android:layout_marginStart="20dp"
+        android:gravity="center"
         android:text="@string/about_myself"
+        android:textColor="@color/Primary_text"
         android:textSize="32sp"
         android:textStyle="bold"
-        android:textColor="@color/Primary_text"
-        android:gravity="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/progressRegistration" />
@@ -50,8 +50,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="@string/we_will_recommend_diets"
         android:gravity="center"
+        android:text="@string/we_will_recommend_diets"
         android:textColor="@color/Primary_text"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="@+id/tv_about_myself"
@@ -60,7 +60,7 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/til_name"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        style="@style/MyOutlinedBoxStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
@@ -95,27 +95,23 @@
         android:id="@+id/radioGroup"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/default_margin_16"
+        android:layout_marginStart="@dimen/default_margin_8"
+        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="@+id/tv_sex"
         app:layout_constraintStart_toStartOf="@+id/tv_sex"
         app:layout_constraintTop_toBottomOf="@id/tv_sex">
 
         <RadioButton
-            android:id="@+id/rbMan"
-            android:text="@string/man"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:button="@drawable/ic_man" />
 
         <RadioButton
-            android:id="@+id/rvWoman"
-            android:text="@string/woman"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <RadioButton
-            android:id="@+id/rbAnother"
-            android:text="@string/another"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/default_margin_16"
+            android:button="@drawable/ic_woman" />
 
     </RadioGroup>
 
@@ -135,18 +131,19 @@
         android:id="@+id/tv_age_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="18"
         android:textColor="@color/Primary_text"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="@+id/tv_age"
         app:layout_constraintEnd_toEndOf="@+id/tv_sex"
-        app:layout_constraintTop_toTopOf="@+id/tv_age"
-        tools:text="25" />
+        app:layout_constraintTop_toTopOf="@+id/tv_age" />
 
     <com.google.android.material.slider.Slider
         android:id="@+id/sl_age"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:stepSize="1"
+        app:tickVisible="false"
         android:valueFrom="18"
         android:valueTo="100"
         app:layout_constraintEnd_toEndOf="@+id/tv_age"
@@ -156,14 +153,14 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/til_location"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        app:boxCornerRadiusBottomEnd="@dimen/default_margin_16"
-        app:boxCornerRadiusBottomStart="@dimen/default_margin_16"
-        app:boxCornerRadiusTopEnd="@dimen/default_margin_16"
-        app:boxCornerRadiusTopStart="@dimen/default_margin_16"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
         android:enabled="false"
+        app:boxCornerRadiusBottomEnd="@dimen/default_margin_16"
+        app:boxCornerRadiusBottomStart="@dimen/default_margin_16"
+        app:boxCornerRadiusTopEnd="@dimen/default_margin_16"
+        app:boxCornerRadiusTopStart="@dimen/default_margin_16"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/sl_age">
 
@@ -178,37 +175,37 @@
     <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/swEnableLocation"
         android:layout_width="0dp"
-        android:text="@string/my_location"
-        android:drawableStart="@drawable/map_pin"
-        app:drawableTint="@color/Secondary_text"
-        android:drawablePadding="@dimen/default_margin_8"
-        android:checked="false"
         android:layout_height="wrap_content"
         android:layout_marginTop="26dp"
+        android:checked="false"
+        android:drawableStart="@drawable/map_pin"
+        android:drawablePadding="@dimen/default_margin_8"
+        android:text="@string/my_location"
+        app:drawableTint="@color/Secondary_text"
         app:layout_constraintEnd_toEndOf="@+id/sl_age"
         app:layout_constraintStart_toStartOf="@+id/sl_age"
         app:layout_constraintTop_toBottomOf="@id/til_location" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/center_horizontal"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent=".5"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent=".5" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_next"
+        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
         android:layout_width="0dp"
         android:layout_height="55dp"
         android:layout_marginTop="23dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
-        app:cornerRadius="@dimen/default_margin_16"
         android:enabled="false"
         android:text="@string/next"
         android:textAllCaps="false"
         android:textColor="@color/Primary_text"
-        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+        app:cornerRadius="@dimen/default_margin_16"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/swEnableLocation"

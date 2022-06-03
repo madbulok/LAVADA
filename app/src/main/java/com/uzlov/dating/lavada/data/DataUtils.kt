@@ -48,7 +48,7 @@ fun convertListDtoToModel(reUser: ReUser?): User {
         male = male,
         age = fact.user_age?.toInt(),
         about = fact.user_description,
-        url_avatar = fact.user_photo,
+        url_avatar = BASE_STORAGE_URL + fact.user_photo,
         url_video = BASE_STORAGE_URL + fact.user_video,
         lat = fact.user_location_lat?.toDouble(),
         lon = fact.user_location_lng?.toDouble(),

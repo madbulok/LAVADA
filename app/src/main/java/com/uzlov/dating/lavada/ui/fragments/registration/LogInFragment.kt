@@ -75,7 +75,11 @@ class LogInFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
     }
 
     private fun addClickListeners() {
+        viewBinding.btnBack.setOnClickListener {
+            (requireActivity() as LoginActivity).showBenefits()
+        }
         viewBinding.btnLogin.setOnClickListener {
+            viewBinding.btnBack.visibility = View.GONE
             viewBinding.btnLogin.visibility = View.GONE
             viewBinding.progressBar.visibility = View.VISIBLE
             if (!viewBinding.tiEtEmail.text.isNullOrEmpty()) {

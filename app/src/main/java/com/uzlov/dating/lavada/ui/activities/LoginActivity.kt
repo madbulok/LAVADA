@@ -62,7 +62,7 @@ class LoginActivity : AppCompatActivity() {
             .commit()
     }
 
-    private fun showBenefits() {
+    fun showBenefits() {
         supportFragmentManager.apply {
             beginTransaction()
                 .show(benefitFragment)
