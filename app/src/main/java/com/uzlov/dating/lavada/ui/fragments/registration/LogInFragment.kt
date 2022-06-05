@@ -79,16 +79,16 @@ class LogInFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
             (requireActivity() as LoginActivity).showBenefits()
         }
         viewBinding.btnLogin.setOnClickListener {
-            viewBinding.btnBack.visibility = View.GONE
-            viewBinding.btnLogin.visibility = View.GONE
-            viewBinding.progressBar.visibility = View.VISIBLE
+            hideLogin()
+
             if (!viewBinding.tiEtEmail.text.isNullOrEmpty()) {
                 val email = viewBinding.tiEtEmail.text.toString()
                 val password = viewBinding.textInputPassword.text.toString()
 
                 if (!email.isNullOrEmpty() && password.isNotEmpty()) {
                     authService.loginWithEmailAndPassword(email, password)
-                        .addOnSuccessListener(requireActivity()) { _ ->
+                        .addOnSuccessListener(requireActivity()) {
+                            showLogin()
                             authService.getUser()?.getIdToken(true)
                                 ?.addOnSuccessListener { tokenFb ->
                             model.authRemoteUser(hashMapOf("token" to tokenFb.token))
@@ -122,6 +122,7 @@ class LogInFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
                                 }
                             }
                         }.addOnFailureListener { error ->
+                            showLogin()
                             error.printStackTrace()
                             Toast.makeText(
                                 requireContext(),
@@ -210,6 +211,24 @@ class LogInFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
                 }
             }
         }
+
+
+    private fun hideLogin(){
+        with(viewBinding){
+            btnBack.visibility = View.GONE
+            btnLogin.visibility = View.GONE
+            progressBar.visibility = View.VISIBLE
+        }
+    }
+
+    private fun showLogin(){
+        with(viewBinding){
+            btnBack.visibility = View.VISIBLE
+            btnLogin.visibility = View.VISIBLE
+            progressBar.visibility = View.GONE
+            textInputPassword.setText("")
+        }
+    }
 
     private fun showCustomAlert() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_custom_layout, null)

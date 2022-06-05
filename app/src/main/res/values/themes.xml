@@ -25,7 +25,7 @@
 
     <style name="DefaultButtons" parent="Widget.MaterialComponents.Button">
         <item name="cornerRadius">@dimen/default_corner_radius_16</item>
-        <item name="minHeight">55dp</item>
+        <item name="minHeight">60dp</item>
         <item name="rippleColor">@color/Brand_hover</item>
         <item name="android:textColor">@color/text_button_selector</item>
         <item name="android:stateListAnimator">@null</item>

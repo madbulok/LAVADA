@@ -10,6 +10,7 @@ import android.util.Patterns
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
+import androidx.core.widget.addTextChangedListener
 import com.facebook.*
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
@@ -66,6 +67,7 @@ class RegistrationFragment :
 
                         firebaseEmailAuthService.loginWithGoogleAccount()
                             .addOnCompleteListener(requireActivity()) { _task ->
+                                showLogin()
                                 if (_task.isSuccessful) {
                                         prefRepository.readUser()?.let { localUser->
                                             if (localUser.isReady){
@@ -111,23 +113,20 @@ class RegistrationFragment :
     private fun initListeners() {
         with(viewBinding) {
             btnLogin.setOnClickListener {
-                btnBack.visibility = View.GONE
-                btnLogin.visibility = View.GONE
-                progressBar.visibility = View.VISIBLE
+                hideLogin()
                 val email = tiEtEmail.text.toString()
                 val password = textInputPassword.text.toString()
                 user = User(uid = "", email = email)
 
                 firebaseEmailAuthService.registerWithEmailAndPassword(email, password)
                     .addOnCompleteListener(requireActivity()) { task ->
-                    if (task.isSuccessful) {
-                        Log.d(TAG, "createUserWithEmail:success")
-                        //здесь вместо обновления ui прям отсюда нужен статус для передачи в ui слой
-                        (requireActivity() as LoginActivity).startFillDataFragment(user)
-                    } else {
-                        Log.w(TAG, "createUserWithEmail:failure", task.exception)
-                        Toast.makeText(requireContext(), task.exception?.localizedMessage ?: "Ошибка регистрации! Возможно такой аккаунт уже существует.", Toast.LENGTH_SHORT).show()
-                    }
+                        showLogin()
+                        if (task.isSuccessful) {
+                            //здесь вместо обновления ui прям отсюда нужен статус для передачи в ui слой
+                            (requireActivity() as LoginActivity).startFillDataFragment(user)
+                        } else {
+                            Toast.makeText(requireContext(), task.exception?.localizedMessage ?: "Ошибка регистрации! Возможно такой аккаунт уже существует.", Toast.LENGTH_SHORT).show()
+                        }
                 }
             }
 
@@ -147,6 +146,22 @@ class RegistrationFragment :
                     .addToBackStack(null)
                     .commit()
             }
+        }
+    }
+
+    private fun hideLogin(){
+        with(viewBinding){
+            btnBack.visibility = View.GONE
+            btnLogin.visibility = View.GONE
+            progressBar.visibility = View.VISIBLE
+        }
+    }
+
+    private fun showLogin(){
+        with(viewBinding){
+            btnBack.visibility = View.VISIBLE
+            btnLogin.visibility = View.VISIBLE
+            progressBar.visibility = View.GONE
         }
     }
 
