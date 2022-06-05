@@ -25,6 +25,7 @@
         android:layout_marginEnd="20dp"
         android:max="100"
         android:progress="20"
+        android:progressTint="@color/Brand_hover"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -182,6 +183,8 @@
         android:drawablePadding="@dimen/default_margin_8"
         android:text="@string/my_location"
         app:drawableTint="@color/Secondary_text"
+        style="@style/CustomSwitch"
+        app:thumbTint="@color/Surface"
         app:layout_constraintEnd_toEndOf="@+id/sl_age"
         app:layout_constraintStart_toStartOf="@+id/sl_age"
         app:layout_constraintTop_toBottomOf="@id/til_location" />

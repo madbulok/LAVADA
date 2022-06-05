@@ -35,6 +35,12 @@
         <item name="font">@font/inter</item>
     </style>
 
+    <style name="CustomSwitch" parent="Widget.MaterialComponents.CompoundButton.Switch">
+        <!-- active thumb & track color (30% transparency) -->
+        <item name="trackColorActive">@color/Brand_hover</item>
+        <item name="useMaterialThemeColors">false</item>
+    </style>
+
     <style name="Title1" parent="Widget.MaterialComponents.TextView">
         <item name="android:textColor">@color/Primary_text</item>
         <item name="android:textSize">@dimen/text_title1</item>
