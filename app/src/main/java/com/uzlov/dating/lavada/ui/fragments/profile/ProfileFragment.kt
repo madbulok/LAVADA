@@ -6,16 +6,15 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.MediaPlayer
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
 import android.view.View
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.abedelazizshe.lightcompressorlibrary.CompressionListener
@@ -23,10 +22,16 @@ import com.abedelazizshe.lightcompressorlibrary.VideoCompressor
 import com.abedelazizshe.lightcompressorlibrary.VideoQuality
 import com.abedelazizshe.lightcompressorlibrary.config.Configuration
 import com.bumptech.glide.Glide
+import com.google.android.exoplayer2.*
+import com.google.android.exoplayer2.source.ProgressiveMediaSource
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
+import com.google.android.exoplayer2.upstream.DefaultDataSource
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.gowtham.library.utils.LogMessage
-import com.gowtham.library.utils.TrimType
-import com.gowtham.library.utils.TrimVideo
+import com.simform.videooperations.CallBackOfQuery
+import com.simform.videooperations.Common
+import com.simform.videooperations.FFmpegCallBack
+import com.simform.videooperations.FFmpegQueryExtension
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
@@ -41,6 +46,7 @@ import com.uzlov.dating.lavada.ui.fragments.dialogs.FragmentSelectSourceVideo
 import com.uzlov.dating.lavada.ui.fragments.settings.SettingsFragment
 import com.uzlov.dating.lavada.viemodels.UsersViewModel
 import com.uzlov.dating.lavada.viemodels.ViewModelFactory
+import java.io.File
 import javax.inject.Inject
 
 class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding::inflate) {
@@ -55,8 +61,6 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
     lateinit var list: List<Uri>
     private var path: String? = null
     private var user: User = User()
-
-
     private val settingsFragment by lazy {
         SettingsFragment()
     }
@@ -67,21 +71,16 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
     private val shop by lazy {
         ShopFragment()
     }
+    private val player by lazy {
+        val renderer = DefaultRenderersFactory(requireContext())
+        val taskSElector = DefaultTrackSelector(requireContext())
+        val loadControl = DefaultLoadControl()
+        ExoPlayer.Builder(requireContext(), renderer)
+            .setTrackSelector(taskSElector)
+            .setLoadControl(loadControl)
+            .build()
 
-    private val startForResult =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
-            if (result.resultCode == Activity.RESULT_OK &&
-                result.data != null
-            ) {
-                val uri = Uri.parse(TrimVideo.getTrimmedVideoPath(result.data))
-                path = uri.path
-                (requireActivity() as HostActivity).showPreviewVideo(path ?: "", 1, user)
-            } else {
-                LogMessage.v("videoTrimResultLauncher data is null")
-                Toast.makeText(context, "Что-то пошло не так, попробуйте еще", Toast.LENGTH_SHORT)
-                    .show()
-            }
-        }
+    }
 
     private val selectVideoListener: FragmentSelectSourceVideo.OnSelectListener =
         object : FragmentSelectSourceVideo.OnSelectListener {
@@ -100,10 +99,32 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
         super.onCreate(savedInstanceState)
         requireContext().appComponent.inject(this)
         model = factoryViewModel.create(UsersViewModel::class.java)
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val bottomSheetBehavior = BottomSheetBehavior.from(viewBinding.flBackground)
+        bottomSheetBehavior.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+
+                // handle onSlide
+            }
+
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+                    viewBinding.flCard.visibility = View.INVISIBLE
+                    viewBinding.tvDesc.maxLines = 1
+                }
+                if (newState == BottomSheetBehavior.STATE_EXPANDED) {
+                    viewBinding.tvDesc.maxLines = Int.MAX_VALUE
+                    viewBinding.flCard.visibility = View.VISIBLE
+
+                }
+            }
+        })
         firebaseEmailAuthService.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
             model.authRemoteUser(hashMapOf("token" to tokenFb.token))
                 .observe(viewLifecycleOwner) { tokenBack ->
@@ -111,7 +132,20 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
                         user = result?.copy()!!
                         viewBinding.tvLocation.text = result.location
                         viewBinding.tvName.text = result.name + ", " + result.age
+                        viewBinding.tvDesc.text = result.about
                         result.url_avatar?.let { it1 -> loadImage(it1, viewBinding.ivProfile) }
+                        viewBinding.itemVideoExoplayer.player = player
+                        result.url_video?.let { playVideo(it) }
+                        if (result.premium){
+                            viewBinding.clPremium.visibility = View.VISIBLE
+                            viewBinding.clNotPremium.visibility = View.GONE
+                        } else {
+                            viewBinding.clPremium.visibility = View.INVISIBLE
+                            viewBinding.clNotPremium.visibility = View.VISIBLE
+                        }
+                    }
+                    viewBinding.tbBackAction.setOnClickListener {
+                        (requireActivity() as HostActivity).rollbackFragment()
                     }
                     model.getRemoteBalance(tokenBack).observe(viewLifecycleOwner) { balance ->
                         viewBinding.btnCoins.text = balance.toString()
@@ -144,7 +178,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
                     .addToBackStack(null)
                     .commit()
             }
-            clPremium.setOnClickListener {
+            clNotPremium.setOnClickListener {
                 val buyPremiumFragment = FragmentBuyPremium()
                 buyPremiumFragment.show(
                     childFragmentManager,
@@ -156,6 +190,26 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
             }
 
         }
+    }
+
+    private fun playVideo(path: String) {
+        val videoFile = File(path)
+        val pathVideo = Uri.fromFile(videoFile).toString()
+
+        val uri = Uri.parse(pathVideo)
+
+        val mediaItem =
+            MediaItem.fromUri(path)
+        val mediaSource = ProgressiveMediaSource.Factory(
+            DefaultDataSource.Factory(
+                requireActivity()
+            )
+        ).createMediaSource(mediaItem)
+
+        player.setMediaSource(mediaSource)
+        player.prepare()
+        player.repeatMode = Player.REPEAT_MODE_ALL
+        player.playWhenReady = true
     }
 
     private fun showCustomAlertToByPremium() {
@@ -235,10 +289,10 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
                             it.reset()
                             it.release()
                             if (durationTime > 5 && durationTime != 0L) {
-//                                trimVideo()
+                                    testTrim(videoFullPath)
                                 Toast.makeText(
                                     context,
-                                    "Ваше видео длиннее 5 секунд, выберите другое",
+                                    "Так как ваше видео длиннее 5 секунд, оно будет обрезано",
                                     Toast.LENGTH_SHORT
                                 ).show()
                             } else {
@@ -252,13 +306,35 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
             }
         }
 
-    private fun trimVideo() {
-        TrimVideo.activity(list[0].toString())
-            .setHideSeekBar(true)
-            .setTrimType(TrimType.MIN_MAX_DURATION)
-            .setAccurateCut(true)
-            .setMinToMax(1, 5)
-            .start(this@ProfileFragment, startForResult)
+    private fun testTrim(inputPath: String) {
+        val outputPath = context?.let { Common.getFilePath(it, Common.VIDEO) }
+        val startTimeString = "00:00:00"
+        val endTimeString = "00:00:05"
+        val query: Array<String> =
+            FFmpegQueryExtension().cutVideo(inputPath, startTimeString, endTimeString, outputPath!!)
+        CallBackOfQuery().callQuery(query, object : FFmpegCallBack {
+            override fun statisticsProcess(statistics: com.simform.videooperations.Statistics) {
+                Log.i("FFMPEG LOG : ", statistics.videoFrameNumber.toString())
+            }
+
+            override fun process(logMessage: com.simform.videooperations.LogMessage) {
+                Log.i("FFMPEG LOG : ", logMessage.text)
+                viewBinding.btnChangeVideo.isEnabled = false
+            }
+
+            @RequiresApi(Build.VERSION_CODES.N)
+            override fun success() {
+                Log.e("OUTPUT", outputPath.toString())
+                path = outputPath
+                (requireActivity() as HostActivity).showPreviewVideo(path ?: "", 1, user)
+            }
+
+            override fun cancel() {
+            }
+
+            override fun failed() {
+            }
+        })
     }
 
     private fun compressVideo() {
@@ -312,36 +388,43 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
     fun startCompressing() {
         with(viewBinding) {
             btnChangeVideo.visibility = View.GONE
-            progressCompressing.visibility = View.VISIBLE
+            //         progressCompressing.visibility = View.VISIBLE
         }
     }
 
     fun stopCompressing() {
         with(viewBinding) {
             btnChangeVideo.visibility = View.VISIBLE
-            progressCompressing.visibility = View.GONE
+            //        progressCompressing.visibility = View.GONE
         }
     }
-        fun openGalleryForVideo() {
-            val intent = Intent().apply {
-                type = "video/*"
-                action = Intent.ACTION_PICK
-            }
-            startForResultOpenVideo.launch(intent)
+
+    fun openGalleryForVideo() {
+        val intent = Intent().apply {
+            type = "video/*"
+            action = Intent.ACTION_PICK
         }
+        startForResultOpenVideo.launch(intent)
+    }
 
-        companion object {
-            const val REQUEST_EXTERNAL_STORAGE = 1
-            private val PERMISSIONS_STORAGE = arrayOf(
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            )
+    override fun onDestroyView() {
+        super.onDestroyView()
+        player.stop()
+        player.release()
+    }
 
-            fun newInstance() =
-                ProfileFragment().apply {
-                    arguments = Bundle().apply {
+    companion object {
+        const val REQUEST_EXTERNAL_STORAGE = 1
+        private val PERMISSIONS_STORAGE = arrayOf(
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        )
 
-                    }
+        fun newInstance() =
+            ProfileFragment().apply {
+                arguments = Bundle().apply {
+
                 }
-        }
+            }
     }
+}

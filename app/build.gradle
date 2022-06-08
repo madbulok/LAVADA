@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId "com.uzlov.dating.lavada"
-        minSdk 22
+        minSdk 24
         targetSdk 31
         versionCode 1
         versionName "1.01"
@@ -123,7 +123,9 @@ dependencies {
     implementation 'com.github.AbedElazizShe:LightCompressor:1.1.1'
 
     //video trimmer
-    implementation 'com.github.a914-gowtham:android-video-trimmer:1.7.0'
+ //   implementation 'com.github.a914-gowtham:android-video-trimmer:1.7.0'
+    implementation 'com.github.SimformSolutionsPvtLtd:SSffmpegVideoOperation:1.0.8'
+    implementation 'com.arthenica:mobile-ffmpeg-full:4.4'
 
     def camerax_version = "1.1.0-beta01"
     implementation "androidx.camera:camera-core:${camerax_version}"
