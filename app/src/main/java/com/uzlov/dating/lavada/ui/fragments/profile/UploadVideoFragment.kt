@@ -117,20 +117,13 @@ class UploadVideoFragment :
                     list = listOf(result.data?.data) as List<Uri>
                     if (videoFullPath != null) {
                         val uri = Uri.parse(videoFullPath)
-                        var durationTime: Long
+                        var videoWidth: Int
                         MediaPlayer.create(context, uri).also {
-                            durationTime = (it.duration / 1000).toLong()
+                            videoWidth = it.videoWidth
                             it.reset()
                             it.release()
-                            if (durationTime > 5 && durationTime != 0L) {
-                                testTrim(videoFullPath)
-
-                                Toast.makeText(
-                                    context,
-                                    "Так как ваше видео длиннее 5 секунд, оно будет обрезано",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-
+                            if (videoWidth > 1920) {
+                                compressVideoWithTrim()
                             } else {
                                 compressVideo()
                             }
@@ -201,8 +194,6 @@ class UploadVideoFragment :
 
 
     private fun compressVideo() {
-        //нужно обновить UI (вопрос что там обновлять), работает на корутинах, не в основном потомке
-
         VideoCompressor.start(
             context = requireContext(), // => This is required
             uris = list, // => Source can be provided as content uris
@@ -223,9 +214,23 @@ class UploadVideoFragment :
                 override fun onSuccess(index: Int, size: Long, path: String?) {
                     this@UploadVideoFragment.path = path
                     stopCompressing()
-                    viewBinding.progressRegistration.setProgressCompat(100, true)
-                    viewBinding.btnSelectVideo.text = "Видео выбрано. Нажмите чтоб выбрать другое"
-                    Log.e("РАЗМЕР ВИДЕО СТАЛ:", size.toString())
+                    if (path != null) {
+                        val uri = Uri.parse(path)
+                        var durationTime: Long
+                        MediaPlayer.create(context, uri).also {
+                            durationTime = (it.duration / 1000).toLong()
+                            it.reset()
+                            it.release()
+                            if (durationTime > 5 && durationTime != 0L) {
+                                testTrim(path)
+                            } else {
+                                viewBinding.progressRegistration.setProgressCompat(100, true)
+                                viewBinding.btnSelectVideo.text = "Видео выбрано. Нажмите чтоб выбрать другое"
+                                Log.e("РАЗМЕР ВИДЕО СТАЛ:", size.toString())
+                            }
+                        }
+                    }
+
                 }
 
                 override fun onFailure(index: Int, failureMessage: String) {
@@ -247,6 +252,67 @@ class UploadVideoFragment :
                 videoBitrate = 3677198, /*Int, ignore, or null*/
                 disableAudio = false, /*Boolean, or ignore*/
                 keepOriginalResolution = true, /*Boolean, or ignore*/
+            )
+        )
+    }
+
+    private fun compressVideoWithTrim() {
+
+        VideoCompressor.start(
+            context = requireContext(), // => This is required
+            uris = list, // => Source can be provided as content uris
+            isStreamable = true,
+            saveAt = Environment.DIRECTORY_MOVIES, // => the directory to save the compressed video(s)
+            listener = object : CompressionListener {
+                override fun onProgress(index: Int, percent: Float) {
+                    // Update UI with progress value
+                }
+
+                override fun onStart(index: Int) {
+                    // Compression start
+                    startCompressing()
+                }
+
+                override fun onSuccess(index: Int, size: Long, path: String?) {
+                    this@UploadVideoFragment.path = path
+                    stopCompressing()
+                    if (path != null) {
+                        val uri = Uri.parse(path)
+                        var durationTime: Long
+                        MediaPlayer.create(context, uri).also {
+                            durationTime = (it.duration / 1000).toLong()
+                            it.reset()
+                            it.release()
+                            if (durationTime > 5 && durationTime != 0L) {
+                                testTrim(path)
+                            } else {
+                                viewBinding.progressRegistration.setProgressCompat(100, true)
+                                viewBinding.btnSelectVideo.text = "Видео выбрано. Нажмите чтоб выбрать другое"
+                                Log.e("РАЗМЕР ВИДЕО СТАЛ:", size.toString())
+                            }
+                        }
+                    }
+                }
+
+                override fun onFailure(index: Int, failureMessage: String) {
+                    // On Failure
+                    Toast.makeText(requireContext(), failureMessage, Toast.LENGTH_SHORT).show()
+                }
+
+                override fun onCancelled(index: Int) {
+                    // On Cancelled
+                }
+
+            },
+            configureWith = Configuration(
+                quality = VideoQuality.MEDIUM,
+                frameRate = 24, /*Int, ignore, or null*/
+                isMinBitrateCheckEnabled = true,
+                videoBitrate = 3677198, /*Int, ignore, or null*/
+                disableAudio = false, /*Boolean, or ignore*/
+                keepOriginalResolution = true, /*Boolean, or ignore*/
+                videoWidth = 1920.0, /*Double, ignore, or null*/
+                videoHeight = 1080.0 /*Double, ignore, or null*/
             )
         )
     }

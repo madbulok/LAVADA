@@ -136,7 +136,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
                         result.url_avatar?.let { it1 -> loadImage(it1, viewBinding.ivProfile) }
                         viewBinding.itemVideoExoplayer.player = player
                         result.url_video?.let { playVideo(it) }
-                        if (result.premium){
+                        if (result.premium) {
                             viewBinding.clPremium.visibility = View.VISIBLE
                             viewBinding.clNotPremium.visibility = View.GONE
                         } else {
@@ -193,11 +193,6 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
     }
 
     private fun playVideo(path: String) {
-        val videoFile = File(path)
-        val pathVideo = Uri.fromFile(videoFile).toString()
-
-        val uri = Uri.parse(pathVideo)
-
         val mediaItem =
             MediaItem.fromUri(path)
         val mediaSource = ProgressiveMediaSource.Factory(
@@ -283,24 +278,17 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
                     list = listOf(result.data!!.data) as List<Uri>
                     if (videoFullPath != null) {
                         val uri = Uri.parse(videoFullPath)
-                        var durationTime: Long
+                        var videoWidth: Int
                         MediaPlayer.create(context, uri).also {
-                            durationTime = (it.duration / 1000).toLong()
+                            videoWidth = it.videoWidth
                             it.reset()
                             it.release()
-                            if (durationTime > 5 && durationTime != 0L) {
-                                    testTrim(videoFullPath)
-                                Toast.makeText(
-                                    context,
-                                    "Так как ваше видео длиннее 5 секунд, оно будет обрезано",
-                                    Toast.LENGTH_SHORT
-                                ).show()
+                            if (videoWidth > 1920) {
+                                compressVideoWithTrim()
                             } else {
                                 compressVideo()
-                                //           (requireActivity() as HostActivity).showPreviewVideo(path ?: "", 1, user)
                             }
                         }
-
                     }
                 }
             }
@@ -319,11 +307,12 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
 
             override fun process(logMessage: com.simform.videooperations.LogMessage) {
                 Log.i("FFMPEG LOG : ", logMessage.text)
-                viewBinding.btnChangeVideo.isEnabled = false
+                startCompressing()
             }
 
             @RequiresApi(Build.VERSION_CODES.N)
             override fun success() {
+                stopCompressing()
                 Log.e("OUTPUT", outputPath.toString())
                 path = outputPath
                 (requireActivity() as HostActivity).showPreviewVideo(path ?: "", 1, user)
@@ -335,6 +324,69 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
             override fun failed() {
             }
         })
+    }
+
+    private fun compressVideoWithTrim() {
+
+        VideoCompressor.start(
+            context = requireContext(), // => This is required
+            uris = list, // => Source can be provided as content uris
+            isStreamable = true,
+            saveAt = Environment.DIRECTORY_MOVIES, // => the directory to save the compressed video(s)
+            listener = object : CompressionListener {
+                override fun onProgress(index: Int, percent: Float) {
+                    // Update UI with progress value
+                }
+
+                override fun onStart(index: Int) {
+                    // Compression start
+                    startCompressing()
+                }
+
+                override fun onSuccess(index: Int, size: Long, path: String?) {
+                    this@ProfileFragment.path = path
+                    stopCompressing()
+                    if (path != null) {
+                        val uri = Uri.parse(path)
+                        var durationTime: Long
+                        MediaPlayer.create(context, uri).also {
+                            durationTime = (it.duration / 1000).toLong()
+                            it.reset()
+                            it.release()
+                            if (durationTime > 5 && durationTime != 0L) {
+                                testTrim(path)
+                            } else {
+                                (requireActivity() as HostActivity).showPreviewVideo(
+                                    path ?: "",
+                                    1,
+                                    user
+                                )
+                            }
+                        }
+                    }
+                }
+
+                override fun onFailure(index: Int, failureMessage: String) {
+                    // On Failure
+                    Toast.makeText(requireContext(), failureMessage, Toast.LENGTH_SHORT).show()
+                }
+
+                override fun onCancelled(index: Int) {
+                    // On Cancelled
+                }
+
+            },
+            configureWith = Configuration(
+                quality = VideoQuality.MEDIUM,
+                frameRate = 24, /*Int, ignore, or null*/
+                isMinBitrateCheckEnabled = true,
+                videoBitrate = 3677198, /*Int, ignore, or null*/
+                disableAudio = false, /*Boolean, or ignore*/
+                keepOriginalResolution = true, /*Boolean, or ignore*/
+                videoWidth = 1920.0, /*Double, ignore, or null*/
+                videoHeight = 1080.0 /*Double, ignore, or null*/
+            )
+        )
     }
 
     private fun compressVideo() {
@@ -358,10 +410,24 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
                 override fun onSuccess(index: Int, size: Long, path: String?) {
                     this@ProfileFragment.path = path
                     stopCompressing()
-                    path?.let {
-                        (requireActivity() as HostActivity).showPreviewVideo(path, 1, user)
+                    if (path != null) {
+                        val uri = Uri.parse(path)
+                        var durationTime: Long
+                        MediaPlayer.create(context, uri).also {
+                            durationTime = (it.duration / 1000).toLong()
+                            it.reset()
+                            it.release()
+                            if (durationTime > 5 && durationTime != 0L) {
+                                testTrim(path)
+                            } else {
+                                (requireActivity() as HostActivity).showPreviewVideo(
+                                    path ?: "",
+                                    1,
+                                    user
+                                )
+                            }
+                        }
                     }
-
                 }
 
                 override fun onFailure(index: Int, failureMessage: String) {
@@ -377,25 +443,24 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
             configureWith = Configuration(
                 quality = VideoQuality.MEDIUM,
                 frameRate = 24, /*Int, ignore, or null*/
-                isMinBitrateCheckEnabled = false,
+                isMinBitrateCheckEnabled = true,
                 videoBitrate = 3677198, /*Int, ignore, or null*/
                 disableAudio = false, /*Boolean, or ignore*/
                 keepOriginalResolution = true, /*Boolean, or ignore*/
             )
         )
     }
-
     fun startCompressing() {
         with(viewBinding) {
             btnChangeVideo.visibility = View.GONE
-            //         progressCompressing.visibility = View.VISIBLE
+            progressCompressing.visibility = View.VISIBLE
         }
     }
 
     fun stopCompressing() {
         with(viewBinding) {
             btnChangeVideo.visibility = View.VISIBLE
-            //        progressCompressing.visibility = View.GONE
+            progressCompressing.visibility = View.GONE
         }
     }
 
