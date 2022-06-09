@@ -416,6 +416,17 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
         </FrameLayout>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <ProgressBar
+        android:id="@+id/progressCompressing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_marginBottom="36dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/btn_change_video"
+        app:layout_constraintStart_toStartOf="@+id/btn_change_video" />
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_change_video"
         style="@style/DefaultButtons"
