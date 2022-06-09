@@ -24,7 +24,7 @@ fun convertDtoToModel(remoteUser: RemoteUser): User {
         age = fact.user_age?.toInt(),
         about = fact.user_description,
         url_avatar = fact.user_photo,
-        url_video = BASE_STORAGE_URL + fact.user_video,
+        url_video = fact.user_video,
         lat = fact.user_location_lat?.toDouble(),
         lon = fact.user_location_lng?.toDouble(),
         location = fact.user_address,

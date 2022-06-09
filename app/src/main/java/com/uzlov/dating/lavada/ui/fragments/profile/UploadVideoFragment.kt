@@ -4,8 +4,11 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+import android.icu.util.Output
 import android.media.MediaPlayer
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
@@ -13,21 +16,25 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.os.bundleOf
 import com.abedelazizshe.lightcompressorlibrary.CompressionListener
 import com.abedelazizshe.lightcompressorlibrary.VideoCompressor
 import com.abedelazizshe.lightcompressorlibrary.VideoQuality
 import com.abedelazizshe.lightcompressorlibrary.config.Configuration
-import com.gowtham.library.utils.LogMessage
-import com.gowtham.library.utils.TrimType
-import com.gowtham.library.utils.TrimVideo
+import com.simform.videooperations.CallBackOfQuery
+import com.simform.videooperations.Common
+import com.simform.videooperations.FFmpegCallBack
+import com.simform.videooperations.FFmpegQueryExtension
 import com.uzlov.dating.lavada.databinding.FragmentUploadVideoBinding
 import com.uzlov.dating.lavada.domain.models.User
 import com.uzlov.dating.lavada.storage.URIPathHelper
+import com.uzlov.dating.lavada.ui.activities.HostActivity
 import com.uzlov.dating.lavada.ui.activities.LoginActivity
 import com.uzlov.dating.lavada.ui.fragments.BaseFragment
 import com.uzlov.dating.lavada.ui.fragments.dialogs.FragmentSelectSourceVideo
+import java.nio.file.Path
 
 
 class UploadVideoFragment :
@@ -116,12 +123,14 @@ class UploadVideoFragment :
                             it.reset()
                             it.release()
                             if (durationTime > 5 && durationTime != 0L) {
-//                                trimVideo()
+                                testTrim(videoFullPath)
+
                                 Toast.makeText(
                                     context,
-                                    "Ваше видео длиннее 5 секунд, выберите другое",
+                                    "Так как ваше видео длиннее 5 секунд, оно будет обрезано",
                                     Toast.LENGTH_SHORT
                                 ).show()
+
                             } else {
                                 compressVideo()
                             }
@@ -155,17 +164,41 @@ class UploadVideoFragment :
         startForResultOpenVideo.launch(intent)
     }
 
-    //обрезка видео, временно не используется
-//    private fun trimVideo() {
-//        TrimVideo.activity(list[0].toString())
-//            .setHideSeekBar(true)
-//            .setTrimType(TrimType.MIN_MAX_DURATION)
-//            .setAccurateCut(true)
-//            .setMinToMax(1, 5)
-//            .start(this@UploadVideoFragment, startForResult)
-//        viewBinding.progressRegistration.setProgressCompat(100, true)
-//        viewBinding.btnSelectVideo.text = "Видео выбрано. Нажмите чтоб выбрать другое"
-//    }
+
+    private fun testTrim(inputPath: String) {
+        val outputPath = context?.let { Common.getFilePath(it, Common.VIDEO) }
+        val startTimeString = "00:00:00"
+        val endTimeString = "00:00:05"
+        val query: Array<String> =
+            FFmpegQueryExtension().cutVideo(inputPath, startTimeString, endTimeString, outputPath!!)
+        CallBackOfQuery().callQuery(query, object : FFmpegCallBack {
+            override fun statisticsProcess(statistics: com.simform.videooperations.Statistics) {
+                Log.i("FFMPEG LOG : ", statistics.videoFrameNumber.toString())
+            }
+
+            override fun process(logMessage: com.simform.videooperations.LogMessage) {
+                startCompressing()
+                Log.i("FFMPEG LOG : ", logMessage.text)
+            }
+
+            @RequiresApi(Build.VERSION_CODES.N)
+            override fun success() {
+                Log.e("OUTPUT", outputPath.toString())
+                path = outputPath
+                viewBinding.progressRegistration.setProgressCompat(100, true)
+                viewBinding.btnSelectVideo.text = "Видео выбрано. Нажмите чтоб выбрать другое"
+                stopCompressing()
+
+            }
+
+            override fun cancel() {
+            }
+
+            override fun failed() {
+            }
+        })
+    }
+
 
     private fun compressVideo() {
         //нужно обновить UI (вопрос что там обновлять), работает на корутинах, не в основном потомке
@@ -219,7 +252,7 @@ class UploadVideoFragment :
     }
 
     fun startCompressing() {
-        with(viewBinding){
+        with(viewBinding) {
             btnBack.isEnabled = false
             btnNext.isEnabled = false
             btnSelectVideo.visibility = View.GONE
@@ -228,7 +261,7 @@ class UploadVideoFragment :
     }
 
     fun stopCompressing() {
-        with(viewBinding){
+        with(viewBinding) {
             btnBack.isEnabled = true
             btnNext.isEnabled = true
             btnSelectVideo.visibility = View.VISIBLE

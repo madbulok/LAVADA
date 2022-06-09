@@ -7,340 +7,426 @@
     android:orientation="vertical"
     android:id="@+id/container">
 
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/imageView2"
+    <com.google.android.exoplayer2.ui.PlayerView
+        android:id="@+id/item_video_exoplayer"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:scaleType="centerCrop"
-        app:layout_constraintBottom_toBottomOf="@id/subContent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:lottie_autoPlay="true"
-        app:lottie_cacheComposition="true"
-        app:lottie_imageAssetsFolder="images/"
-        app:lottie_loop="true"
-        app:lottie_rawRes="@raw/lott_2340_1080"
-        app:lottie_renderMode="hardware" />
+        app:resize_mode="zoom"
+        app:surface_type="texture_view"
+        app:use_controller="false" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/subContent"
+    <ImageView
+        android:id="@+id/tbBackAction"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.6"
-        app:layout_constraintTop_toTopOf="@id/container" />
+        android:layout_marginStart="22dp"
+        android:layout_marginTop="18dp"
+        android:src="@drawable/chevron_left_white"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
+    <ImageView
+        android:id="@+id/iv_edit_profile"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="18dp"
+        android:src="@drawable/edit_2"
+        app:layout_constraintEnd_toStartOf="@id/btn_settings"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <FrameLayout
-        android:id="@+id/fl_background"
+    <ImageView
+        android:id="@+id/btn_settings"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="18dp"
+        android:src="@drawable/settings"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/cl_background"
+        <FrameLayout
+            android:id="@+id/fl_background"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/background_welcome_layout">
+            style="?attr/bottomSheetStyle"
+            app:behavior_hideable="false"
+            app:behavior_peekHeight="210dp"
+            app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+            app:layout_constraintBottom_toBottomOf="parent">
 
-
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/ivProfile"
-                android:layout_width="@dimen/size_image_profile"
-                android:layout_height="@dimen/size_image_profile"
-                android:layout_marginStart="@dimen/default_margin_16"
-                android:layout_marginTop="25dp"
-                app:layout_constraintStart_toStartOf="@id/cl_background"
-                app:layout_constraintTop_toTopOf="@id/cl_background"
-                app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent"
-                tools:background="@tools:sample/avatars" />
-
-            <TextView
-                android:id="@+id/tv_name"
-                style="@style/Large"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:text="Name"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/ivProfile"
-                app:layout_constraintTop_toTopOf="@id/ivProfile" />
-
-            <TextView
-                android:id="@+id/tv_location"
-                style="@style/Regular"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:text="location"
-                android:textColor="@color/Secondary_text"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/ivProfile"
-                app:layout_constraintTop_toBottomOf="@id/tv_name" />
-
-            <ImageView
-                android:id="@+id/iv_edit_profile"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginEnd="20dp"
-                android:src="@drawable/edit_2"
-                app:layout_constraintBottom_toBottomOf="@id/tv_location"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/tv_name" />
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/fl_card"
-                android:layout_width="0dp"
-                android:layout_height="78dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="30dp"
-                android:layout_marginEnd="20dp"
-                android:elevation="5dp"
-                app:cardCornerRadius="24dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/ivProfile">
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <ImageView
-                        android:id="@+id/iv_videos"
-                        android:layout_width="30dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/video"
-                        app:layout_constraintBottom_toTopOf="@id/tv_videos"
-                        app:layout_constraintEnd_toStartOf="@id/iv_gifts"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/tv_videos"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="2244"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="@id/iv_videos"
-                        app:layout_constraintStart_toStartOf="@id/iv_videos"
-                        app:layout_constraintTop_toBottomOf="@id/iv_videos" />
-
-                    <ImageView
-                        android:id="@+id/iv_gifts"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/gift"
-                        app:layout_constraintBottom_toTopOf="@id/tv_gifts"
-                        app:layout_constraintEnd_toStartOf="@id/iv_likes"
-                        app:layout_constraintStart_toEndOf="@id/iv_videos"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/tv_gifts"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="2244"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="@id/iv_gifts"
-                        app:layout_constraintStart_toStartOf="@id/iv_gifts"
-                        app:layout_constraintTop_toBottomOf="@id/iv_gifts" />
-
-                    <ImageView
-                        android:id="@+id/iv_likes"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/heart"
-                        app:layout_constraintBottom_toTopOf="@id/tv_likes"
-                        app:layout_constraintEnd_toStartOf="@id/iv_messages"
-                        app:layout_constraintStart_toEndOf="@id/iv_gifts"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/tv_likes"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="2244"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@id/iv_messages"
-                        app:layout_constraintStart_toEndOf="@id/iv_gifts"
-                        app:layout_constraintTop_toBottomOf="@id/iv_likes" />
-
-                    <ImageView
-                        android:id="@+id/iv_messages"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/message_circle"
-                        app:layout_constraintBottom_toTopOf="@id/tv_messages"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/iv_likes"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/tv_messages"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="2244"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/iv_likes"
-                        app:layout_constraintTop_toBottomOf="@id/iv_messages" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-            </androidx.cardview.widget.CardView>
-
-            <TextView
-                android:id="@+id/tv_shop"
-                style="@style/Title3"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_background"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="32dp"
-                android:layout_marginEnd="20dp"
-                android:text="Shop"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                app:layout_constraintTop_toBottomOf="@id/fl_card" />
+                android:layout_height="match_parent"
+                android:background="@drawable/background_welcome_layout">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_top_up"
-                style="@style/DefaultButtons"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="20dp"
-                android:text="top up"
-                android:textColor="@color/Secondary_text"
-                app:layout_constraintBottom_toBottomOf="@id/tv_shop"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/tv_shop" />
 
-            <TextView
-                android:id="@+id/tv_coins"
-                style="@style/Large"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="20dp"
-                android:text="Coins"
-                android:textSize="20sp"
-                app:layout_constraintTop_toBottomOf="@id/tv_shop" />
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/ivProfile"
+                    android:layout_width="@dimen/size_image_profile"
+                    android:layout_height="@dimen/size_image_profile"
+                    android:layout_marginStart="@dimen/default_margin_16"
+                    android:layout_marginTop="25dp"
+                    app:layout_constraintStart_toStartOf="@id/cl_background"
+                    app:layout_constraintTop_toTopOf="@id/cl_background"
+                    app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent"
+                    tools:background="@tools:sample/avatars" />
 
-            <TextView
-                android:id="@+id/btn_coins"
-                style="@style/DefaultButtons"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawableEnd="@drawable/ic_coin"
-                android:drawablePadding="@dimen/default_margin_8"
-                android:text="1233"
-                app:layout_constraintBottom_toBottomOf="@id/tv_coins"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/tv_coins" />
+                <TextView
+                    android:id="@+id/tv_name"
+                    style="@style/Large"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:text="Name"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/ivProfile"
+                    app:layout_constraintTop_toTopOf="@id/ivProfile" />
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/fl_card_too"
-                android:layout_width="0dp"
-                android:layout_height="84dp"
-                android:layout_margin="20dp"
-                android:elevation="5dp"
-                app:cardCornerRadius="24dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_coins">
+                <TextView
+                    android:id="@+id/tv_location"
+                    style="@style/Regular"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:text="location"
+                    android:textColor="@color/Secondary_text"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/ivProfile"
+                    app:layout_constraintTop_toBottomOf="@id/tv_name" />
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/cl_premium"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                <TextView
+                    android:id="@+id/tv_desc"
+                    style="@style/Regular"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginTop="4dp"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:textColor="@color/Secondary_text"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/ivProfile" />
 
-                    <TextView
-                        android:id="@+id/tv_premium"
-                        style="@style/Large"
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/fl_card"
+                    android:layout_width="0dp"
+                    android:layout_height="78dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="30dp"
+                    android:layout_marginEnd="20dp"
+                    android:elevation="5dp"
+                    app:cardCornerRadius="24dp"
+                    android:visibility="invisible"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_desc">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginEnd="20dp"
-                        android:text="Premium account"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:layout_height="match_parent">
 
-                    <TextView
-                        android:id="@+id/tv_profit"
-                        style="@style/DefaultButtons"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:drawableEnd="@drawable/ic_coin"
-                        android:drawablePadding="@dimen/default_margin_8"
-                        android:text="+100"
-                        app:layout_constraintBottom_toBottomOf="@id/tv_premium"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="@id/tv_premium" />
+                        <ImageView
+                            android:id="@+id/iv_videos"
+                            android:layout_width="30dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/video"
+                            app:layout_constraintBottom_toTopOf="@id/tv_videos"
+                            app:layout_constraintEnd_toStartOf="@id/iv_gifts"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
 
-                    <TextView
-                        android:id="@+id/tv_profit_to"
-                        style="@style/Regular"
+                        <TextView
+                            android:id="@+id/tv_videos"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="2244"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="@id/iv_videos"
+                            app:layout_constraintStart_toStartOf="@id/iv_videos"
+                            app:layout_constraintTop_toBottomOf="@id/iv_videos" />
+
+                        <ImageView
+                            android:id="@+id/iv_gifts"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/gift"
+                            app:layout_constraintBottom_toTopOf="@id/tv_gifts"
+                            app:layout_constraintEnd_toStartOf="@id/iv_likes"
+                            app:layout_constraintStart_toEndOf="@id/iv_videos"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/tv_gifts"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="2244"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="@id/iv_gifts"
+                            app:layout_constraintStart_toStartOf="@id/iv_gifts"
+                            app:layout_constraintTop_toBottomOf="@id/iv_gifts" />
+
+                        <ImageView
+                            android:id="@+id/iv_likes"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/heart"
+                            app:layout_constraintBottom_toTopOf="@id/tv_likes"
+                            app:layout_constraintEnd_toStartOf="@id/iv_messages"
+                            app:layout_constraintStart_toEndOf="@id/iv_gifts"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/tv_likes"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="2244"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/iv_messages"
+                            app:layout_constraintStart_toEndOf="@id/iv_gifts"
+                            app:layout_constraintTop_toBottomOf="@id/iv_likes" />
+
+                        <ImageView
+                            android:id="@+id/iv_messages"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/message_circle"
+                            app:layout_constraintBottom_toTopOf="@id/tv_messages"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@id/iv_likes"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/tv_messages"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="2244"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@id/iv_likes"
+                            app:layout_constraintTop_toBottomOf="@id/iv_messages" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                </androidx.cardview.widget.CardView>
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/fl_card_for_coins"
+                    android:layout_width="0dp"
+                    android:layout_height="84dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="110dp"
+                    android:elevation="5dp"
+                    app:cardCornerRadius="24dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/fl_card"
+                    app:layout_constraintBottom_toBottomOf="@id/fl_card_have_premium">
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginEnd="20dp"
-                        android:layout_marginBottom="16dp"
-                        android:text="until 31.03.2022"
-                        android:textColor="@color/Secondary_text"
-                        app:layout_constraintBottom_toBottomOf="parent" />
+                        android:layout_height="match_parent">
+                        <TextView
+                            android:id="@+id/tv_shop"
+                            style="@style/Title3"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="20dp"
+                            android:layout_marginEnd="20dp"
+                            android:text="Lavcoins"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"/>
 
-                    <TextView
-                        android:id="@+id/tv_profit_desc"
-                        style="@style/Regular"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="18dp"
-                        android:drawablePadding="@dimen/default_margin_8"
-                        android:text="every day"
-                        android:textColor="@color/Secondary_text"
-                        app:layout_constraintBottom_toBottomOf="@id/tv_profit_to"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="@id/tv_profit_to" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </androidx.cardview.widget.CardView>
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_top_up"
+                            style="@style/DefaultButtons"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="20dp"
+                            android:text="top up"
+                            android:textColor="@color/Secondary_text"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btn_settings"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="40dp"
-                android:layout_marginEnd="20dp"
-                android:text="Settings"
-                app:layout_constraintBottom_toTopOf="@id/btn_change_video"
-                app:layout_constraintTop_toBottomOf="@id/fl_card_too" />
+                        <TextView
+                            android:id="@+id/btn_coins"
+                            style="@style/DefaultButtons"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:drawableEnd="@drawable/ic_coin"
+                            android:drawablePadding="@dimen/default_margin_8"
+                            android:text="1233"
+                            app:layout_constraintBottom_toBottomOf="@id/btn_top_up"
+                            app:layout_constraintEnd_toStartOf="@id/btn_top_up"
+                            app:layout_constraintTop_toTopOf="@id/btn_top_up" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.cardview.widget.CardView>
 
-            <ProgressBar
-                android:id="@+id/progressCompressing"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:layout_marginTop="100dp"
-                android:layout_marginBottom="100dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/btn_settings"/>
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_change_video"
-                style="@style/DefaultButtons"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="36dp"
-                android:text="Add new video"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/btn_settings" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </FrameLayout>
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/fl_card_have_not_premium"
+                    android:layout_width="0dp"
+                    android:layout_height="144dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="110dp"
+                    android:elevation="5dp"
+                    app:cardCornerRadius="24dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/fl_card_for_coins"
+                    app:layout_constraintBottom_toBottomOf="parent">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/cl_not_premium"
+                        android:layout_width="match_parent"
+                        android:background="@color/Brand_hover"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:id="@+id/tv_not_premium"
+                            style="@style/Large"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="20dp"
+                            android:layout_marginTop="16dp"
+                            android:layout_marginEnd="20dp"
+                            android:text="Premium account"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/tv_profit_no_premium"
+                            style="@style/Regular"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="20dp"
+                            android:layout_marginEnd="20dp"
+                            android:layout_marginBottom="16dp"
+                            android:text="Выделение и поднятие анкеты \nНачисление лавкоинов \nПросмотр лайков и соцсетей"
+                            android:textColor="@color/Secondary_text"
+                            app:layout_constraintTop_toBottomOf="@id/tv_not_premium" />
+
+                        <TextView
+                            android:id="@+id/tv_profit_desc_no_premium"
+                            style="@style/Small"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="20dp"
+                            android:drawablePadding="@dimen/default_margin_8"
+                            android:text="For 1 month"
+                            android:textColor="@color/Secondary_text"
+                            app:layout_constraintTop_toBottomOf="@id/tv_profit_no_premium"
+                            app:layout_constraintStart_toStartOf="parent" />
+                        <include layout="@layout/card_buy_premium_small"
+                            android:elevation="0dp"
+                            android:layout_width="79dp"
+                            android:layout_height="75dp"
+                            android:layout_marginEnd="8dp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="@id/tv_not_premium"
+                            />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/fl_card_have_premium"
+                    android:layout_width="0dp"
+                    android:layout_height="84dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="110dp"
+                    android:visibility="invisible"
+                    android:elevation="5dp"
+                    app:cardCornerRadius="24dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/fl_card_for_coins"
+                    app:layout_constraintBottom_toBottomOf="parent">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/cl_premium"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:id="@+id/tv_premium"
+                            style="@style/Large"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="20dp"
+                            android:layout_marginTop="16dp"
+                            android:layout_marginEnd="20dp"
+                            android:text="Premium account"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/tv_profit"
+                            style="@style/DefaultButtons"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:drawableEnd="@drawable/ic_coin"
+                            android:drawablePadding="@dimen/default_margin_8"
+                            android:text="+100"
+                            app:layout_constraintBottom_toBottomOf="@id/tv_premium"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="@id/tv_premium" />
+
+                        <TextView
+                            android:id="@+id/tv_profit_to"
+                            style="@style/Regular"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="20dp"
+                            android:layout_marginEnd="20dp"
+                            android:layout_marginBottom="16dp"
+                            android:text="until 31.03.2022"
+                            android:textColor="@color/Secondary_text"
+                            app:layout_constraintBottom_toBottomOf="parent" />
+
+                        <TextView
+                            android:id="@+id/tv_profit_desc"
+                            style="@style/Regular"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="18dp"
+                            android:drawablePadding="@dimen/default_margin_8"
+                            android:text="every day"
+                            android:textColor="@color/Secondary_text"
+                            app:layout_constraintBottom_toBottomOf="@id/tv_profit_to"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="@id/tv_profit_to" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.cardview.widget.CardView>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </FrameLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_change_video"
+        style="@style/DefaultButtons"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="36dp"
+        android:text="Add new video"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
