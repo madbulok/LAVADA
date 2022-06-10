@@ -35,6 +35,7 @@ class PlayerViewAdapter {
         fun pauseAllPlayers() {
             playersMap.forEach {
                 it.value.stop()
+          //      it.value.pause()
             }
         }
 

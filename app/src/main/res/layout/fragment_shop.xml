@@ -64,12 +64,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
-                android:backgroundTint="#FFEE52"
-                android:visibility="gone"
+                android:backgroundTint="@color/Brand_hover"
                 android:elevation="8dp"
+                android:visibility="gone"
                 app:cardCornerRadius="@dimen/default_margin_16"
-                app:layout_constraintTop_toBottomOf="@id/btn_coins"
-                app:layout_constraintBottom_toTopOf="@id/card_super_box">
+                app:layout_constraintBottom_toTopOf="@id/card_super_box"
+                app:layout_constraintTop_toBottomOf="@id/btn_coins">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -104,8 +104,8 @@
                         android:textColor="@color/Secondary_text"
                         app:layout_constraintTop_toBottomOf="@id/tv_about_premium_label" />
 
-                    <ImageView
-                        android:id="@+id/iv_sale"
+                    <include
+                        layout="@layout/card_buy_premium_small"
                         android:layout_width="79dp"
                         android:layout_height="71dp"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -113,6 +113,7 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.card.MaterialCardView>
+
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/card_has_premium"
@@ -122,8 +123,8 @@
                 android:elevation="8dp"
                 android:visibility="gone"
                 app:cardCornerRadius="@dimen/default_margin_16"
-                app:layout_constraintTop_toBottomOf="@id/btn_coins"
-                app:layout_constraintBottom_toTopOf="@id/card_super_box">
+                app:layout_constraintBottom_toTopOf="@id/card_super_box"
+                app:layout_constraintTop_toBottomOf="@id/btn_coins">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -144,18 +145,18 @@
                         style="@style/Regular"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="+100 "
                         android:drawableEnd="@drawable/ic_coin"
+                        android:text="+100 "
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        />
+                        app:layout_constraintTop_toTopOf="parent" />
+
                     <TextView
                         android:id="@+id/tv_about_premium_label_1"
                         style="@style/Regular"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/Secondary_text"
                         android:text="until 31.02.2022"
+                        android:textColor="@color/Secondary_text"
                         app:layout_constraintTop_toBottomOf="@id/tv_premium_label_1" />
 
                     <TextView
@@ -165,8 +166,8 @@
                         android:layout_height="wrap_content"
                         android:text="every day"
                         android:textColor="@color/Secondary_text"
-                        app:layout_constraintTop_toBottomOf="@id/tv_premium_label_1"
-                        app:layout_constraintEnd_toEndOf="parent"/>
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tv_premium_label_1" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.card.MaterialCardView>

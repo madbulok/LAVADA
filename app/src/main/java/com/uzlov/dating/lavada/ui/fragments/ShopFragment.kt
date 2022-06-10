@@ -116,8 +116,6 @@ class ShopFragment : BaseFragment<FragmentShopBinding>(FragmentShopBinding::infl
         super.onViewCreated(view, savedInstanceState)
         initListeners()
         updateData()
-        loadImage(resources.getDrawable(R.drawable.price_sale), viewBinding.ivSale)
-
     }
 
     private fun updateData() {
