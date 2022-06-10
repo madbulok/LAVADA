@@ -13,6 +13,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
+import com.uzlov.dating.lavada.data.convertDtoToModel
 import com.uzlov.dating.lavada.data.repository.PreferenceRepository
 import com.uzlov.dating.lavada.databinding.MainVideosFragmentBinding
 import com.uzlov.dating.lavada.domain.models.*
@@ -106,20 +107,22 @@ class MainVideosFragment :
 
             model.likes.observe(viewLifecycleOwner) {
                 Log.e("javaClass.simpleName", "likes recieve")
-                it.data?.let { user->
-                    if (user._mutual_like == "0"){
+                it.let { user->
+                    if (!user.matches.getValue(user.uid)){
                         Toast.makeText(
                             requireContext(),
                             "Вы отправили лайк пользователю",
                             Toast.LENGTH_SHORT
                         ).show()
-                    } else if(user._mutual_like == "1"){
-//                        self.matches[user.uid] = false
-//                        val heartFragment = FragmentMatch.newInstance(user)
-//                        heartFragment.show(
-//                            childFragmentManager,
-//                            heartFragment.javaClass.simpleName
-//                        )
+                    } else if(user.matches.getValue(user.uid)){
+
+                        Log.e("ОТПРАВЛЯЕМ ЛАЙК СЮДА", it.uid)
+                        self.matches[it.uid] = false
+                        val heartFragment = FragmentMatch.newInstance(it)
+                        heartFragment.show(
+                            childFragmentManager,
+                            heartFragment.javaClass.simpleName
+                        )
                     }
                 }
             }

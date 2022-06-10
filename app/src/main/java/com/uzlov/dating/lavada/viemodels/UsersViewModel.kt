@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
 import com.uzlov.dating.lavada.data.convertDtoToModel
 import com.uzlov.dating.lavada.data.convertListDtoToModel
+import com.uzlov.dating.lavada.data.convertToLike
 import com.uzlov.dating.lavada.data.use_cases.UserUseCases
 import com.uzlov.dating.lavada.di.modules.ServerCommunication
 import com.uzlov.dating.lavada.domain.logic.distance
@@ -40,8 +41,9 @@ class UsersViewModel @Inject constructor(
     private var user = MutableLiveData<RemoteUser>()
     private var selfBalance = MutableLiveData<Int>()
     private var updatedBalance = MutableLiveData<User>()
-    private var updatedLike = MutableLiveData<RemoteUser>()
-    val likes get() : LiveData<RemoteUser> = updatedLike
+    private var updatedLike = MutableLiveData<User>()
+    private var checkedLike = MutableLiveData<RemoteUser>()
+    val likes get() : LiveData<User> = updatedLike
 
 
     /**
@@ -231,7 +233,6 @@ class UsersViewModel @Inject constructor(
      */
     fun setLike(tokenFB: String, firebaseUid: String, likeState: String) {
         viewModelScope.launch(Dispatchers.IO) {
-
             // запускаем наш токен
             usersUseCases.authRemoteUser(hashMapOf("token" to tokenFB)).let {
                 // получаем токен с бэка
@@ -239,13 +240,13 @@ class UsersViewModel @Inject constructor(
                 result?.await()?.data?.token?.let { tokenToo ->
                     // прописываем его в запросы
                     serverCommunication.updateToken(tokenToo)
-                    val body = mutableMapOf<String, String>()
-                    body["firebase_uid"] = firebaseUid
-                    body["like_state"] = likeState
-                    //  val reUser = serverCommunication.apiServiceWithToken?.setLikeAsync(body)?.await()
-                        // ставим лайк
                     serverCommunication.apiServiceWithToken?.setLike(firebaseUid, likeState)?.await()?.let { reUser ->
-                        updatedLike.postValue(reUser)
+                        val like = convertToLike(reUser.data)
+                        val user = convertDtoToModel(serverCommunication.apiServiceWithToken?.getUserByIdAsync(firebaseUid)?.await()!!)
+                        val matches = mutableMapOf<String, Boolean>()
+                       matches[firebaseUid] = like
+                        user.matches = matches
+                        updatedLike.postValue(user)
                     }
                 }
             }
@@ -262,12 +263,12 @@ class UsersViewModel @Inject constructor(
             serverCommunication.updateToken(token)
             val reUser =
                 serverCommunication.apiServiceWithToken?.checkLikeAsync(firebaseUid)?.await()
-            updatedLike.let {
+            checkedLike.let {
                 it.postValue(reUser)
             }
 
         }
-        return updatedLike
+        return checkedLike
     }
 
 
