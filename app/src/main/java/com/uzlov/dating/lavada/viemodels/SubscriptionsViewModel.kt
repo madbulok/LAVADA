@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.billingclient.api.Purchase
+import com.android.billingclient.api.SkuDetails
 import com.uzlov.dating.lavada.data.data_sources.interfaces.ISubscriptionsDataSource
 import com.uzlov.dating.lavada.domain.PremiumState
 import com.uzlov.dating.lavada.domain.models.Subscription
@@ -20,9 +21,24 @@ class SubscriptionsViewModel @Inject constructor(var subsRepository: ISubscripti
     private val responseSubs = MutableLiveData<PremiumState<Subscription>>()
     private val responsePurchase = MutableLiveData<PremiumState<Purchase>>()
 
+    // все подписки которые зарегистрированы на play markets
+    private val allSubscriptions = MutableLiveData<List<SkuDetails>>()
+    val allSubs get(): LiveData<List<SkuDetails>> = allSubscriptions
+
+    // хранит стейт подписки (0/1)
+    private val hasSubscriptions = MutableLiveData<Boolean>()
+    val hasSubsMoth get(): LiveData<Boolean> = hasSubscriptions
+
+    fun getAllSubscriptions() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val result = subsRepository.getAvailableSubscriptions()
+            allSubscriptions.postValue(result)
+        }
+    }
+
     fun getAvailableSubscriptions(uidUser: String) : LiveData<List<Subscription>>{
         viewModelScope.launch(Dispatchers.IO) {
-
+            subsRepository.getAvailableSubscriptions()
         }
         return result
     }
@@ -33,9 +49,15 @@ class SubscriptionsViewModel @Inject constructor(var subsRepository: ISubscripti
         }
         return responseSubs
     }
+
     fun putSubscription(subscription: Subscription) {
         viewModelScope.launch(Dispatchers.IO) {
             subsRepository.putSubscription(subscription)
         }
+    }
+
+    // нужно здесь будет проверять
+    fun checkSubscription() {
+        hasSubscriptions.postValue(false)
     }
 }

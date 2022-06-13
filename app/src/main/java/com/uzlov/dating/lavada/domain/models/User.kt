@@ -33,6 +33,16 @@ data class User(
     var balance: Int = 0
 ) : Parcelable
 
+fun User.getNAmeLabel() = if (name.isNullOrBlank() && age == null) {
+    "Безымянный пользователь"
+} else if (name.isNullOrBlank() && age != null) {
+    "Без имени, $age"
+}else if (!name.isNullOrBlank() && age == null) {
+    name
+} else {
+    "$name, $age"
+}
+
 @Parcelize
 data class RemoteUser(
     val status: String? = null,

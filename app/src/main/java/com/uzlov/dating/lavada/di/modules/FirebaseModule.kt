@@ -1,5 +1,6 @@
 package com.uzlov.dating.lavada.di.modules
 
+import com.android.billingclient.api.BillingClient
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -29,7 +30,7 @@ class FirebaseModule {
 
     @Provides
     @Singleton
-    fun providePurchaseRepository(): IPurchasesDataSource = PurchasesRemoteDataSourceImpl()
+    fun providePurchaseRepository(billingBuilder: BillingClient.Builder): IPurchasesDataSource = PurchasesRemoteDataSourceImpl(billingBuilder)
 
     @Provides
     @Singleton

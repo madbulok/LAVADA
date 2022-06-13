@@ -29,7 +29,7 @@ class LocationRepository @Inject constructor(
         return suspendCoroutine { continuation ->
             val callback = object : LocationCallback() {
                 override fun onLocationResult(locationResult: LocationResult) {
-                    continuation.resumeWith(Result.success(locationResult.lastLocation))
+                    continuation.resumeWith(Result.success(locationResult.lastLocation!!))
                     locationClient.removeLocationUpdates(this)
                 }
             }

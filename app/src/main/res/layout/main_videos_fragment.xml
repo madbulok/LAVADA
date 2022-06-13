@@ -38,7 +38,6 @@
         android:layout_height="@dimen/size_image_profile"
         android:layout_marginTop="22dp"
         android:layout_marginStart="@dimen/default_margin_16"
-        app:srcCompat="@drawable/test_avatar"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:background="@tools:sample/avatars"/>

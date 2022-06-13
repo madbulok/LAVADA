@@ -27,6 +27,7 @@ import com.uzlov.dating.lavada.ui.fragments.dialogs.FragmentMatch
 import com.uzlov.dating.lavada.ui.fragments.dialogs.GiftsBottomSheetDialogFragment
 import com.uzlov.dating.lavada.ui.fragments.profile.ProfileFragment
 import com.uzlov.dating.lavada.viemodels.MessageChatViewModel
+import com.uzlov.dating.lavada.viemodels.SubscriptionsViewModel
 import com.uzlov.dating.lavada.viemodels.UsersViewModel
 import com.uzlov.dating.lavada.viemodels.ViewModelFactory
 import javax.inject.Inject
@@ -48,6 +49,10 @@ class MainVideosFragment :
 
     private val messageChatViewModel: MessageChatViewModel by lazy {
         factoryViewModel.create(MessageChatViewModel::class.java)
+    }
+
+    private val subsViewModel: SubscriptionsViewModel by lazy {
+        factoryViewModel.create(SubscriptionsViewModel::class.java)
     }
 
     private var self = User()
@@ -176,6 +181,8 @@ class MainVideosFragment :
             })
         }
         setOnClickListener()
+
+        subsViewModel.getAvailableSubscriptions("")
     }
 
 
@@ -330,6 +337,7 @@ class MainVideosFragment :
             Glide
                 .with(it.context)
                 .load(image)
+                .placeholder(R.drawable.ic_default_user)
                 .error(R.drawable.ic_default_user)
                 .into(container)
         }
