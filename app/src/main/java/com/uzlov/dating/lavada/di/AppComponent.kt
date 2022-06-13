@@ -53,4 +53,5 @@ interface AppComponent {
     fun inject(shopFragment: ShopFragment)
     fun inject(matchesService: MatchesService)
     fun inject(messageService: NewMessageService)
+    fun inject(aboutPremiumFragment: AboutPremiumFragment)
 }

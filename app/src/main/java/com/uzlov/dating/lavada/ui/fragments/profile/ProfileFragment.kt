@@ -37,6 +37,7 @@ import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
 import com.uzlov.dating.lavada.databinding.FragmentProfileBinding
 import com.uzlov.dating.lavada.domain.models.User
+import com.uzlov.dating.lavada.domain.models.getNAmeLabel
 import com.uzlov.dating.lavada.storage.URIPathHelper
 import com.uzlov.dating.lavada.ui.activities.HostActivity
 import com.uzlov.dating.lavada.ui.fragments.BaseFragment
@@ -131,7 +132,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
                     model.getUser(tokenBack).observe(viewLifecycleOwner) { result ->
                         user = result?.copy()!!
                         viewBinding.tvLocation.text = result.location
-                        viewBinding.tvName.text = result.name + ", " + result.age
+                        viewBinding.tvName.text = result.getNAmeLabel()
                         viewBinding.tvDesc.text = result.about
                         result.url_avatar?.let { it1 -> loadImage(it1, viewBinding.ivProfile) }
                         viewBinding.itemVideoExoplayer.player = player
@@ -319,9 +320,11 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
             }
 
             override fun cancel() {
+                stopCompressing()
             }
 
             override fun failed() {
+                stopCompressing()
             }
         })
     }
@@ -369,10 +372,12 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
                 override fun onFailure(index: Int, failureMessage: String) {
                     // On Failure
                     Toast.makeText(requireContext(), failureMessage, Toast.LENGTH_SHORT).show()
+                    stopCompressing()
                 }
 
                 override fun onCancelled(index: Int) {
                     // On Cancelled
+                    stopCompressing()
                 }
 
             },
@@ -433,10 +438,12 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
                 override fun onFailure(index: Int, failureMessage: String) {
                     // On Failure
                     Toast.makeText(requireContext(), failureMessage, Toast.LENGTH_SHORT).show()
+                    stopCompressing()
                 }
 
                 override fun onCancelled(index: Int) {
                     // On Cancelled
+                    stopCompressing()
                 }
 
             },

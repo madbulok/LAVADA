@@ -1,5 +1,6 @@
 package com.uzlov.dating.lavada.di.modules
 
+import com.android.billingclient.api.BillingClient
 import com.uzlov.dating.lavada.data.data_sources.implementation.GiftRemoteDataSourceImpl
 import com.uzlov.dating.lavada.data.data_sources.implementation.SubscriptionsRemoteDataSourceImpl
 import com.uzlov.dating.lavada.data.data_sources.interfaces.IGiftsDataSource
@@ -39,7 +40,7 @@ class RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideSubscriptionsDataSource() : ISubscriptionsDataSource = SubscriptionsRemoteDataSourceImpl()
+    fun provideSubscriptionsDataSource(billingBuilder: BillingClient.Builder) : ISubscriptionsDataSource = SubscriptionsRemoteDataSourceImpl(billingBuilder)
 
 
     @Provides

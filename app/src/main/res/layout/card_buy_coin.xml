@@ -2,98 +2,102 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_marginEnd="@dimen/default_margin_16"
+    android:layout_marginEnd="4dp"
     android:layout_marginBottom="4dp"
     android:layout_width="163dp"
     android:layout_height="112dp">
 
-<androidx.cardview.widget.CardView
-    android:layout_width="163dp"
-    android:layout_height="100dp"
-    app:cardCornerRadius="@dimen/default_margin_16"
-   android:elevation="@dimen/default_margin_8"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintStart_toStartOf="parent">
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
+        android:layout_width="163dp"
+        android:layout_height="100dp"
+        android:layout_margin="4dp"
+        android:elevation="@dimen/default_margin_8"
+        app:cardCornerRadius="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cv_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/default_margin_16"
-            app:cardCornerRadius="@dimen/default_margin_16"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
-                android:layout_width="56dp"
-                android:layout_height="68dp"
-                android:background="@color/Secondary_text" />
-        </androidx.cardview.widget.CardView>
+                android:id="@+id/ivCoinBox"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/coins_new_price"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/coins_quantity"
-            style="@style/Title3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/default_margin_16"
-            android:layout_marginTop="10dp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="300" />
 
-        <TextView
-            android:id="@+id/coins_new_price"
-            style="@style/Regular"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/default_margin_16"
-            android:layout_marginTop="4dp"
-            android:text="250 ₽"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/coins_quantity" />
+            <TextView
+                android:id="@+id/coins_quantity"
+                style="@style/Title3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/default_margin_16"
+                android:layout_marginTop="10dp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="300" />
 
-        <TextView
-            android:id="@+id/coins_old_price"
-            style="@style/Small"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/default_margin_16"
-            android:text="1999 ₽"
-            android:textColor="@color/Secondary_text"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/coins_new_price" />
+            <TextView
+                android:id="@+id/coins_new_price"
+                style="@style/Regular"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/default_margin_16"
+                android:layout_marginTop="4dp"
+                android:text="250 ₽"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/coins_quantity" />
 
-        <ImageView
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:src="@drawable/foreground_old_price"
-            app:layout_constraintBottom_toBottomOf="@id/coins_old_price"
-            app:layout_constraintEnd_toEndOf="@id/coins_old_price"
-            app:layout_constraintStart_toStartOf="@id/coins_old_price"
-            app:layout_constraintTop_toTopOf="@id/coins_old_price" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.cardview.widget.CardView>
+            <TextView
+                android:id="@+id/coins_old_price"
+                style="@style/Small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/default_margin_16"
+                android:text="1999 ₽"
+                android:textColor="@color/Secondary_text"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/coins_new_price" />
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:src="@drawable/foreground_old_price"
+                app:layout_constraintBottom_toBottomOf="@id/coins_old_price"
+                app:layout_constraintEnd_toEndOf="@id/coins_old_price"
+                app:layout_constraintStart_toStartOf="@id/coins_old_price"
+                app:layout_constraintTop_toTopOf="@id/coins_old_price" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
         android:layout_width="51dp"
         android:layout_height="24dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        android:backgroundTint="@color/Brand_fill"
         android:elevation="0dp"
-        android:backgroundTint="@color/Premium_fill"
-        app:cardCornerRadius="@dimen/default_margin_32">
+        app:cardCornerRadius="@dimen/default_margin_32"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
         <TextView
+            android:id="@+id/tvSaleCoins"
+            style="@style/Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="-15%"
-            style="@style/Small"
+            android:layout_gravity="center"
             android:textStyle="bold"
-            android:layout_gravity="center"/>
+            tools:text="-15%" />
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>
