@@ -326,6 +326,7 @@ class MainVideosFragment :
             Glide
                 .with(it.context)
                 .load(image)
+                .placeholder(R.drawable.ic_default_user)
                 .error(R.drawable.ic_default_user)
                 .into(container)
         }
