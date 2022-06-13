@@ -160,6 +160,8 @@ class ShopFragment : BaseFragment<FragmentShopBinding>(FragmentShopBinding::infl
         super.onViewCreated(view, savedInstanceState)
         initListeners()
         updateData()
+
+=======
         loadLavCoinsBoxes()
         loadImage(resources.getDrawable(R.drawable.price_sale), viewBinding.ivSale)
         observeDataCoins()
@@ -193,6 +195,7 @@ class ShopFragment : BaseFragment<FragmentShopBinding>(FragmentShopBinding::infl
         } else {
             viewBinding.cardSuperBox.visibility = View.GONE
         }
+
     }
 
     private fun updateData() {

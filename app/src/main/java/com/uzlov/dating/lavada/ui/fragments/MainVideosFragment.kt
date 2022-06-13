@@ -11,8 +11,10 @@ import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.uzlov.dating.lavada.R
+import com.uzlov.dating.lavada.app.App
 import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
+import com.uzlov.dating.lavada.data.convertDtoToModel
 import com.uzlov.dating.lavada.data.repository.PreferenceRepository
 import com.uzlov.dating.lavada.databinding.MainVideosFragmentBinding
 import com.uzlov.dating.lavada.domain.models.*
@@ -111,20 +113,22 @@ class MainVideosFragment :
 
             model.likes.observe(viewLifecycleOwner) {
                 Log.e("javaClass.simpleName", "likes recieve")
-                it.data?.let { user->
-                    if (user._mutual_like == "0"){
+                it.let { user ->
+                    if (!user.matches.getValue(user.uid)) {
                         Toast.makeText(
                             requireContext(),
                             "Вы отправили лайк пользователю",
                             Toast.LENGTH_SHORT
                         ).show()
-                    } else if(user._mutual_like == "1"){
-//                        self.matches[user.uid] = false
-//                        val heartFragment = FragmentMatch.newInstance(user)
-//                        heartFragment.show(
-//                            childFragmentManager,
-//                            heartFragment.javaClass.simpleName
-//                        )
+                    } else if (user.matches.getValue(user.uid)) {
+
+                        Log.e("ОТПРАВЛЯЕМ ЛАЙК СЮДА", it.uid)
+                        self.matches[it.uid] = false
+                        val heartFragment = FragmentMatch.newInstance(it)
+                        heartFragment.show(
+                            childFragmentManager,
+                            heartFragment.javaClass.simpleName
+                        )
                     }
                 }
             }
@@ -240,9 +244,11 @@ class MainVideosFragment :
         // 3) Получаем от нашего сервера token для общения с ним (нашим сервером)
         authService.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
             Log.e("TOKEN_FB", tokenFb.token.toString())
+            model.getUsers(tokenFb.token.toString())
             model.authRemoteUser(hashMapOf("token" to tokenFb.token))
                 .observe(viewLifecycleOwner) { tokenBack ->
-                    model.getUsers(tokenBack).observe(this, { users ->
+
+                    model.listUsersData.observe(viewLifecycleOwner) { users ->
                         Log.e("MV_TOKEN_BACK", tokenBack)
                         model.getUser(tokenBack).observe(viewLifecycleOwner) { user ->
                             Log.e("TAG", "updateData: $user")
@@ -256,11 +262,12 @@ class MainVideosFragment :
                                 users, self
                             )
 
-                            messageChatViewModel.getListMessages(tokenBack, "1").observe(viewLifecycleOwner){
-                                Log.e("GET_LIST_MESSAGE", it.toString())
-                            }
+                            messageChatViewModel.getListMessages(tokenBack, "1")
+                                .observe(viewLifecycleOwner) {
+                                    Log.e("GET_LIST_MESSAGE", it.toString())
+                                }
                         }
-                    })
+                    }
                 }
         }
 
@@ -291,8 +298,12 @@ class MainVideosFragment :
                 PlayerViewAdapter.pauseCurrentPlayingVideo()
             }
             refreshDataLayout.setOnRefreshListener {
-                updateData()
-                //здесь нужно обновить плеер еще
+                //здесь нужно занулить плееры
+                authService.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
+                    model.getUsers(tokenFb.token ?: "")
+                    Log.e("javaClass.simpleName", "listUsers: ")
+                }
+               // а тут - запустить их заново
                 refreshDataLayout.isRefreshing = false
             }
         }
@@ -305,7 +316,7 @@ class MainVideosFragment :
         startActivity(intent)
     }
 
-    private fun openFilterSearch(user: User){
+    private fun openFilterSearch(user: User) {
         val fragment = FilterSearchPeopleFragment.newInstance(user)
         parentFragmentManager.beginTransaction()
             .replace(R.id.container, fragment)
@@ -340,6 +351,11 @@ class MainVideosFragment :
     override fun onPause() {
         super.onPause()
         PlayerViewAdapter.pauseCurrentPlayingVideo()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        PlayerViewAdapter.playCurrentPlayingVideo()
     }
 
     override fun onDestroyView() {

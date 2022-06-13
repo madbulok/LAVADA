@@ -1,9 +1,12 @@
 package com.uzlov.dating.lavada.data
 
+import android.os.Parcelable
 import com.uzlov.dating.lavada.domain.models.MALE
 import com.uzlov.dating.lavada.domain.models.ReUser
 import com.uzlov.dating.lavada.domain.models.RemoteUser
 import com.uzlov.dating.lavada.domain.models.User
+import kotlinx.parcelize.Parcelize
+import java.util.*
 
 const val BASE_STORAGE_URL = "https://708327.selcdn.ru/"
 
@@ -56,3 +59,14 @@ fun convertListDtoToModel(reUser: ReUser?): User {
         premium = fact._has_premium
     )
 }
+
+fun convertToLike(reUser: ReUser?): Boolean{
+    val fact: ReUser? = reUser
+    val like = when(fact?._mutual_like){
+        "1" -> true
+        "2" -> false
+        else -> false
+    }
+    return like
+}
+
