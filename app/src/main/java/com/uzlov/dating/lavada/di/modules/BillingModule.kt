@@ -12,8 +12,7 @@ class BillingModule {
 
     @Singleton
     @Provides
-    fun billingClient(context: Context) : BillingClient =
+    fun billingClient(context: Context) : BillingClient.Builder =
         BillingClient.newBuilder(context)
             .enablePendingPurchases()
-            .build()
 }
