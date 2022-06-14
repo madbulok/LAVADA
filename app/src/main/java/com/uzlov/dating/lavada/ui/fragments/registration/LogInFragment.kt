@@ -150,7 +150,6 @@ class LogInFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
             if (result.resultCode == Activity.RESULT_OK) {
                 val data = result.data
                 val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-                (requireActivity() as LoginActivity).startHome()
                 try {
                     task.getResult(ApiException::class.java)?.let {
                         authService.setToken(it.idToken!!)
@@ -163,7 +162,6 @@ class LogInFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
                         )
                         authService.loginWithGoogleAccount()
                             .addOnSuccessListener(requireActivity()) { _ ->
-
                                 authService.getUser()?.getIdToken(true)
                                     ?.addOnSuccessListener { tokenFb ->
                                         model.authRemoteUser(hashMapOf("token" to tokenFb.token))
@@ -190,8 +188,7 @@ class LogInFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
                                                         if (self.ready) {
                                                             (requireActivity() as LoginActivity).startHome()
                                                         } else {
-                                                            (requireActivity() as LoginActivity)
-                                                                .startFillDataFragment(user)
+                                                            (requireActivity() as LoginActivity).startFillDataFragment(user)
                                                         }
                                                     }
                                             }
