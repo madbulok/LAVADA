@@ -161,9 +161,7 @@ class ShopFragment : BaseFragment<FragmentShopBinding>(FragmentShopBinding::infl
         initListeners()
         updateData()
 
-=======
         loadLavCoinsBoxes()
-        loadImage(resources.getDrawable(R.drawable.price_sale), viewBinding.ivSale)
         observeDataCoins()
 
     }
