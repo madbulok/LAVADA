@@ -247,7 +247,6 @@ class MainVideosFragment :
             model.getUsers(tokenFb.token.toString())
             model.authRemoteUser(hashMapOf("token" to tokenFb.token))
                 .observe(viewLifecycleOwner) { tokenBack ->
-
                     model.listUsersData.observe(viewLifecycleOwner) { users ->
                         Log.e("MV_TOKEN_BACK", tokenBack)
                         model.getUser(tokenBack).observe(viewLifecycleOwner) { user ->

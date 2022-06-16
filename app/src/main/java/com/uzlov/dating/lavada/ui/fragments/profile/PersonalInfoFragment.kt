@@ -11,6 +11,7 @@ import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import androidx.annotation.RequiresApi
@@ -18,7 +19,6 @@ import androidx.core.app.ActivityCompat
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
 import com.uzlov.dating.lavada.R
-import com.uzlov.dating.lavada.app.Constants.Companion.ANOTHER
 import com.uzlov.dating.lavada.app.Constants.Companion.MAN
 import com.uzlov.dating.lavada.app.Constants.Companion.WOMAN
 import com.uzlov.dating.lavada.app.appComponent
@@ -66,14 +66,16 @@ class PersonalInfoFragment :
         if (resultCode == Activity.RESULT_OK && requestCode == UploadVideoFragment.REQUEST_CODE) {
 
             data?.data.let { uri ->
+
                 val imageUri: Uri? = uri
                 val source =
                     context?.let { ImageDecoder.createSource(it.contentResolver, imageUri!!) }
                 val bitmap = source?.let { ImageDecoder.decodeBitmap(it) }
                 if (bitmap != null) {
                     urlImage = bitmap
+                    uri?.let { loadImageFromUri(it, viewBinding.ivProfile) }
                     urlImage?.let { sendFileRequest(it) }
-                    uri?.path?.let { loadImage(it, viewBinding.ivProfile) }
+
                 }
             }
         }
@@ -104,7 +106,7 @@ class PersonalInfoFragment :
                                 when (user.male?.ordinal) {
                                     0 -> radioGroup.check(R.id.rbMan)
                                     1 -> radioGroup.check(R.id.rvWoman)
-                                    2 -> radioGroup.check(R.id.rbAnother)
+                                    else -> radioGroup.check(R.id.rbMan)
                                 }
                                 tvAgeValue.text = user.age?.toString()
                                 slAge.value = user.age?.toFloat() ?: 18F
@@ -137,17 +139,18 @@ class PersonalInfoFragment :
         val stream = ByteArrayOutputStream()
         image.compress(Bitmap.CompressFormat.JPEG, 80, stream)
         val byteArray = stream.toByteArray()
-        val body = MultipartBody.Part.createFormData(
+        val bodyToo = MultipartBody.Part.createFormData(
             "user_photo",
             "user_photo",
             byteArray.toRequestBody("image/jpg".toMediaTypeOrNull(), 0, byteArray.size)
         )
         firebaseEmailAuthService.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
             model.authRemoteUser(hashMapOf("token" to tokenFb.token))
-                .observe(viewLifecycleOwner) { tokenBack ->
-                    model.updateRemoteData(tokenBack, body)
+                .observe(this) { tokenBack ->
+                    model.updateRemoteData(tokenBack, bodyToo)
                 }
         }
+
     }
 
     private fun initListeners() {
@@ -172,7 +175,6 @@ class PersonalInfoFragment :
                 val sex = when (checkedId) {
                     R.id.rbMan -> MAN
                     R.id.rvWoman -> WOMAN
-                    R.id.rbAnother -> ANOTHER
                     else -> MAN
                 }
                 userThis.password = sex
@@ -234,6 +236,22 @@ class PersonalInfoFragment :
     }
 
     private fun loadImage(image: String, container: ImageView) {
+        val circularProgressDrawable = context?.let { CircularProgressDrawable(it) }
+        circularProgressDrawable!!.strokeWidth = 5f
+        circularProgressDrawable.centerRadius = 25f
+        circularProgressDrawable.start()
+
+        view?.let {
+            Glide
+                .with(it.context)
+                .load(image)
+                .placeholder(circularProgressDrawable)
+                .error(R.drawable.ic_default_user)
+                .into(container)
+        }
+    }
+
+    private fun loadImageFromUri(image: Uri, container: ImageView) {
         val circularProgressDrawable = context?.let { CircularProgressDrawable(it) }
         circularProgressDrawable!!.strokeWidth = 5f
         circularProgressDrawable.centerRadius = 25f
