@@ -1,5 +1,6 @@
 package com.uzlov.dating.lavada.ui.fragments.profile
 
+import android.content.ContentValues.TAG
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -10,7 +11,6 @@ import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.upstream.DefaultDataSource
-import com.uzlov.dating.lavada.app.Constants.Companion.ANOTHER
 import com.uzlov.dating.lavada.app.Constants.Companion.MAN
 import com.uzlov.dating.lavada.app.Constants.Companion.WOMAN
 import com.uzlov.dating.lavada.app.appComponent
@@ -87,6 +87,20 @@ class PreviewVideoFragment :
 
             tvNameProfile.text = user.name + ", " + user.age
             tvLocationProfile.text = user.location
+            userViewModel.uploadedFileData.observe(viewLifecycleOwner) {
+                resp = it
+                endLoading()
+                if (request == 1) {
+                    (requireActivity() as HostActivity).rollbackFragment()
+                } else {
+                    (requireActivity() as LoginActivity).routeToMainScreen()
+                }
+                Toast.makeText(
+                    requireContext(),
+                    "Ваше видео успешно обновлено",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
             btnBack.setOnClickListener {
                 if (request == 1) {
                     (requireActivity() as HostActivity).rollbackFragmentWithFlag()
@@ -97,34 +111,25 @@ class PreviewVideoFragment :
 
             btnNext.setOnClickListener {
                 if (request == 1) {
-                    firebaseEmailAuthService.getUser()?.getIdToken(true)
-                        ?.addOnSuccessListener { tokenFb ->
-                            userViewModel.authRemoteUser(hashMapOf("token" to tokenFb.token))
-                                .observe(viewLifecycleOwner) { tokenBack ->
-                                    userViewModel.getUser(tokenBack).observe(viewLifecycleOwner) {
-                                        Log.e("УШЛО УСПЕШНО", it.toString())
-                                    }
-                                }
-                            startLoading()
-                            try {
-                                createMultipartBodyPart(path)
-                            } catch (e: Exception) {
-                                e.printStackTrace()
-                                endWithErrorLoading()
-                            }
-                        }
+                    startLoading()
+                    try {
+                        createMultipartBodyPart(path)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        endWithErrorLoading()
+                    }
                 } else {
                     startLoading()
                     try {
                         user.ready = true
                         try {
                             val map = mutableMapOf<String, String>()
-                            map["user_nickname"] = user.name.toString()
+                            map["user_firstname"] = user.name.toString()
+                            Log.e("POL", user.male.toString())
                             map["user_gender"] = when (user.male) {
                                 MALE.MAN -> MAN
                                 MALE.WOMAN -> WOMAN
-                                MALE.ANOTHER -> ANOTHER
-                                else -> ANOTHER
+                                else -> MAN
                             }
                             map["user_age"] = user.age.toString()
                             map["user_location_lat"] = user.lat.toString()
@@ -132,13 +137,7 @@ class PreviewVideoFragment :
                             map["user_address"] = user.location.toString()
                             firebaseEmailAuthService.getUser()?.getIdToken(true)
                                 ?.addOnSuccessListener { tokenFb ->
-                                    userViewModel.authRemoteUser(hashMapOf("token" to tokenFb.token))
-                                        .observe(viewLifecycleOwner) { tokenBack ->
-                                            userViewModel.updateUser(tokenBack, map)
-                                                ?.observe(viewLifecycleOwner) {
-                                                    Log.e("УШЛО УСПЕШНО", it.toString())
-                                                }
-                                        }
+                                    userViewModel.updateUser(tokenFb.token.toString(), map)
                                 }
 
                         } catch (e: Exception) {
@@ -173,7 +172,14 @@ class PreviewVideoFragment :
                 }
             }
             viewBinding.itemVideoExoplayer.player = player
-
+            userViewModel.updatedUserData.observe(viewLifecycleOwner) {
+                if (it.status != null) {
+                    Log.d(TAG, "ok")
+                } else {
+                    Toast.makeText(context, userViewModel.status.toString(), Toast.LENGTH_SHORT)
+                        .show()
+                }
+            }
             playVideo(path)
         }
     }
@@ -183,23 +189,7 @@ class PreviewVideoFragment :
         val requestBody = videoFile.asRequestBody("multipart/form-data".toMediaTypeOrNull())
         val body = MultipartBody.Part.createFormData("user_video", videoFile.name, requestBody)
         firebaseEmailAuthService.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
-            userViewModel.authRemoteUser(hashMapOf("token" to tokenFb.token))
-                .observe(this) { tokenBack ->
-                    userViewModel.updateRemoteData(tokenBack, body)?.observe(this) {
-                        resp = it
-                        endLoading()
-                        if (request == 1) {
-                            (requireActivity() as HostActivity).rollbackFragment()
-                        } else {
-                            (requireActivity() as LoginActivity).routeToMainScreen()
-                        }
-                        Toast.makeText(
-                            requireContext(),
-                            "Ваше видео успешно обновлено",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
+            userViewModel.updateRemoteData(tokenFb.token.toString(), body)
         }
         return resp
     }

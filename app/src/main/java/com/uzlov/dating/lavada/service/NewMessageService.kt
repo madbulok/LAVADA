@@ -39,12 +39,12 @@ class NewMessageService : Service(), LifecycleOwner {
     private val messageCallback: NewMessageStateListener =
         object : NewMessageStateListener {
             override fun newMessage(item: String, chatMessage: ChatMessage) {
-                    userViewModel.getUser(item).observe(this@NewMessageService) { user ->
-                        notify(
-                            User(), "Новое сообщение от ${user?.name}",
-                            chatMessage.message
-                        )
-                    }
+//                    userViewModel.getUser(item).observe(this@NewMessageService) { user ->
+//                        notify(
+//                            User(), "Новое сообщение от ${user?.name}",
+//                            chatMessage.message
+//                        )
+//                    }
             }
         }
 

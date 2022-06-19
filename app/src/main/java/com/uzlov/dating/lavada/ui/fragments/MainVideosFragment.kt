@@ -11,10 +11,8 @@ import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.uzlov.dating.lavada.R
-import com.uzlov.dating.lavada.app.App
 import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
-import com.uzlov.dating.lavada.data.convertDtoToModel
 import com.uzlov.dating.lavada.data.repository.PreferenceRepository
 import com.uzlov.dating.lavada.databinding.MainVideosFragmentBinding
 import com.uzlov.dating.lavada.domain.models.*
@@ -90,6 +88,7 @@ class MainVideosFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         model = factoryViewModel.create(UsersViewModel::class.java)
+        initObservers()
         updateData()
         with(viewBinding) {
             rvVideosUsers.adapter = mAdapter
@@ -99,90 +98,79 @@ class MainVideosFragment :
 
             // double click send love
             mAdapter.setOnItemClickListener(object : ProfileRecyclerAdapter.OnItemClickListener {
-                override fun onItemClick(position: Int, model: User?) {
+                override fun onItemClick(position: Int, user: User?) {
                     /**
                      * тут, же дублируется отправка сердечка просто?
                      * - отправляем лайк,
                      * - проверяем его на взаимность,
                      * - если взаимен, открываем фрагмент matches;
                      * - если нет - тост "вы отправили симпатию"*/
-                    Toast.makeText(requireContext(), "Вы отправили симпатию", Toast.LENGTH_SHORT)
-                        .show()
-                }
-            })
-
-            model.likes.observe(viewLifecycleOwner) {
-                Log.e("javaClass.simpleName", "likes recieve")
-                it.let { user ->
-                    if (!user.matches.getValue(user.uid)) {
-                        Toast.makeText(
-                            requireContext(),
-                            "Вы отправили лайк пользователю",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    } else if (user.matches.getValue(user.uid)) {
-
-                        Log.e("ОТПРАВЛЯЕМ ЛАЙК СЮДА", it.uid)
-                        self.matches[it.uid] = false
-                        val heartFragment = FragmentMatch.newInstance(it)
-                        heartFragment.show(
-                            childFragmentManager,
-                            heartFragment.javaClass.simpleName
-                        )
-                    }
-                }
-            }
-
-            mAdapter.setOnActionClickListener(object : ProfileRecyclerAdapter.OnActionListener {
-                override fun sendGift(user: User) {
-                    val giftFragment = GiftsBottomSheetDialogFragment()
-                    giftFragment.show(childFragmentManager, giftFragment.javaClass.simpleName)
-
-                }
-
-                override fun sendHeart(user: User) {
-                    /**
-                     * тут, я так понимаю, будет так
-                     * - отправляем лайк,
-                     * - проверяем его на взаимность,
-                     * - если взаимен, открываем фрагмент matches;
-                     * - если нет - тост "вы отправили симпатию"*/
-                    authService.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
-                        model.setLike(tokenFb.token ?: "", user.uid, "1")
-                        Log.e("javaClass.simpleName", "sendHeart: ")
-                    }
-
-
-                }
-
-                override fun sendMessage(user: User) {
-                    //check likes?
-                    /**
-                     * тут будет так
-                     * - проверяем лайк,
-                     * - если взаимен, открываем сообщения
-                     * - если нет, проверяем премиум
-                     * - если премиум, то открываем сообщения, если нет, открываем алерт с прежложением купить премиум*/
-                    if (self.premium) {
-                        authService.getUserUid()?.let {
-                            self.chats[user.uid] = self.uid
-                            PlayerViewAdapter.pauseCurrentPlayingVideo()
-                            openChatActivity(user.uid)
+                    if (user != null) {
+                        authService.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
+                            model.setLike(tokenFb.token ?: "", user.uid, "1")
+                            Log.e("javaClass.simpleName", "sendHeart: ")
                         }
-                    } else {
-                        showCustomAlertOnlyPremium()
                     }
 
                 }
-
-                override fun complain(user: User) {
-                    showCustomAlertToComplain()
-                }
             })
+
         }
         setOnClickListener()
 
         subsViewModel.getAvailableSubscriptions("")
+    }
+
+    private fun initObservers(){
+        //лайки
+        model.likes.observe(viewLifecycleOwner) {
+            Log.e("javaClass.simpleName", "likes recieve")
+            it.let { user ->
+                if (!user.matches.getValue(user.uid)) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Вы отправили лайк пользователю",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else if (user.matches.getValue(user.uid)) {
+
+                    Log.e("ОТПРАВЛЯЕМ ЛАЙК СЮДА", it.uid)
+                    self.matches[it.uid] = false
+                    val heartFragment = FragmentMatch.newInstance(it)
+                    heartFragment.show(
+                        childFragmentManager,
+                        heartFragment.javaClass.simpleName
+                    )
+                }
+            }
+        }
+        //пользователи
+        model.listUsersData.observe(viewLifecycleOwner) { users ->
+            model.selfUserData.observe(viewLifecycleOwner) { user ->
+                Log.e("TAG", "updateData: $user")
+                user?.url_avatar?.let { it -> loadImage(it, viewBinding.ivProfile) }
+                self = user?.copy()!!
+                testData = users
+
+            }
+            /** пока без сортировки*/
+            mAdapter.updateList(
+                users, self
+            )
+
+//                            messageChatViewModel.getListMessages(tokenBack, "1")
+//                                .observe(viewLifecycleOwner) {
+//                                    Log.e("GET_LIST_MESSAGE", it.toString())
+//                                }
+        }
+        //статус доступа к api
+        model.status.observe(viewLifecycleOwner) { result ->
+            if (!result.isNullOrEmpty()) {
+                Toast.makeText(context, result.toString(), Toast.LENGTH_SHORT).show()
+                model.status.value = null
+            }
+
+        }
     }
 
 
@@ -238,36 +226,10 @@ class MainVideosFragment :
     }
 
     private fun updateData() {
-        // Работает.
-        // 1) Получаем token firebase
-        // 2) Отправляем token firebase на наш сервер для авороизации
-        // 3) Получаем от нашего сервера token для общения с ним (нашим сервером)
         authService.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
             Log.e("TOKEN_FB", tokenFb.token.toString())
             model.getUsers(tokenFb.token.toString())
-            model.authRemoteUser(hashMapOf("token" to tokenFb.token))
-                .observe(viewLifecycleOwner) { tokenBack ->
-                    model.listUsersData.observe(viewLifecycleOwner) { users ->
-                        Log.e("MV_TOKEN_BACK", tokenBack)
-                        model.getUser(tokenBack).observe(viewLifecycleOwner) { user ->
-                            Log.e("TAG", "updateData: $user")
-                            user?.url_avatar?.let { it -> loadImage(it, viewBinding.ivProfile) }
-                            self = user?.copy()!!
-                            testData = users
-                            Log.e("USERS", users.toString())
-
-                            /** пока без сортировки*/
-                            mAdapter.updateList(
-                                users, self
-                            )
-
-                            messageChatViewModel.getListMessages(tokenBack, "1")
-                                .observe(viewLifecycleOwner) {
-                                    Log.e("GET_LIST_MESSAGE", it.toString())
-                                }
-                        }
-                    }
-                }
+            model.getUser(tokenFb.token.toString())
         }
 
     }
@@ -298,14 +260,63 @@ class MainVideosFragment :
             }
             refreshDataLayout.setOnRefreshListener {
                 //здесь нужно занулить плееры
+                PlayerViewAdapter.releaseAllPlayers()
                 authService.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
-                    model.getUsers(tokenFb.token ?: "")
+                    model.getUsers(tokenFb.token.toString())
                     Log.e("javaClass.simpleName", "listUsers: ")
                 }
-               // а тут - запустить их заново
+                // а тут - запустить их заново
+
                 refreshDataLayout.isRefreshing = false
             }
         }
+
+        mAdapter.setOnActionClickListener(object : ProfileRecyclerAdapter.OnActionListener {
+            override fun sendGift(user: User) {
+                val giftFragment = GiftsBottomSheetDialogFragment()
+                giftFragment.show(childFragmentManager, giftFragment.javaClass.simpleName)
+
+            }
+
+            override fun sendHeart(user: User) {
+                /**
+                 * тут, я так понимаю, будет так
+                 * - отправляем лайк,
+                 * - проверяем его на взаимность,
+                 * - если взаимен, открываем фрагмент matches;
+                 * - если нет - тост "вы отправили симпатию"*/
+                authService.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
+                    model.setLike(tokenFb.token ?: "", user.uid, "1")
+                    Log.e("javaClass.simpleName", "sendHeart: ")
+                }
+
+
+            }
+
+            override fun sendMessage(user: User) {
+                //check likes?
+                /**
+                 * тут будет так
+                 * - проверяем лайк,
+                 * - если взаимен, открываем сообщения
+                 * - если нет, проверяем премиум
+                 * - если премиум, то открываем сообщения, если нет, открываем алерт с прежложением купить премиум*/
+                if (self.premium) {
+                    authService.getUserUid()?.let {
+                        self.chats[user.uid] = self.uid
+                        PlayerViewAdapter.pauseCurrentPlayingVideo()
+                        openChatActivity(user.uid)
+                    }
+                } else {
+                    showCustomAlertOnlyPremium()
+                }
+
+            }
+
+            override fun complain(user: User) {
+                showCustomAlertToComplain()
+            }
+        })
     }
 
     private fun openChatActivity(companionId: String) {

@@ -13,16 +13,16 @@ const val BASE_STORAGE_URL = "https://708327.selcdn.ru/"
 fun convertDtoToModel(remoteUser: RemoteUser): User {
     val fact: ReUser? = remoteUser.data
     val male  = when (fact?.user_gender) {
-        "MALE" -> MALE.MAN
-        "FEMALE" -> MALE.WOMAN
-        "ANOTHER" -> MALE.ANOTHER
-        else -> MALE.ANOTHER
+        "male" -> MALE.MAN
+        "female" -> MALE.WOMAN
+        "another" -> MALE.ANOTHER
+        else -> MALE.MAN
     }
 
     return User(
         uid = fact?.user_firebase_uid!!,
         email = fact.user_email,
-        name = fact.user_nickname,
+        name = fact.user_firstname,
         male = male,
         age = fact.user_age?.toInt(),
         about = fact.user_description,
@@ -51,8 +51,8 @@ fun convertListDtoToModel(reUser: ReUser?): User {
         male = male,
         age = fact.user_age?.toInt(),
         about = fact.user_description,
-        url_avatar = BASE_STORAGE_URL + fact.user_photo,
-        url_video = BASE_STORAGE_URL + fact.user_video,
+        url_avatar = fact.user_photo,
+        url_video = fact.user_video,
         lat = fact.user_location_lat?.toDouble(),
         lon = fact.user_location_lng?.toDouble(),
         location = fact.user_address,

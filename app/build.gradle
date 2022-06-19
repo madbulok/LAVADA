@@ -129,7 +129,6 @@ dependencies {
     implementation 'com.github.AbedElazizShe:LightCompressor:1.1.1'
 
     //video trimmer
- //   implementation 'com.github.a914-gowtham:android-video-trimmer:1.7.0'
     implementation 'com.github.SimformSolutionsPvtLtd:SSffmpegVideoOperation:1.0.8'
     implementation 'com.arthenica:mobile-ffmpeg-full:4.4'
 

@@ -5,50 +5,68 @@ import com.uzlov.dating.lavada.domain.models.RemoteUser
 import com.uzlov.dating.lavada.domain.models.RemoteUserList
 import com.uzlov.dating.lavada.domain.models.User
 import okhttp3.MultipartBody
+import retrofit2.Response
 import javax.inject.Inject
 
 
 class UserRemoteServerDataSourceImpl @Inject constructor(
     private val serverCommunication: ServerCommunication
-    ) : IServerDataSource<Any> {
+) : IServerDataSource<Any> {
 
     /**пользователи*/
-    override suspend fun getUser(token: String): RemoteUser {
-        return serverCommunication.apiServiceWithToken?.getUserAsync()?.await()!!
-    }
-    override suspend fun getUserById(token: String, id: String): RemoteUser {
-        return serverCommunication.apiServiceWithToken?.getUserByIdAsync(id)!!.await()
-    }
-    override suspend fun updateUser(token: String, field: Map<String, String>): Any {
-        return serverCommunication.apiServiceWithToken?.updateUserAsync(field)!!.await()
-    }
-    override suspend fun updateData(token: String, field: MultipartBody.Part): Any {
-        return serverCommunication.apiServiceWithToken?.uploadEmployeeDataAsync(field)!!.await()
+    override suspend fun getUser(token: String): Response<RemoteUser>? {
+        return serverCommunication.apiServiceWithToken?.getUserAsync()
     }
 
-    override suspend fun saveUser(token: String, user: User){
+    override suspend fun getUserById(token: String, id: String): Response<RemoteUser>? {
+        return serverCommunication.apiServiceWithToken?.getUserByIdAsync(id)
+    }
+
+    override suspend fun updateUser(
+        token: String,
+        field: Map<String, String>
+    ): Response<RemoteUser>? {
+        return serverCommunication.apiServiceWithToken?.updateUserAsync(field)
+    }
+
+    override suspend fun updateData(
+        token: String,
+        field: MultipartBody.Part
+    ): Response<RemoteUser>? {
+        return serverCommunication.apiServiceWithToken?.uploadEmployeeDataAsync(field)
+    }
+
+    override suspend fun saveUser(token: String, user: User) {
         return serverCommunication.apiServiceWithToken?.saveUserAsync(token, user)!!
     }
 
     override suspend fun removeUser(token: String, id: String) {
-
     }
 
-    override suspend fun authUser(selfToken: HashMap<String, String?>): RemoteUser {
-        return serverCommunication.apiServiceWithToken?.authUserAsync(selfToken)!!.await()
-    }
-    override suspend fun postBalance(token: String, balance: Map<String, String>): Any {
-        return serverCommunication.apiServiceWithToken?.postBalanceAsync(balance)!!.await()
-    }
-    override suspend fun getUsers(token: String): RemoteUserList {
-        return serverCommunication.apiServiceWithToken?.getUsersAsync()!!.await()
-    }
-    override suspend fun getBalance(token: String): Any {
-        return serverCommunication.apiServiceWithToken?.getUserBalanceAsync()!!.await()
+    override suspend fun authUser(selfToken: HashMap<String, String?>): Response<RemoteUser>? {
+        return serverCommunication.apiServiceWithToken?.authUserAsync(selfToken)
     }
 
-    override suspend fun postSubscribe(token: String, subscribe: Map<String, String>): Any {
-        return serverCommunication.apiServiceWithToken?.postSubscribeAsync(subscribe)!!.await()
+    override suspend fun postBalance(
+        token: String,
+        balance: Map<String, String>
+    ): Response<RemoteUser>? {
+        return serverCommunication.apiServiceWithToken?.postBalanceAsync(balance)
+    }
+
+    override suspend fun getUsers(token: String): Response<RemoteUserList> {
+        return serverCommunication.apiServiceWithToken?.getUsersAsync()!!
+    }
+
+    override suspend fun getBalance(token: String): Response<RemoteUser>? {
+        return serverCommunication.apiServiceWithToken?.getUserBalanceAsync()
+    }
+
+    override suspend fun postSubscribe(
+        token: String,
+        subscribe: Map<String, String>
+    ): Response<RemoteUser>? {
+        return serverCommunication.apiServiceWithToken?.postSubscribeAsync(subscribe)
     }
 
     /**чаты*/
@@ -99,20 +117,26 @@ class UserRemoteServerDataSourceImpl @Inject constructor(
         offset: String,
         status: String
     ): Any {
-        return serverCommunication.apiServiceWithToken?.getListGiftsAsync(limit, offset, status)!!.await()
+        return serverCommunication.apiServiceWithToken?.getListGiftsAsync(limit, offset, status)!!
+            .await()
     }
 
     override suspend fun getListReceivedGifts(token: String, limit: String, offset: String): Any {
-        return serverCommunication.apiServiceWithToken?.getListReceivedGiftsAsync(limit, offset)!!.await()
+        return serverCommunication.apiServiceWithToken?.getListReceivedGiftsAsync(limit, offset)!!
+            .await()
     }
 
     /**лайки*/
-    override suspend fun setLike(token: String, like: String, status: String): Any {
-        return serverCommunication.apiServiceWithToken?.setLike(like, status)!!.await()
+    override suspend fun setLike(
+        token: String,
+        like: String,
+        status: String
+    ): Response<RemoteUser>? {
+        return serverCommunication.apiServiceWithToken?.setLike(like, status)
     }
 
-    override suspend fun checkLike(token: String, firebaseUid: String): Any {
-        return serverCommunication.apiServiceWithToken?.checkLikeAsync(firebaseUid)!!.await()
+    override suspend fun checkLike(token: String, firebaseUid: String): Response<RemoteUser>? {
+        return serverCommunication.apiServiceWithToken?.checkLikeAsync(firebaseUid)
     }
 
     override fun setToken(token: String) {
