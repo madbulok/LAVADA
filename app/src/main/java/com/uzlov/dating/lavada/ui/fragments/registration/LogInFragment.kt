@@ -91,10 +91,8 @@ class LogInFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
                             showLogin()
                             authService.getUser()?.getIdToken(true)
                                 ?.addOnSuccessListener { tokenFb ->
-                            model.authRemoteUser(hashMapOf("token" to tokenFb.token))
-                                .observe(viewLifecycleOwner) { tokenBack ->
-                                    model.getUser(tokenBack)
-                                        .observe(viewLifecycleOwner) { result ->
+                                    model.getUser(tokenFb.token.toString())
+                                    model.selfUserData.observe(viewLifecycleOwner) { result ->
                                             self = result?.copy()!!
                                            val savedSelf = preferenceRepository.readUser()
                                             self.ready = savedSelf?.isReady ?: false
@@ -120,7 +118,6 @@ class LogInFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
                                             }
                                         }
                                 }
-                            }
                         }.addOnFailureListener { error ->
                             showLogin()
                             error.printStackTrace()
@@ -150,7 +147,6 @@ class LogInFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
             if (result.resultCode == Activity.RESULT_OK) {
                 val data = result.data
                 val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-                (requireActivity() as LoginActivity).startHome()
                 try {
                     task.getResult(ApiException::class.java)?.let {
                         authService.setToken(it.idToken!!)
@@ -163,38 +159,36 @@ class LogInFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
                         )
                         authService.loginWithGoogleAccount()
                             .addOnSuccessListener(requireActivity()) { _ ->
-
                                 authService.getUser()?.getIdToken(true)
                                     ?.addOnSuccessListener { tokenFb ->
-                                        model.authRemoteUser(hashMapOf("token" to tokenFb.token))
-                                            .observe(this) { tokenBack ->
-                                                model.getUser(tokenBack)
-                                                    .observe(viewLifecycleOwner) { result ->
-                                                        self = result?.copy()!!
-                                                        val user = User(
-                                                            uid = authService.auth.currentUser?.uid
-                                                                ?: "",
-                                                            email = authService.auth.currentUser?.email
-                                                        )
+                                        model.getUser(tokenFb.token.toString())
+                                        model.selfUserData.observe(viewLifecycleOwner) { result ->
+                                            self = result?.copy()!!
+                                            val user = User(
+                                                uid = authService.auth.currentUser?.uid
+                                                    ?: "",
+                                                email = authService.auth.currentUser?.email
+                                            )
 
-                                                        AuthorizedUser(
-                                                            uuid = authService.auth.currentUser?.uid
-                                                                ?: "",
-                                                            datetime = System.currentTimeMillis() / 1000,
-                                                            name = authService.auth.currentUser?.email
-                                                                ?: "",
-                                                            isReady = self.ready
-                                                        ).also { prefUser ->
-                                                            preferenceRepository.updateUser(prefUser)
-                                                        }
-                                                        if (self.ready) {
-                                                            (requireActivity() as LoginActivity).startHome()
-                                                        } else {
-                                                            (requireActivity() as LoginActivity)
-                                                                .startFillDataFragment(user)
-                                                        }
-                                                    }
+                                            AuthorizedUser(
+                                                uuid = authService.auth.currentUser?.uid
+                                                    ?: "",
+                                                datetime = System.currentTimeMillis() / 1000,
+                                                name = authService.auth.currentUser?.email
+                                                    ?: "",
+                                                isReady = self.ready
+                                            ).also { prefUser ->
+                                                preferenceRepository.updateUser(prefUser)
                                             }
+                                            if (self.ready) {
+                                                (requireActivity() as LoginActivity).startHome()
+                                            } else {
+                                                (requireActivity() as LoginActivity).startFillDataFragment(
+                                                    user
+                                                )
+                                            }
+                                        }
+
                                     }
                             }.addOnFailureListener { error ->
                                 error.printStackTrace()
@@ -213,16 +207,16 @@ class LogInFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
         }
 
 
-    private fun hideLogin(){
-        with(viewBinding){
+    private fun hideLogin() {
+        with(viewBinding) {
             btnBack.visibility = View.GONE
             btnLogin.visibility = View.GONE
             progressBar.visibility = View.VISIBLE
         }
     }
 
-    private fun showLogin(){
-        with(viewBinding){
+    private fun showLogin() {
+        with(viewBinding) {
             btnBack.visibility = View.VISIBLE
             btnLogin.visibility = View.VISIBLE
             progressBar.visibility = View.GONE
@@ -248,7 +242,7 @@ class LogInFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
             вот эта штука присылает письмо на почту, оттуда редикретит
             на свой адрес и предлагает там ввести новый пароль. Варианта сделать это внутри приложения
             я чот не нашла(
-            */
+             */
 
             val email = viewBinding.tiEtEmail.text.toString()
             if (!email.isNullOrEmpty()) {

@@ -42,22 +42,22 @@ class GiftsBottomSheetDialogFragment : BottomSheetDialogFragment() {
         object : GiftsAdapter.OnGiftsClickListener {
             override fun onClick(gift: Gift) {
                 firebaseEmailAuthService.getUserUid()?.let { it ->
-                        model.getUser(it).observe(viewLifecycleOwner) { result ->
-                            if (result?.balance != null && result.balance >= gift.cost){
-                                val newBalance = result.balance - gift.cost
-                                viewBinding?.btnCoins?.text = newBalance.toString()
-//                                model.updateUser(it, "balance", newBalance)
-                                Toast.makeText(context, "отправляем подарок/оставляем себе/ что мы там тут с ним делаем", Toast.LENGTH_SHORT).show()
-                            }
-                            if (result?.balance != null && result.balance < gift.cost) {
-                                viewBinding?.btnCoins?.setTextColor(resources.getColor(R.color.Error))
-                                viewBinding?.tvNeedMoreCoins?.visibility = View.VISIBLE
-
-                            } else {
-                                viewBinding?.btnCoins?.setTextColor(resources.getColor(R.color.Primary_text))
-                                viewBinding?.tvNeedMoreCoins?.visibility = View.GONE
-                            }
-                        }
+//                        model.getUser(it).observe(viewLifecycleOwner) { result ->
+//                            if (result?.balance != null && result.balance >= gift.cost){
+//                                val newBalance = result.balance - gift.cost
+//                                viewBinding?.btnCoins?.text = newBalance.toString()
+////                                model.updateUser(it, "balance", newBalance)
+//                                Toast.makeText(context, "отправляем подарок/оставляем себе/ что мы там тут с ним делаем", Toast.LENGTH_SHORT).show()
+//                            }
+//                            if (result?.balance != null && result.balance < gift.cost) {
+//                                viewBinding?.btnCoins?.setTextColor(resources.getColor(R.color.Error))
+//                                viewBinding?.tvNeedMoreCoins?.visibility = View.VISIBLE
+//
+//                            } else {
+//                                viewBinding?.btnCoins?.setTextColor(resources.getColor(R.color.Primary_text))
+//                                viewBinding?.tvNeedMoreCoins?.visibility = View.GONE
+//                            }
+//                        }
                 }
             }
         }
@@ -100,7 +100,8 @@ class GiftsBottomSheetDialogFragment : BottomSheetDialogFragment() {
             behavior.state = BottomSheetBehavior.STATE_COLLAPSED
         }
         firebaseEmailAuthService.getUserUid()?.let { it ->
-            model.getUser(it).observe(viewLifecycleOwner) { result ->
+            model.getUser(it)
+            model.selfUserData.observe(viewLifecycleOwner) { result ->
                 viewBinding?.btnCoins?.text = result?.balance.toString()
                 viewBinding?.btnCoins?.text = result?.balance.toString()
                 //подставить тут актуальную минимальную цену или вообще тягать ее из цен на подарки

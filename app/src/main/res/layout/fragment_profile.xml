@@ -269,7 +269,7 @@
                             android:layout_height="wrap_content"
                             android:drawableEnd="@drawable/ic_coin"
                             android:drawablePadding="@dimen/default_margin_8"
-                            android:text="1233"
+                            android:text="загружаем..."
                             app:layout_constraintBottom_toBottomOf="@id/btn_top_up"
                             app:layout_constraintEnd_toStartOf="@id/btn_top_up"
                             app:layout_constraintTop_toTopOf="@id/btn_top_up" />

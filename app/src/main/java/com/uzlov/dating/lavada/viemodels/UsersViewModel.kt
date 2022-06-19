@@ -5,7 +5,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.GsonBuilder
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
+import com.uzlov.dating.lavada.data.ErrorUtils
 import com.uzlov.dating.lavada.data.convertDtoToModel
 import com.uzlov.dating.lavada.data.convertListDtoToModel
 import com.uzlov.dating.lavada.data.convertToLike
@@ -17,15 +19,11 @@ import com.uzlov.dating.lavada.domain.models.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
+import retrofit2.Response
 import java.util.*
 import javax.inject.Inject
-import kotlin.collections.List
-import kotlin.collections.Map
-import kotlin.collections.mutableListOf
-import kotlin.collections.mutableMapOf
 import kotlin.collections.set
-import kotlin.collections.sortedBy
-import kotlin.collections.toMutableList
+
 
 class UsersViewModel @Inject constructor(
     private val usersUseCases: UserUseCases,
@@ -38,89 +36,128 @@ class UsersViewModel @Inject constructor(
     private var tokenResult = MutableLiveData<String>()
     private var listUsers = MutableLiveData<List<User>>()
     private var response = MutableLiveData<RemoteUser>()
-    private var user = MutableLiveData<RemoteUser>()
+    private var uploadedFile = MutableLiveData<RemoteUser>()
     private var selfBalance = MutableLiveData<Int>()
     private var updatedBalance = MutableLiveData<User>()
     private var updatedLike = MutableLiveData<User>()
     private var checkedLike = MutableLiveData<RemoteUser>()
     val likes get() : LiveData<User> = updatedLike
     val listUsersData get() : LiveData<List<User>> = listUsers
+    val selfUserData get() : MutableLiveData<User> = selfUser
+    val status = MutableLiveData<String?>()
+    val updatedUserData get() : MutableLiveData<RemoteUser> = response
+    val uploadedFileData get() : MutableLiveData<RemoteUser> = uploadedFile
+    val selfBalanceData get() : MutableLiveData<Int> = selfBalance
+    val updatedBalanceData get() : MutableLiveData<User> = updatedBalance
+    val checkedLikeData get() : MutableLiveData<RemoteUser> = checkedLike
+    val userByIdData get() : MutableLiveData<User> = userById
+    val tokenResultData get(): MutableLiveData<String> = tokenResult
 
 
     /**
      * Получаем пользователя с сервера
-     * @param token собственный токен, отданный после аутентификации с бэка
+     * @param token fb
      */
-    fun getUser(token: String): LiveData<User?> {
-        authService.getUser()?.getIdToken(true)?.addOnSuccessListener {
-            viewModelScope.launch(Dispatchers.IO) {
-                serverCommunication.updateToken(token) // обновляем токен полученый с сервера
-                val reUser = serverCommunication.apiServiceWithToken?.getUserAsync()?.await()
-                if (reUser != null) {
-                    selfUser.postValue(convertDtoToModel(reUser))
+    fun getUser(token: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            usersUseCases.authRemoteUser(hashMapOf("token" to token)).let {
+                val result =
+                    serverCommunication.apiServiceWithToken?.authUserAsync(hashMapOf("token" to token))
+                result?.body()?.data?.token?.let { tokenToo ->
+                    serverCommunication.updateToken(tokenToo)
+                    serverCommunication.apiServiceWithToken?.getUserAsync()?.let { reUser ->
+                        if (reUser.isSuccessful) {
+                            selfUser.postValue(
+                                reUser.body()?.let { it1 -> convertDtoToModel(it1) })
+                        } else {
+                            displayApiResponseErrorBody(reUser)
+                        }
+                    }
                 }
             }
         }
-        return selfUser
     }
 
     /**
      * Получает пользователя по UID
-     * @param token пользователя с бэка
+     * @param token fb
      * @param uid идентификатор пользователя на fb
      */
-    fun getUserById(token: String, uid: String): LiveData<User?> {
-        authService.getUser()?.getIdToken(true)?.addOnSuccessListener {
-            viewModelScope.launch(Dispatchers.IO) {
-                serverCommunication.updateToken(token) // обновляем токен полученый с сервера
-                val reUser = serverCommunication.apiServiceWithToken?.getUserByIdAsync(uid)?.await()
-                if (reUser != null) {
-                    userById.postValue(convertDtoToModel(reUser))
+    fun getUserById(token: String, uid: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            usersUseCases.authRemoteUser(hashMapOf("token" to token)).let {
+                val result =
+                    serverCommunication.apiServiceWithToken?.authUserAsync(hashMapOf("token" to token))
+                result?.body()?.data?.token?.let { tokenToo ->
+                    serverCommunication.updateToken(tokenToo)
+                    val reUser = serverCommunication.apiServiceWithToken?.getUserByIdAsync(uid)
+                    if (reUser!!.isSuccessful && reUser.body() != null) {
+                        userById.postValue(convertDtoToModel(reUser.body()!!))
+                    } else {
+                        displayApiResponseErrorBody(reUser)
+                    }
                 }
             }
         }
-        return userById
     }
 
     /**
      * Отправляет пользователя на сервер
-     * @param token пользователя с бэка
+     * @param token fb
      * @param field<String, String> - поле, которое нужно обновить
      */
-    fun updateUser(token: String, field: Map<String, String>): LiveData<RemoteUser?>? {
+    fun updateUser(token: String, field: Map<String, String>) {
         viewModelScope.launch(Dispatchers.IO) {
-            serverCommunication.updateToken(token) // обновляем токен полученый с сервера
-            response.postValue(
-                serverCommunication.apiServiceWithToken?.updateUserAsync(field)!!.await()
-            )
+            usersUseCases.authRemoteUser(hashMapOf("token" to token)).let {
+                val result =
+                    serverCommunication.apiServiceWithToken?.authUserAsync(hashMapOf("token" to token))
+                result?.body()?.data?.token?.let { tokenToo ->
+                    serverCommunication.updateToken(tokenToo)
+                    val reUser = serverCommunication.apiServiceWithToken?.updateUserAsync(field)!!
+                    if (reUser.isSuccessful) {
+                        response.postValue(
+                            reUser.body()
+                        )
+                    } else {
+                        status.postValue(displayApiResponseErrorBody(reUser))
+                    }
+                }
+            }
         }
-        return response
     }
 
     /**
      * Отправляет файл на сервер
-     * @param token пользователя с бэка
+     * @param token fb
      * @param field<MultipartBody.Part> - поле, которое нужно обновить. Принимает в себя файл
      */
-    fun updateRemoteData(token: String, field: MultipartBody.Part): LiveData<RemoteUser?>? {
+    fun updateRemoteData(token: String, field: MultipartBody.Part) {
         viewModelScope.launch(Dispatchers.IO) {
-            serverCommunication.updateToken(token) // обновляем токен полученый с сервера
-            viewModelScope.launch(Dispatchers.IO) {
-                user.postValue(
-                    serverCommunication.apiServiceWithToken?.uploadEmployeeDataAsync(
+            usersUseCases.authRemoteUser(hashMapOf("token" to token)).let {
+                val result =
+                    serverCommunication.apiServiceWithToken?.authUserAsync(hashMapOf("token" to token))
+                result?.body()?.data?.token?.let { tokenToo ->
+                    serverCommunication.updateToken(tokenToo)
+                    val reUser = serverCommunication.apiServiceWithToken?.uploadEmployeeDataAsync(
                         field
-                    )?.await()
-                )
-
+                    )!!
+                    if (reUser.isSuccessful) {
+                        uploadedFile.postValue(
+                            reUser.body()
+                        )
+                    } else {
+                        status.postValue(displayApiResponseErrorBody(reUser))
+                    }
+                }
             }
         }
-        return user
     }
 
     /**
      * Отправляет пользователя на сервер
      * @param token пользователя с бэка
      * @param user - объект пользователя
+     * это нам вообще надо?
      */
     fun saveUser(token: String, user: User) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -130,7 +167,7 @@ class UsersViewModel @Inject constructor(
 
     /**
      * Получаем список пользователей с сервера
-     * @param token пользователя с бэка
+     * @param token fb
      */
     fun getUsers(token: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -139,104 +176,145 @@ class UsersViewModel @Inject constructor(
                 // получаем токен с бэка
                 val result =
                     serverCommunication.apiServiceWithToken?.authUserAsync(hashMapOf("token" to token))
-                result?.await()?.data?.token?.let { tokenToo ->
+                result?.body()?.data?.token?.let { tokenToo ->
                     // прописываем его в запросы
                     serverCommunication.updateToken(tokenToo)
-                                serverCommunication.apiServiceWithToken?.getUsersAsync()?.await().let { result ->
-                                    val listUser = mutableListOf<User>()
-                                    if (result != null) {
-                                        val listUsers = result.data?.rows
-                                        if (listUsers != null) {
-                                            for (reUser in listUsers) {
-                                                listUser.add(convertListDtoToModel(reUser!!))
-                                            }
-                                        }
-                                    }
-                                    val iterator = listUser.iterator()
-                                    while (iterator.hasNext()) {
-                                        val item = iterator.next()
-                                        if (item.url_video.isNullOrEmpty()) {
-                                            iterator.remove()
-                                        }
-                                    }
-                                    listUsers.postValue(listUser)
+                    serverCommunication.apiServiceWithToken?.getUsersAsync()?.let { result ->
+                        Log.e("GET_USERS", result.body().toString())
+                        val listUser = mutableListOf<User>()
+                        if (result.isSuccessful) {
+                            val list = result.body()?.data?.rows
+                            if (list != null) {
+                                for (reUser in list) {
+                                    listUser.add(convertListDtoToModel(reUser!!))
                                 }
-
+                                val iterator = listUser.iterator()
+                                while (iterator.hasNext()) {
+                                    val item = iterator.next()
+                                    if (item.url_video.isNullOrEmpty()) {
+                                        iterator.remove()
+                                    }
+                                }
+                                listUsers.postValue(listUser)
+                            }
+                        } else {
+                            status.postValue(displayApiResponseErrorBody(result))
                         }
+
                     }
+                }
+            }
         }
     }
 
+
     /**
      * Получаем баланс пользователя
-     * @param token пользователя с бэка
+     * @param token fb
      */
-    fun getRemoteBalance(token: String): LiveData<Int> {
+    fun getRemoteBalance(token: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            serverCommunication.updateToken(token) // обновляем токен полученый с сервера
-            val result =
-                serverCommunication.apiServiceWithToken?.getUserBalanceAsync()?.await()
-            val resBal = result?.data?.user_balance?.toDouble()?.toInt()
-            selfBalance.postValue(resBal!!)
+            usersUseCases.authRemoteUser(hashMapOf("token" to token)).let {
+                val result =
+                    serverCommunication.apiServiceWithToken?.authUserAsync(hashMapOf("token" to token))
+                result?.body()?.data?.token?.let { tokenToo ->
+                    serverCommunication.updateToken(tokenToo)
+                    val reUser = serverCommunication.apiServiceWithToken?.getUserBalanceAsync()
+                    reUser.let { response ->
+                        if (response!!.isSuccessful) {
+                            val resBal = response.body()?.data?.user_balance?.toDouble()?.toInt()
+                            selfBalance.postValue(resBal!!)
+                        } else {
+                            status.postValue(displayApiResponseErrorBody(response))
+                        }
+                    }
+                }
+            }
         }
-        return selfBalance
     }
 
     /**
      * Обновляем баланс пользователя
-     * @param token пользователя с бэка
+     * @param token fb
      * @param balance String - сумма пополнения
      * какая-то херота с этим балансом творится. Подозреваю бэк
      */
-    fun postRemoteBalance(token: String, balance: String): LiveData<User> {
+    fun postRemoteBalance(token: String, balance: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            serverCommunication.updateToken(token) // обновляем токен полученый с сервера
-            val body = mutableMapOf<String, String>()
-            body["pay_system"] = "google"
-            body["trx_id"] = UUID.randomUUID().toString()
-            body["amount"] = balance
-            body["meta"] = "{}"
-            body["status"] = "succeeded"
-            serverCommunication.apiServiceWithToken?.postBalanceAsync(body)?.await()
+            usersUseCases.authRemoteUser(hashMapOf("token" to token)).let {
+                val result =
+                    serverCommunication.apiServiceWithToken?.authUserAsync(hashMapOf("token" to token))
+                result?.body()?.data?.token?.let { tokenToo ->
+                    serverCommunication.updateToken(tokenToo)
+                    val body = mutableMapOf<String, String>()
+                    body["pay_system"] = "google"
+                    body["trx_id"] = UUID.randomUUID().toString()
+                    body["amount"] = balance
+                    body["meta"] = "{}"
+                    body["status"] = "succeeded"
+                    val result = serverCommunication.apiServiceWithToken?.postBalanceAsync(body)!!
+                    result.let { response ->
+                        if (!response.isSuccessful) {
+                            status.postValue(displayApiResponseErrorBody(result))
+                        }
+                    }
+                }
+            }
         }
-        return updatedBalance
     }
 
     /**
      * Авторизация пользователя на сервере
      * @param token токен после авторизации или регистрации пользователя через FirebaseAuth
      * */
-    fun authRemoteUser(token: HashMap<String, String?>): LiveData<String> {
+    fun authRemoteUser(token: HashMap<String, String?>) {
         viewModelScope.launch(Dispatchers.IO) {
             usersUseCases.authRemoteUser(token).let {
-                val result = serverCommunication.apiServiceWithToken?.authUserAsync(token)
-                val tokenToo = result?.await()
-                Log.e("AUTH_REMOTE_USER", tokenToo?.data?.token.toString())
-                tokenResult.postValue(tokenToo?.data?.token.toString())
+                val result =
+                    serverCommunication.apiServiceWithToken?.authUserAsync(token)
+                if (result!!.isSuccessful) {
+                    Log.e("AUTH_REMOTE_USER", result.body()?.data?.token.toString())
+                    tokenResult.postValue(result.body()?.data?.token.toString())
+                } else {
+                    status.postValue(displayApiResponseErrorBody(result))
+                }
+
             }
         }
-        return tokenResult
     }
 
     /**
      * Обновляем подписку пользователя
-     * @param token пользователя с бэка
+     * @param token fb
      * @param subscribe : String, вида "2022-05-10 00:00:00"
      * @param amount : String - сумма оплаты
      */
-    fun postSubscribe(token: String, subscribe: String, amount: String): LiveData<User> {
+    fun postSubscribe(
+        token: String,
+        subscribe: String,
+        amount: String
+    ){
         viewModelScope.launch(Dispatchers.IO) {
-            serverCommunication.updateToken(token) // обновляем токен полученый с сервера
-            val body = mutableMapOf<String, String>()
-            body["expiration_pay"] = subscribe
-            body["pay_system"] = "google"
-            body["trx_id"] = UUID.randomUUID().toString()
-            body["amount"] = amount
-            body["meta"] = "{}"
-            body["status"] = "succeeded"
-            serverCommunication.apiServiceWithToken?.postSubscribeAsync(body)?.await()
+            usersUseCases.authRemoteUser(hashMapOf("token" to token)).let {
+                val result =
+                    serverCommunication.apiServiceWithToken?.authUserAsync(hashMapOf("token" to token))
+                result?.body()?.data?.token?.let { tokenToo ->
+                    serverCommunication.updateToken(tokenToo)
+                    val body = mutableMapOf<String, String>()
+                    body["expiration_pay"] = subscribe
+                    body["pay_system"] = "google"
+                    body["trx_id"] = UUID.randomUUID().toString()
+                    body["amount"] = amount
+                    body["meta"] = "{}"
+                    body["status"] = "succeeded"
+                    val response =
+                        serverCommunication.apiServiceWithToken?.postSubscribeAsync(body)
+                    if (!response!!.isSuccessful) {
+                        status.postValue(displayApiResponseErrorBody(response))
+                    }
+                }
+            }
         }
-        return updatedBalance
     }
 
 
@@ -253,22 +331,28 @@ class UsersViewModel @Inject constructor(
                 // получаем токен с бэка
                 val result =
                     serverCommunication.apiServiceWithToken?.authUserAsync(hashMapOf("token" to tokenFB))
-                result?.await()?.data?.token?.let { tokenToo ->
+                result?.body()?.data?.token?.let { tokenToo ->
                     // прописываем его в запросы
                     serverCommunication.updateToken(tokenToo)
-                    serverCommunication.apiServiceWithToken?.setLike(firebaseUid, likeState)
-                        ?.await()?.let { reUser ->
+                    val response =
+                        serverCommunication.apiServiceWithToken?.setLike(
+                            firebaseUid,
+                            likeState
+                        )
+                    if (response!!.isSuccessful) {
+                        response.body()?.let { reUser ->
                             val like = convertToLike(reUser.data)
                             val user = convertDtoToModel(
                                 serverCommunication.apiServiceWithToken?.getUserByIdAsync(
                                     firebaseUid
-                                )?.await()!!
+                                )!!.body()!!
                             )
                             val matches = mutableMapOf<String, Boolean>()
                             matches[firebaseUid] = like
                             user.matches = matches
                             updatedLike.postValue(user)
                         }
+                    }
                 }
             }
         }
@@ -276,21 +360,26 @@ class UsersViewModel @Inject constructor(
 
     /**
      * Проверяем лайк на взаимность
-     * @param token пользователя с бэка
+     * @param token fb
      * @param firebaseUid : String, uid пользователя, которому ставим лайк
      */
-    fun checkLike(token: String, firebaseUid: String): MutableLiveData<RemoteUser> {
+    fun checkLike(token: String, firebaseUid: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            serverCommunication.updateToken(token)
-            val reUser =
-                serverCommunication.apiServiceWithToken?.checkLikeAsync(firebaseUid)
-                    ?.await()
-            checkedLike.let {
-                it.postValue(reUser)
+            usersUseCases.authRemoteUser(hashMapOf("token" to token)).let {
+                val result =
+                    serverCommunication.apiServiceWithToken?.authUserAsync(hashMapOf("token" to token))
+                result?.body()?.data?.token?.let { tokenToo ->
+                    serverCommunication.updateToken(tokenToo)
+                    val reUser =
+                        serverCommunication.apiServiceWithToken?.checkLikeAsync(firebaseUid)
+                    if (reUser!!.isSuccessful) {
+                        checkedLike.postValue(reUser.body())
+                    } else {
+                        status.postValue(displayApiResponseErrorBody(reUser))
+                    }
+                }
             }
-
         }
-        return checkedLike
     }
 
 
@@ -347,5 +436,16 @@ class UsersViewModel @Inject constructor(
     override fun onCleared() {
         super.onCleared()
         serverCommunication.destroy() // освобождаем память
+    }
+
+    private fun displayApiResponseErrorBody(response: Response<*>): String {
+        val finish: String?
+        val gson = GsonBuilder().create()
+        val mError = gson.fromJson(
+            response.errorBody()!!.string(),
+            ErrorUtils::class.java
+        )
+        finish = mError.error?.user_status
+        return finish ?: "Неизвестная ошибка"
     }
 }

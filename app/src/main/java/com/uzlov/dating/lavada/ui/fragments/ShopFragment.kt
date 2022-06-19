@@ -39,6 +39,7 @@ class ShopFragment : BaseFragment<FragmentShopBinding>(FragmentShopBinding::infl
     private lateinit var purchasesViewModel: PurchasesViewModel
 
     private var billingClient: BillingClient? = null
+
     // callback about purchase!
     private val purchasesUpdateListener = PurchasesUpdatedListener { result, purchase ->
         when (result.responseCode) {
@@ -71,78 +72,49 @@ class ShopFragment : BaseFragment<FragmentShopBinding>(FragmentShopBinding::infl
         object : FragmentBuyCoins.OnSelectListener {
             override fun coins300() {
                 Toast.makeText(context, "Покупаем 300 монет", Toast.LENGTH_SHORT).show()
-//            если покупка удалась
-                if (true) {
-                    firebaseEmailAuthService.getUser()?.getIdToken(true)
-                        ?.addOnSuccessListener { tokenFb ->
-                            lifecycleScope.launchWhenResumed {
-                                usersViewModel.authRemoteUser(hashMapOf("token" to tokenFb.token))
-                                    .observe(viewLifecycleOwner) { tokenBack ->
-                                        usersViewModel.postRemoteBalance(
-                                            tokenBack,
-                                            300.toString()
-                                        )
-                                    }
-                            }
-                        }
-                }
+                firebaseEmailAuthService.getUser()?.getIdToken(true)
+                    ?.addOnSuccessListener { tokenFb ->
+                        usersViewModel.postRemoteBalance(
+                            tokenFb.token.toString(),
+                            300.toString()
+                        )
+                    }
                 updateData()
             }
 
             override fun coins500() {
                 Toast.makeText(context, "Покупаем 500 монет", Toast.LENGTH_SHORT).show()
-                if (true) {
-                    firebaseEmailAuthService.getUser()?.getIdToken(true)
-                        ?.addOnSuccessListener { tokenFb ->
-                            lifecycleScope.launchWhenResumed {
-                                usersViewModel.authRemoteUser(hashMapOf("token" to tokenFb.token))
-                                    .observe(viewLifecycleOwner) { tokenBack ->
-                                        usersViewModel.postRemoteBalance(
-                                            tokenBack,
-                                            500.toString()
-                                        )
-                                    }
-                            }
-                        }
-                }
+                firebaseEmailAuthService.getUser()?.getIdToken(true)
+                    ?.addOnSuccessListener { tokenFb ->
+                        usersViewModel.postRemoteBalance(
+                            tokenFb.token.toString(),
+                            500.toString()
+                        )
+                    }
                 updateData()
             }
 
             override fun coins1500() {
                 Toast.makeText(context, "Покупаем 1500 монет", Toast.LENGTH_SHORT).show()
-                if (true) {
-                    firebaseEmailAuthService.getUser()?.getIdToken(true)
-                        ?.addOnSuccessListener { tokenFb ->
-                            lifecycleScope.launchWhenResumed {
-                                usersViewModel.authRemoteUser(hashMapOf("token" to tokenFb.token))
-                                    .observe(viewLifecycleOwner) { tokenBack ->
-                                        usersViewModel.postRemoteBalance(
-                                            tokenBack,
-                                            1500.toString()
-                                        )
-                                    }
-                            }
-                        }
-                }
+                firebaseEmailAuthService.getUser()?.getIdToken(true)
+                    ?.addOnSuccessListener { tokenFb ->
+                        usersViewModel.postRemoteBalance(
+                            tokenFb.token.toString(),
+                            1500.toString()
+                        )
+                    }
                 updateData()
             }
 
             override fun coins3500() {
                 Toast.makeText(context, "Покупаем 3500 монет", Toast.LENGTH_SHORT).show()
-                if (true) {
-                    firebaseEmailAuthService.getUser()?.getIdToken(true)
-                        ?.addOnSuccessListener { tokenFb ->
-                            lifecycleScope.launchWhenResumed {
-                                usersViewModel.authRemoteUser(hashMapOf("token" to tokenFb.token))
-                                    .observe(viewLifecycleOwner) { tokenBack ->
-                                        usersViewModel.postRemoteBalance(
-                                            tokenBack,
-                                            3500.toString()
-                                        )
-                                    }
-                            }
-                        }
-                }
+                firebaseEmailAuthService.getUser()?.getIdToken(true)
+                    ?.addOnSuccessListener { tokenFb ->
+                        usersViewModel.postRemoteBalance(
+                            tokenFb.token.toString(),
+                            3500.toString()
+                        )
+                    }
                 updateData()
             }
 
@@ -161,10 +133,21 @@ class ShopFragment : BaseFragment<FragmentShopBinding>(FragmentShopBinding::infl
         initListeners()
         updateData()
 
-=======
         loadLavCoinsBoxes()
-        loadImage(resources.getDrawable(R.drawable.price_sale), viewBinding.ivSale)
         observeDataCoins()
+
+        usersViewModel.selfUserData.observe(viewLifecycleOwner) { reUser ->
+            if (reUser!!.premium) {
+                viewBinding.cardBuyPremium.visibility = View.GONE
+                viewBinding.cardHasPremium.visibility = View.VISIBLE
+            } else {
+                viewBinding.cardBuyPremium.visibility = View.VISIBLE
+                viewBinding.cardHasPremium.visibility = View.GONE
+            }
+        }
+        usersViewModel.selfBalanceData.observe(viewLifecycleOwner) { result ->
+            viewBinding.btnCoins.text = result.toString()
+        }
 
     }
 
@@ -172,8 +155,8 @@ class ShopFragment : BaseFragment<FragmentShopBinding>(FragmentShopBinding::infl
         purchasesViewModel.getAllPurchases()
     }
 
-    private fun observeDataCoins(){
-        purchasesViewModel.allPurchases.observe(viewLifecycleOwner){ result ->
+    private fun observeDataCoins() {
+        purchasesViewModel.allPurchases.observe(viewLifecycleOwner) { result ->
             setupSuperBox(result.firstOrNull { it.sku == "lavcoins_5000" })
             setupOtherBox(result.filter { it.sku != "lavcoins_5000" })
         }
@@ -186,7 +169,7 @@ class ShopFragment : BaseFragment<FragmentShopBinding>(FragmentShopBinding::infl
     }
 
     private fun setupSuperBox(superBox: SkuDetails?) {
-        if (superBox != null){
+        if (superBox != null) {
             viewBinding.cardSuperBox.visibility = View.VISIBLE
             Glide.with(requireContext())
                 .load(Extensions.getPictureForPurchase(superBox.sku))
@@ -200,23 +183,8 @@ class ShopFragment : BaseFragment<FragmentShopBinding>(FragmentShopBinding::infl
 
     private fun updateData() {
         firebaseEmailAuthService.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
-            lifecycleScope.launchWhenResumed {
-                usersViewModel.authRemoteUser(hashMapOf("token" to tokenFb.token))
-                    .observe(viewLifecycleOwner) { tokenBack ->
-                        usersViewModel.getRemoteBalance(tokenBack).observe(viewLifecycleOwner) { result ->
-                            viewBinding.btnCoins.text = result.toString()
-                        }
-                        usersViewModel.getUser(tokenBack).observe(viewLifecycleOwner){ reUser ->
-                            if (reUser!!.premium){
-                                viewBinding.cardBuyPremium.visibility = View.GONE
-                                viewBinding.cardHasPremium.visibility = View.VISIBLE
-                            } else{
-                                viewBinding.cardBuyPremium.visibility = View.VISIBLE
-                                viewBinding.cardHasPremium.visibility = View.GONE
-                            }
-                        }
-                    }
-            }
+            usersViewModel.getRemoteBalance(tokenFb.token.toString())
+            usersViewModel.getUser(tokenFb.token.toString())
         }
     }
 

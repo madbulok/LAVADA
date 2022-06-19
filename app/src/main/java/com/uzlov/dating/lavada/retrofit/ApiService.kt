@@ -4,6 +4,7 @@ import com.uzlov.dating.lavada.domain.models.*
 import kotlinx.coroutines.Deferred
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
+import retrofit2.Response
 import retrofit2.http.*
 
 
@@ -12,66 +13,67 @@ interface ApiService {
     /**пользователи**/
     //получить список пользователей (пока без сортировки по дистанции) +
     @GET("api/v1/users")
-    fun getUsersAsync(
+    suspend fun getUsersAsync(
         //       @Query("limit") limit: String,
         //       @Query("offset") offset: String,
         //       @Query("order_by_location") order_by_location: String,
         //       @Query("only_premium") only_premium: String,
-    ): Deferred<RemoteUserList>
+    ): Response<RemoteUserList>
 
     //получить пользователя +
     @GET("api/v1/user")
-    fun getUserAsync() : Deferred<RemoteUser>
+    suspend fun getUserAsync() : Response<RemoteUser>
 
-    //получить пользователя по uid fb +
+    //получить пользователя по uid fb,
+    //пока не используется
     @GET("api/v1/user")
-    fun getUserByIdAsync(
+    suspend fun getUserByIdAsync(
         @Query("firebase_uid") id: String
-    ) : Deferred<RemoteUser>
+    ) : Response<RemoteUser>
 
     //получить баланс пользователя
     @GET("api/v1/user/balance")
-    fun getUserBalanceAsync(): Deferred<RemoteUser>
+    suspend fun getUserBalanceAsync(): Response<RemoteUser>
 
     //обновить данные пользователя
     @FormUrlEncoded
     @POST("api/v1/user")
-    fun updateUserAsync(
+    suspend fun updateUserAsync(
         @FieldMap() field: Map<String, String>
-    ): Deferred<RemoteUser>
+    ): Response<RemoteUser>
 
     @FormUrlEncoded
     @POST("api/v1/user")
-    fun saveUserAsync(token: String, @FieldMap() user: User)
+    suspend fun saveUserAsync(token: String, @FieldMap() user: User)
 
     //тут грузить фото/видео //фото+, видео +
     @Multipart
     @POST("api/v1/user")
-    fun uploadEmployeeDataAsync(
+    suspend fun uploadEmployeeDataAsync(
         @Part body: MultipartBody.Part
-    ): Deferred<RemoteUser>
+    ): Response<RemoteUser>
 
     //авторизовать пользователя, обратно приходит токен с бэка +
     @FormUrlEncoded
     @POST("api/v1/user/auth")
-    fun authUserAsync(
+    suspend fun authUserAsync(
         @FieldMap params: HashMap<String, String?>
-    ): Deferred<RemoteUser>
+    ): Response<RemoteUser>
 
     //начисление баланса пользователю
     /** зачислилось 2 раза и перестало. Хз почему, надо разбираться*/
     @FormUrlEncoded
     @POST("api/v1/user/balance")
-    fun postBalanceAsync(
+    suspend fun postBalanceAsync(
         @FieldMap balance: Map<String, String>
-    ): Deferred<RemoteUser>
+    ): Response<RemoteUser>
 
     //включение подписки. меняет статус на _has_premium":[{"google":"2022-06-10 00:00:00"}]
     @FormUrlEncoded
     @POST("api/v1/user/subscribe")
-    fun postSubscribeAsync(
+    suspend fun postSubscribeAsync(
         @FieldMap subscribe: Map<String, String>
-    ): Deferred<RemoteUser>
+    ): Response<RemoteUser>
 
     /**чаты**/
     //создать сообщение +
@@ -161,13 +163,13 @@ interface ApiService {
      **/
 
     @PUT("api/v1/like")
-    fun setLike(
+    suspend fun setLike(
         @Query("firebase_uid") uid: String,
         @Query("like_state") like: String
-    ): Deferred<RemoteUser>
+    ): Response<RemoteUser>
 
     @GET("api/v1/like/check")
-    fun checkLikeAsync(
+    suspend fun checkLikeAsync(
         @Query("firebase_uid") firebase_uid: String
-    ): Deferred<RemoteUser>
+    ): Response<RemoteUser>
 }

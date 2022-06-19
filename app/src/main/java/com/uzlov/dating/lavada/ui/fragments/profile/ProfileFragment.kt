@@ -127,31 +127,30 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
             }
         })
         firebaseEmailAuthService.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
-            model.authRemoteUser(hashMapOf("token" to tokenFb.token))
-                .observe(viewLifecycleOwner) { tokenBack ->
-                    model.getUser(tokenBack).observe(viewLifecycleOwner) { result ->
-                        user = result?.copy()!!
-                        viewBinding.tvLocation.text = result.location
-                        viewBinding.tvName.text = result.getNAmeLabel()
-                        viewBinding.tvDesc.text = result.about
-                        result.url_avatar?.let { it1 -> loadImage(it1, viewBinding.ivProfile) }
-                        viewBinding.itemVideoExoplayer.player = player
-                        result.url_video?.let { playVideo(it) }
-                        if (result.premium) {
-                            viewBinding.clPremium.visibility = View.VISIBLE
-                            viewBinding.clNotPremium.visibility = View.GONE
-                        } else {
-                            viewBinding.clPremium.visibility = View.INVISIBLE
-                            viewBinding.clNotPremium.visibility = View.VISIBLE
-                        }
-                    }
-                    viewBinding.tbBackAction.setOnClickListener {
-                        (requireActivity() as HostActivity).rollbackFragment()
-                    }
-                    model.getRemoteBalance(tokenBack).observe(viewLifecycleOwner) { balance ->
-                        viewBinding.btnCoins.text = balance.toString()
-                    }
+            model.getUser(tokenFb.token.toString())
+            model.selfUserData.observe(viewLifecycleOwner) { result ->
+                user = result?.copy()!!
+                viewBinding.tvLocation.text = result.location
+                viewBinding.tvName.text = result.getNAmeLabel()
+                viewBinding.tvDesc.text = result.about
+                result.url_avatar?.let { it1 -> loadImage(it1, viewBinding.ivProfile) }
+                viewBinding.itemVideoExoplayer.player = player
+                result.url_video?.let { playVideo(it) }
+                if (result.premium) {
+                    viewBinding.clPremium.visibility = View.VISIBLE
+                    viewBinding.clNotPremium.visibility = View.GONE
+                } else {
+                    viewBinding.clPremium.visibility = View.INVISIBLE
+                    viewBinding.clNotPremium.visibility = View.VISIBLE
                 }
+            }
+            viewBinding.tbBackAction.setOnClickListener {
+                (requireActivity() as HostActivity).rollbackFragment()
+            }
+            model.getRemoteBalance(tokenFb.token.toString())
+            model.selfBalanceData.observe(viewLifecycleOwner) { balance ->
+                viewBinding.btnCoins.text = balance.toString()
+            }
         }
         with(viewBinding) {
             ivEditProfile.setOnClickListener {
@@ -457,6 +456,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
             )
         )
     }
+
     fun startCompressing() {
         with(viewBinding) {
             btnChangeVideo.visibility = View.GONE
@@ -482,7 +482,6 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
     override fun onDestroyView() {
         super.onDestroyView()
         player.stop()
-        player.release()
     }
 
     companion object {

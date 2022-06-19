@@ -52,7 +52,6 @@ class FilterSearchPeopleFragment :
             when (userFilter.sex) {
                 0 -> radioGroup.check(R.id.rbMan)
                 1 -> radioGroup.check(R.id.rvWoman)
-                2 -> radioGroup.check(R.id.rbAnother)
             }
 
             btnNext.isEnabled = true
@@ -86,7 +85,6 @@ class FilterSearchPeopleFragment :
         val sex = when (viewBinding.radioGroup.checkedRadioButtonId) {
             R.id.rbMan -> 0
             R.id.rvWoman -> 1
-            R.id.rbAnother -> 2
             else -> 0
         }
         preferenceRepository.setFilter(

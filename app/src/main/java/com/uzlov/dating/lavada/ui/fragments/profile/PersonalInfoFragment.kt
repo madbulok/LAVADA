@@ -13,19 +13,18 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
 import com.uzlov.dating.lavada.R
-import com.uzlov.dating.lavada.app.Constants.Companion.ANOTHER
 import com.uzlov.dating.lavada.app.Constants.Companion.MAN
 import com.uzlov.dating.lavada.app.Constants.Companion.WOMAN
 import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
 import com.uzlov.dating.lavada.databinding.FragmentPersonalInfoBinding
 import com.uzlov.dating.lavada.domain.models.User
-import com.uzlov.dating.lavada.storage.IStorage
 import com.uzlov.dating.lavada.ui.fragments.BaseFragment
 import com.uzlov.dating.lavada.viemodels.UsersViewModel
 import com.uzlov.dating.lavada.viemodels.ViewModelFactory
@@ -43,13 +42,11 @@ class PersonalInfoFragment :
     lateinit var list: List<Uri>
     private var userThis: User = User()
     private var urlImage: Bitmap? = null
+    private var fileSended: Boolean? = null
     // var blackList: MutableList<String> = mutableListOf("WJfUC7k7EVZDtJdJYXDFn8DfAoD3", "67r4Wd1H9JblvgKhScAX3Y42aFX2", "NelQeaw9g4dBWT8oPuCiNrRdK0m2")
 
     @Inject
     lateinit var firebaseEmailAuthService: FirebaseEmailAuthService
-
-    @Inject
-    lateinit var serverStorageService: IStorage
 
     @Inject
     lateinit var factoryViewModel: ViewModelFactory
@@ -66,14 +63,16 @@ class PersonalInfoFragment :
         if (resultCode == Activity.RESULT_OK && requestCode == UploadVideoFragment.REQUEST_CODE) {
 
             data?.data.let { uri ->
+
                 val imageUri: Uri? = uri
                 val source =
                     context?.let { ImageDecoder.createSource(it.contentResolver, imageUri!!) }
                 val bitmap = source?.let { ImageDecoder.decodeBitmap(it) }
                 if (bitmap != null) {
                     urlImage = bitmap
-                    urlImage?.let { sendFileRequest(it) }
-                    uri?.path?.let { loadImage(it, viewBinding.ivProfile) }
+                    uri?.let { loadImageFromUri(it, viewBinding.ivProfile) }
+
+
                 }
             }
         }
@@ -84,34 +83,47 @@ class PersonalInfoFragment :
         model = factoryViewModel.create(UsersViewModel::class.java)
         checkPermission()
         firebaseEmailAuthService.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
-            model.authRemoteUser(hashMapOf("token" to tokenFb.token))
-                .observe(viewLifecycleOwner) { tokenBack ->
-                    model.getUser(tokenBack).observe(viewLifecycleOwner) { result ->
-                        result?.let { user ->
-                            userThis = user
-                            with(viewBinding) {
-                                if (user.url_avatar.isNullOrEmpty()) {
-                                    btnAddPhoto.visibility = View.VISIBLE
-                                    ivEditPhoto.visibility = View.GONE
-                                } else {
-                                    btnAddPhoto.visibility = View.GONE
-                                    ivEditPhoto.visibility = View.VISIBLE
-                                    loadImage(user.url_avatar.toString(), viewBinding.ivProfile)
-                                }
-                                tiEtName.setText(user.name)
-                                tiEtAboutMyself.setText(user.about)
-                                tiEtLocation.setText(user.location)
-                                when (user.male?.ordinal) {
-                                    0 -> radioGroup.check(R.id.rbMan)
-                                    1 -> radioGroup.check(R.id.rvWoman)
-                                    2 -> radioGroup.check(R.id.rbAnother)
-                                }
-                                tvAgeValue.text = user.age?.toString()
-                                slAge.value = user.age?.toFloat() ?: 18F
-                            }
+            model.getUser(tokenFb.token.toString())
+            model.selfUserData.observe(viewLifecycleOwner) { result ->
+                result?.let { user ->
+                    userThis = user
+                    with(viewBinding) {
+                        if (user.url_avatar.isNullOrEmpty()) {
+                            btnAddPhoto.visibility = View.VISIBLE
+                            ivEditPhoto.visibility = View.GONE
+                        } else {
+                            btnAddPhoto.visibility = View.GONE
+                            ivEditPhoto.visibility = View.VISIBLE
+                            loadImage(user.url_avatar.toString(), viewBinding.ivProfile)
                         }
+                        tiEtName.setText(user.name)
+                        tiEtAboutMyself.setText(user.about)
+                        tiEtLocation.setText(user.location)
+                        when (user.male?.ordinal) {
+                            0 -> radioGroup.check(R.id.rbMan)
+                            1 -> radioGroup.check(R.id.rvWoman)
+                            else -> radioGroup.check(R.id.rbMan)
+                        }
+                        tvAgeValue.text = user.age?.toString()
+                        slAge.value = user.age?.toFloat() ?: 18F
                     }
                 }
+            }
+        }
+        model.updatedUserData.observe(viewLifecycleOwner) { data ->
+            if (data.status != null && fileSended != null) {
+                model.uploadedFileData.observe(viewLifecycleOwner) { image ->
+                    if (image.status != null && fileSended == true) {
+                        endLoading()
+                        parentFragmentManager.popBackStack()
+                    } else {
+                        Toast.makeText(context, "Что-то пошло не так", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            } else if (data.status != null && fileSended == null){
+                endLoading()
+                parentFragmentManager.popBackStack()
+            } else Toast.makeText(context, "Что-то пошло не так", Toast.LENGTH_SHORT).show()
         }
         addTextChangedListener()
         initListeners()
@@ -132,21 +144,20 @@ class PersonalInfoFragment :
         } else true
     }
 
-    private fun sendFileRequest(image: Bitmap) {
+    private fun sendFileRequest(image: Bitmap){
 
+        fileSended = false
         val stream = ByteArrayOutputStream()
         image.compress(Bitmap.CompressFormat.JPEG, 80, stream)
         val byteArray = stream.toByteArray()
-        val body = MultipartBody.Part.createFormData(
+        val bodyToo = MultipartBody.Part.createFormData(
             "user_photo",
             "user_photo",
             byteArray.toRequestBody("image/jpg".toMediaTypeOrNull(), 0, byteArray.size)
         )
         firebaseEmailAuthService.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
-            model.authRemoteUser(hashMapOf("token" to tokenFb.token))
-                .observe(viewLifecycleOwner) { tokenBack ->
-                    model.updateRemoteData(tokenBack, body)
-                }
+            model.updateRemoteData(tokenFb.token.toString(), bodyToo)
+            fileSended = true
         }
     }
 
@@ -172,7 +183,6 @@ class PersonalInfoFragment :
                 val sex = when (checkedId) {
                     R.id.rbMan -> MAN
                     R.id.rvWoman -> WOMAN
-                    R.id.rbAnother -> ANOTHER
                     else -> MAN
                 }
                 userThis.password = sex
@@ -182,18 +192,18 @@ class PersonalInfoFragment :
                 parentFragmentManager.popBackStack()
             }
             btnSave.setOnClickListener {
+                startLoading()
                 firebaseEmailAuthService.getUser()?.getIdToken(true)
                     ?.addOnSuccessListener { tokenFb ->
-                        model.authRemoteUser(hashMapOf("token" to tokenFb.token))
-                            .observe(viewLifecycleOwner) { tokenBack ->
-                                val body = mutableMapOf<String, String>()
-                                body["user_age"] = tvAgeValue.text.toString()
-                                body["user_gender"] = userThis.password.toString()
-                                body["user_nickname"] = tiEtName.text.toString()
-                                body["user_description"] = tiEtAboutMyself.text.toString()
-                                model.updateUser(tokenBack, body)
-                                parentFragmentManager.popBackStack()
-                            }
+                        val body = mutableMapOf<String, String>()
+                        body["user_age"] = tvAgeValue.text.toString()
+                        body["user_gender"] = userThis.password.toString()
+                        body["user_firstname"] = tiEtName.text.toString()
+                        body["user_description"] = tiEtAboutMyself.text.toString()
+                        model.updateUser(tokenFb.token.toString(), body)
+                        if (urlImage != null){
+                            sendFileRequest(urlImage!!)
+                        }
                     }
             }
         }
@@ -204,6 +214,7 @@ class PersonalInfoFragment :
             override fun afterTextChanged(s: Editable) {
                 verifyText()
             }
+
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
         })
@@ -246,6 +257,36 @@ class PersonalInfoFragment :
                 .placeholder(circularProgressDrawable)
                 .error(R.drawable.ic_default_user)
                 .into(container)
+        }
+    }
+
+    private fun loadImageFromUri(image: Uri, container: ImageView) {
+        val circularProgressDrawable = context?.let { CircularProgressDrawable(it) }
+        circularProgressDrawable!!.strokeWidth = 5f
+        circularProgressDrawable.centerRadius = 25f
+        circularProgressDrawable.start()
+
+        view?.let {
+            Glide
+                .with(it.context)
+                .load(image)
+                .placeholder(circularProgressDrawable)
+                .error(R.drawable.ic_default_user)
+                .into(container)
+        }
+    }
+
+    private fun startLoading() {
+        with(viewBinding) {
+            btnSave.isEnabled = false
+            progressUploading.visibility = View.VISIBLE
+        }
+    }
+
+    private fun endLoading() {
+        with(viewBinding) {
+            btnSave.isEnabled = true
+            progressUploading.visibility = View.INVISIBLE
         }
     }
 }

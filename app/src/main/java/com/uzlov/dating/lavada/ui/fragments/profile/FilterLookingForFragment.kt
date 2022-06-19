@@ -98,7 +98,6 @@ class FilterLookingForFragment :
         val sex = when (viewBinding.radioGroup.checkedRadioButtonId) {
             R.id.rbMan -> 0
             R.id.rvWoman -> 1
-            R.id.rbAnother -> 2
             else -> 0
         }
         preferenceRepository.setFilter(

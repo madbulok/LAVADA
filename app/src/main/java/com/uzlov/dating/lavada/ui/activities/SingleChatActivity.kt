@@ -78,9 +78,9 @@ class SingleChatActivity : AppCompatActivity() {
     }
 
     private fun initCompanion() {
-            userViewModel.getUser(companionId).observe(this, {
-                it?.let { it1 -> updateUiCompanion(it1) }
-            })
+//            userViewModel.getUser(companionId).observe(this, {
+//                it?.let { it1 -> updateUiCompanion(it1) }
+//            })
     }
 
     private fun initChat() {

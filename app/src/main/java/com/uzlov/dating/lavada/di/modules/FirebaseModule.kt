@@ -37,8 +37,4 @@ class FirebaseModule {
     fun provideMessageRepository(
         dataSource: IServerDataSource<Any>,
     ): IMessageDataSource = MessagesRepository(dataSource)
-
-    @Provides
-    @Singleton
-    fun provideStorage() : IStorage = ServerStorageService()
 }

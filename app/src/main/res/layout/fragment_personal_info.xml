@@ -39,8 +39,10 @@
             android:layout_height="@dimen/size_image_profile"
             android:layout_marginStart="@dimen/default_margin_16"
             android:layout_marginTop="16dp"
+            android:layout_marginBottom="@dimen/default_margin_16"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/chatLabel"
+            app:layout_constraintBottom_toTopOf="@id/til_name"
             app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent"
             tools:background="@tools:sample/avatars" />
 
@@ -50,7 +52,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginEnd="16dp"
-            android:src="@drawable/edit_2"
+            android:src="@drawable/edit"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@id/ivProfile"
             app:layout_constraintEnd_toEndOf="parent"
@@ -63,52 +65,60 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:text="@string/add_photo"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@id/ivProfile"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/ivProfile" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/til_name"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            style="@style/MyOutlinedBoxStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="@dimen/default_margin_16"
             app:boxCornerRadiusBottomEnd="@dimen/default_margin_16"
             app:boxCornerRadiusBottomStart="@dimen/default_margin_16"
             app:boxCornerRadiusTopEnd="@dimen/default_margin_16"
             app:boxCornerRadiusTopStart="@dimen/default_margin_16"
-            app:layout_constraintTop_toBottomOf="@id/ivProfile">
+            app:layout_constraintTop_toBottomOf="@id/ivProfile"
+            app:layout_constraintBottom_toTopOf="@id/til_about_myself">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/ti_et_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/name"
+                android:text="Загружаем..."
+                app:hintAnimationEnabled="false"
                 android:inputType="textEmailAddress" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/til_about_myself"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            style="@style/MyOutlinedBoxStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            app:counterEnabled="true"
-            app:counterMaxLength="200"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
             app:boxCornerRadiusBottomEnd="@dimen/default_margin_16"
             app:boxCornerRadiusBottomStart="@dimen/default_margin_16"
             app:boxCornerRadiusTopEnd="@dimen/default_margin_16"
             app:boxCornerRadiusTopStart="@dimen/default_margin_16"
+            app:counterEnabled="true"
+            app:counterMaxLength="200"
             app:layout_constraintTop_toBottomOf="@id/til_name"
-            >
+            app:layout_constraintBottom_toTopOf="@id/tv_sex">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/ti_et_about_myself"
                 android:layout_width="match_parent"
                 android:layout_height="320dp"
                 android:gravity="top"
-                android:hint="@string/about_myself"/>
-              </com.google.android.material.textfield.TextInputLayout>
+                android:text="Загружаем..."
+                android:hint="@string/about_myself" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
             android:id="@+id/tv_sex"
@@ -121,16 +131,16 @@
             android:textColor="@color/Secondary_text"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/til_about_myself" />
+            app:layout_constraintTop_toBottomOf="@id/til_about_myself"
+            app:layout_constraintBottom_toTopOf="@id/radioGroup"/>
 
 
         <RadioGroup
             android:id="@+id/radioGroup"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="center"
+            android:gravity="left"
             android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="@+id/tv_sex"
             app:layout_constraintStart_toStartOf="@+id/tv_sex"
             app:layout_constraintTop_toBottomOf="@id/tv_sex">
 
@@ -138,21 +148,15 @@
                 android:id="@+id/rbMan"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingEnd="@dimen/default_margin_32"
-                android:text="@string/man" />
+                android:button="@drawable/ic_man"
+                android:paddingEnd="@dimen/default_margin_32" />
 
             <RadioButton
                 android:id="@+id/rvWoman"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingEnd="@dimen/default_margin_32"
-                android:text="@string/woman" />
-
-            <RadioButton
-                android:id="@+id/rbAnother"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/another" />
+                android:button="@drawable/ic_woman"
+                android:paddingEnd="@dimen/default_margin_32" />
 
         </RadioGroup>
 
@@ -188,11 +192,12 @@
             android:valueTo="100"
             app:layout_constraintEnd_toEndOf="@+id/tv_age"
             app:layout_constraintStart_toStartOf="@+id/tv_age"
-            app:layout_constraintTop_toBottomOf="@id/tv_age" />
+            app:layout_constraintTop_toBottomOf="@id/tv_age"
+            app:tickVisible="false" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/til_location"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            style="@style/MyOutlinedBoxStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
@@ -221,11 +226,14 @@
             android:drawableStart="@drawable/map_pin"
             android:drawablePadding="@dimen/default_margin_8"
             android:enabled="false"
+            app:thumbTint="@color/Surface"
+            app:trackTint="@color/Brand_hover"
             android:text="@string/my_location"
             app:drawableTint="@color/Secondary_text"
             app:layout_constraintEnd_toEndOf="@+id/sl_age"
             app:layout_constraintStart_toStartOf="@+id/sl_age"
-            app:layout_constraintTop_toBottomOf="@id/til_location" />
+            app:layout_constraintTop_toBottomOf="@id/til_location"
+            app:layout_constraintBottom_toBottomOf="@id/tv_social"/>
 
         <TextView
             android:id="@+id/tv_social"
@@ -239,7 +247,8 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/swEnableLocation" />
+            app:layout_constraintTop_toBottomOf="@id/swEnableLocation"
+            app:layout_constraintBottom_toTopOf="@id/tv_social_desc"/>
 
         <TextView
             android:id="@+id/tv_social_desc"
@@ -247,7 +256,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
-            android:layout_marginTop="@dimen/default_margin_16"
+            android:layout_marginTop="@dimen/default_margin_8"
             android:layout_marginEnd="24dp"
             android:text="@string/nly_seen_by_premium_users"
             android:textColor="@color/Secondary_text"
@@ -258,7 +267,7 @@
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tv_instagram"
             style="@style/Regular"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:layout_marginTop="28dp"
@@ -266,22 +275,26 @@
             android:drawableStart="@drawable/instagram_for_ap"
             android:drawablePadding="@dimen/default_margin_8"
             android:text="@string/instagram"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btn_instagram"
             app:layout_constraintTop_toBottomOf="@id/tv_social_desc" />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_instagram"
             style="@style/DefaultButtons"
-            android:layout_width="65dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="20dp"
             android:text="@string/add"
             app:layout_constraintBottom_toBottomOf="@id/tv_instagram"
+            app:layout_constraintStart_toEndOf="@id/tv_instagram"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/tv_instagram" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tv_facebook"
             style="@style/Regular"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:layout_marginTop="40dp"
@@ -289,40 +302,50 @@
             android:drawableStart="@drawable/facebook"
             android:drawablePadding="@dimen/default_margin_8"
             android:text="@string/facebook"
-            app:layout_constraintTop_toBottomOf="@id/tv_instagram" />
+            app:layout_constraintBottom_toTopOf="@id/tv_tiktok"
+            app:layout_constraintEnd_toStartOf="@id/btn_facebook"
+            app:layout_constraintTop_toBottomOf="@id/tv_instagram"
+            app:layout_constraintStart_toStartOf="parent"/>
 
         <com.google.android.material.button.MaterialButton
+            android:id="@id/btn_facebook"
             style="@style/DefaultButtons"
-            android:layout_width="65dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="20dp"
             android:text="@string/add"
             app:layout_constraintBottom_toBottomOf="@id/tv_facebook"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/tv_facebook" />
+            app:layout_constraintTop_toTopOf="@id/tv_facebook"
+            app:layout_constraintStart_toEndOf="@id/tv_facebook"/>
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tv_twitter"
+            android:id="@+id/tv_tiktok"
             style="@style/Regular"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:layout_marginTop="40dp"
             android:layout_marginEnd="24dp"
-            android:drawableStart="@drawable/twitter"
+            android:drawableStart="@drawable/tiktok_for_ap"
             android:drawablePadding="@dimen/default_margin_8"
-            android:text="@string/twitter"
-            app:layout_constraintTop_toBottomOf="@id/tv_facebook" />
+            android:text="@string/tiktok"
+            app:layout_constraintBottom_toTopOf="@id/btn_facebook"
+            app:layout_constraintTop_toBottomOf="@id/tv_facebook"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btn_tiktok"/>
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_tiktok"
             style="@style/DefaultButtons"
-            android:layout_width="65dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="20dp"
             android:text="@string/add"
-            app:layout_constraintBottom_toBottomOf="@id/tv_twitter"
+            app:layout_constraintStart_toEndOf="@id/tv_tiktok"
+            app:layout_constraintBottom_toBottomOf="@id/tv_tiktok"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/tv_twitter" />
+            app:layout_constraintTop_toTopOf="@id/tv_tiktok" />
 
         <TextView
             android:id="@+id/btn_cancel"
@@ -333,22 +356,32 @@
             android:gravity="center"
             android:text="@string/cancel_label"
             android:textColor="@color/Secondary_text"
-            app:layout_constraintTop_toBottomOf="@id/tv_twitter" />
+            app:layout_constraintTop_toBottomOf="@id/tv_tiktok"
+            app:layout_constraintBottom_toTopOf="@id/btn_save"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_save"
-            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+            style="@style/DefaultButtons"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="55dp"
             android:layout_marginStart="20dp"
             android:layout_marginTop="26dp"
             android:layout_marginEnd="20dp"
             android:layout_marginBottom="34dp"
             android:text="@string/save"
             android:textAllCaps="false"
-            android:textColor="@color/Primary_text"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/btn_cancel" />
+
+        <ProgressBar
+            android:id="@+id/progressUploading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>
