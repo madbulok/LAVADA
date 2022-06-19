@@ -21,7 +21,6 @@ import com.uzlov.dating.lavada.domain.models.AuthorizedUser
 import com.uzlov.dating.lavada.domain.models.MALE
 import com.uzlov.dating.lavada.domain.models.RemoteUser
 import com.uzlov.dating.lavada.domain.models.User
-import com.uzlov.dating.lavada.storage.IStorage
 import com.uzlov.dating.lavada.ui.activities.HostActivity
 import com.uzlov.dating.lavada.ui.activities.LoginActivity
 import com.uzlov.dating.lavada.ui.fragments.BaseFragment
@@ -39,9 +38,6 @@ class PreviewVideoFragment :
 
     @Inject
     lateinit var firebaseEmailAuthService: FirebaseEmailAuthService
-
-    @Inject
-    lateinit var serverStorageService: IStorage
 
     @Inject
     lateinit var preferenceRepository: PreferenceRepository

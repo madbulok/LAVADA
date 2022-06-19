@@ -11,7 +11,6 @@ import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
@@ -26,7 +25,6 @@ import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
 import com.uzlov.dating.lavada.databinding.FragmentPersonalInfoBinding
 import com.uzlov.dating.lavada.domain.models.User
-import com.uzlov.dating.lavada.storage.IStorage
 import com.uzlov.dating.lavada.ui.fragments.BaseFragment
 import com.uzlov.dating.lavada.viemodels.UsersViewModel
 import com.uzlov.dating.lavada.viemodels.ViewModelFactory
@@ -49,9 +47,6 @@ class PersonalInfoFragment :
 
     @Inject
     lateinit var firebaseEmailAuthService: FirebaseEmailAuthService
-
-    @Inject
-    lateinit var serverStorageService: IStorage
 
     @Inject
     lateinit var factoryViewModel: ViewModelFactory
