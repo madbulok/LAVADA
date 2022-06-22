@@ -8,10 +8,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
-import com.android.billingclient.api.BillingClient
-import com.android.billingclient.api.BillingFlowParams
-import com.android.billingclient.api.PurchasesUpdatedListener
-import com.android.billingclient.api.SkuDetails
+import com.android.billingclient.api.*
 import com.bumptech.glide.Glide
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.app.Extensions
@@ -124,6 +121,15 @@ class ShopFragment : BaseFragment<FragmentShopBinding>(FragmentShopBinding::infl
         super.onCreate(savedInstanceState)
         requireContext().appComponent.inject(this)
         billingClient = billingClientBuilder.setListener(purchasesUpdateListener).build()
+        billingClient?.startConnection(object : BillingClientStateListener {
+            override fun onBillingSetupFinished(p0: BillingResult) {
+                
+            }
+
+            override fun onBillingServiceDisconnected() {
+
+            }
+        })
         usersViewModel = factoryViewModel.create(UsersViewModel::class.java)
         purchasesViewModel = factoryViewModel.create(PurchasesViewModel::class.java)
     }
