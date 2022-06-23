@@ -14,6 +14,7 @@ import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.databinding.FragmentAboutPremiumBinding
 import com.uzlov.dating.lavada.ui.fragments.dialogs.FragmentBuyPremium
+import com.uzlov.dating.lavada.ui.fragments.dialogs.FragmentSelectSourceVideo
 import com.uzlov.dating.lavada.viemodels.SubscriptionsViewModel
 import com.uzlov.dating.lavada.viemodels.ViewModelFactory
 import javax.inject.Inject
@@ -82,6 +83,12 @@ class AboutPremiumFragment :
 
                 }
             }
+        }
+    }
+
+    companion object {
+        fun newInstance(): AboutPremiumFragment {
+            return AboutPremiumFragment()
         }
     }
 

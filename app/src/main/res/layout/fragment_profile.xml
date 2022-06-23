@@ -126,7 +126,7 @@
                     android:layout_marginStart="20dp"
                     android:layout_marginTop="30dp"
                     android:layout_marginEnd="20dp"
-                    android:elevation="5dp"
+                    app:cardElevation="0dp"
                     app:cardCornerRadius="24dp"
                     android:visibility="invisible"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -135,7 +135,8 @@
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                        android:layout_height="match_parent"
+                        >
 
                         <ImageView
                             android:id="@+id/iv_videos"
@@ -151,7 +152,7 @@
                             android:id="@+id/tv_videos"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="2244"
+                            android:text="0"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="@id/iv_videos"
                             app:layout_constraintStart_toStartOf="@id/iv_videos"
@@ -171,7 +172,7 @@
                             android:id="@+id/tv_gifts"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="2244"
+                            android:text="0"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="@id/iv_gifts"
                             app:layout_constraintStart_toStartOf="@id/iv_gifts"
@@ -191,7 +192,7 @@
                             android:id="@+id/tv_likes"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="2244"
+                            android:text="0"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toStartOf="@id/iv_messages"
                             app:layout_constraintStart_toEndOf="@id/iv_gifts"
@@ -211,7 +212,7 @@
                             android:id="@+id/tv_messages"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="2244"
+                            android:text="0"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toEndOf="@id/iv_likes"
@@ -257,7 +258,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="20dp"
                             android:text="top up"
-                            android:textColor="@color/Secondary_text"
+                            android:textColor="@color/Primary_text"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />

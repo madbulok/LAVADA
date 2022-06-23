@@ -18,7 +18,11 @@ fun convertDtoToModel(remoteUser: RemoteUser): User {
         "another" -> MALE.ANOTHER
         else -> MALE.MAN
     }
-
+    val ready = when(fact?.user_status){
+        "active" -> true
+        "not_confirmed" -> false
+        else -> false
+    }
     return User(
         uid = fact?.user_firebase_uid!!,
         email = fact.user_email,
@@ -32,6 +36,7 @@ fun convertDtoToModel(remoteUser: RemoteUser): User {
         lon = fact.user_location_lng?.toDouble(),
         location = fact.user_address,
         premium = fact._has_premium,
+        ready = ready
     )
 }
 
@@ -42,6 +47,11 @@ fun convertListDtoToModel(reUser: ReUser?): User {
         "FEMALE" -> MALE.WOMAN
         "ANOTHER" -> MALE.ANOTHER
         else -> MALE.ANOTHER
+    }
+    val ready = when(fact?.user_status){
+        "active" -> true
+        "not_confirmed" -> false
+        else -> false
     }
 
     return User(
@@ -56,7 +66,8 @@ fun convertListDtoToModel(reUser: ReUser?): User {
         lat = fact.user_location_lat?.toDouble(),
         lon = fact.user_location_lng?.toDouble(),
         location = fact.user_address,
-        premium = fact._has_premium
+        premium = fact._has_premium,
+        ready = ready
     )
 }
 
@@ -68,5 +79,15 @@ fun convertToLike(reUser: ReUser?): Boolean{
         else -> false
     }
     return like
+}
+
+fun convertToReady(reUser: ReUser?): Boolean{
+    val fact: ReUser? = reUser
+    val ready = when(fact?.user_status){
+        "active" -> true
+        "not_confirmed" -> false
+        else -> false
+    }
+    return ready
 }
 

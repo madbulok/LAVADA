@@ -40,6 +40,7 @@ import com.uzlov.dating.lavada.domain.models.User
 import com.uzlov.dating.lavada.domain.models.getNAmeLabel
 import com.uzlov.dating.lavada.storage.URIPathHelper
 import com.uzlov.dating.lavada.ui.activities.HostActivity
+import com.uzlov.dating.lavada.ui.fragments.AboutPremiumFragment
 import com.uzlov.dating.lavada.ui.fragments.BaseFragment
 import com.uzlov.dating.lavada.ui.fragments.ShopFragment
 import com.uzlov.dating.lavada.ui.fragments.dialogs.FragmentBuyPremium
@@ -71,6 +72,9 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
     }
     private val shop by lazy {
         ShopFragment()
+    }
+    private val aboutPremium by lazy {
+        AboutPremiumFragment()
     }
     private val player by lazy {
         val renderer = DefaultRenderersFactory(requireContext())
@@ -179,11 +183,10 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
                     .commit()
             }
             clNotPremium.setOnClickListener {
-                val buyPremiumFragment = FragmentBuyPremium()
-                buyPremiumFragment.show(
-                    childFragmentManager,
-                    buyPremiumFragment.javaClass.simpleName
-                )
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.container, aboutPremium)
+                    .addToBackStack(null)
+                    .commit()
             }
             flCard.setOnClickListener {
                 showCustomAlertToByPremium()

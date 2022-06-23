@@ -12,8 +12,6 @@ import com.uzlov.dating.lavada.data.data_sources.interfaces.IMessageDataSource
 import com.uzlov.dating.lavada.data.data_sources.interfaces.IPurchasesDataSource
 import com.uzlov.dating.lavada.data.repository.MessagesRepository
 import com.uzlov.dating.lavada.retrofit.IServerDataSource
-import com.uzlov.dating.lavada.storage.IStorage
-import com.uzlov.dating.lavada.storage.ServerStorageService
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
