@@ -14,7 +14,7 @@ interface ApiService {
     //получить список пользователей (пока без сортировки по дистанции) +
     @GET("api/v1/users")
     suspend fun getUsersAsync(
-        //       @Query("limit") limit: String,
+               @Query("limit") limit: String,
         //       @Query("offset") offset: String,
         //       @Query("order_by_location") order_by_location: String,
         //       @Query("only_premium") only_premium: String,
@@ -29,6 +29,11 @@ interface ApiService {
     @GET("api/v1/user")
     suspend fun getUserByIdAsync(
         @Query("firebase_uid") id: String
+    ) : Response<RemoteUser>
+
+    @GET("api/v1/user")
+    suspend fun getUserByLavadaIdAsync(
+        @Query("user_id") id: String
     ) : Response<RemoteUser>
 
     //получить баланс пользователя
@@ -79,49 +84,49 @@ interface ApiService {
     //создать сообщение +
     @FormUrlEncoded
     @POST("api/v1/chat/message")
-    fun createMessageAsync(
+    suspend fun createMessageAsync(
         @FieldMap map: Map<String, String>
-    ): Deferred<ReChat>
+    ): Response<ReChat>
 
 
     // получить список сообщений +
     @GET("api/v1/chat/message/list")
-    fun getMessagesAsync(
+    suspend fun getMessagesAsync(
         @Query("chat_id") id: String
-    ): Deferred<ReMessage>
+    ): Response<ReMessage>
 
     //обновить статус - прочитано/не прочитано - не могу проверить, потому что не могу создать сообщение
     @FormUrlEncoded
     @POST("api/v1/chat/message/status")
-    fun updateStatusAsync(
+    suspend fun updateStatusAsync(
         @FieldMap subscribe: Map<String, String>
-    ): Deferred<ResponseBody>
+    ): Response<ResponseBody>
 
     //получить список чатов +
     @GET("api/v1/chat/list")
-    fun getListChatsAsync(
+    suspend fun getListChatsAsync(
         @Query("offset") offset: String,
         @Query("limit") limit: String
-    ): Deferred<RemoteChatList>
+    ): Response<RemoteChatList>
 
     // создать чат +
     @FormUrlEncoded
     @POST("api/v1/chat")
-    fun createChatAsync(
+    suspend fun createChatAsync(
         @FieldMap subscribe: Map<String, String>
-    ): Deferred<ReChat>
+    ): Response<ReChat>
 
     //получить чат по id + (работает возможно неправильно со стороны бэка)
     @GET("api/v1/chat")
-    fun getChatByIdAsync(
+    suspend fun getChatByIdAsync(
         @Query("chat_id") chat_id: String
-    ): Deferred<ReChat>
+    ): Response<ReChat>
 
     //проверить, существует ли чат +
     @GET("api/v1/chat/check")
-    fun checkChatAsync(
+    suspend fun checkChatAsync(
         @Query("firebase_uid") firebase_uid: String
-    ): Deferred<ReChat>
+    ): Response<ReChat>
 
     /**подарки**/
 

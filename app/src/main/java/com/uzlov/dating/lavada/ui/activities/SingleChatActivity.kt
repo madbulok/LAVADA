@@ -3,31 +3,30 @@ package com.uzlov.dating.lavada.ui.activities
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
-import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.*
+import android.view.View.OnTouchListener
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
+import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
 import com.uzlov.dating.lavada.databinding.FragmentSingleChatBinding
-import com.uzlov.dating.lavada.domain.models.Chat
 import com.uzlov.dating.lavada.domain.models.ChatMessage
 import com.uzlov.dating.lavada.domain.models.User
+import com.uzlov.dating.lavada.storage.URIPathHelper
 import com.uzlov.dating.lavada.ui.adapters.ChatMessageAdapter
+import com.uzlov.dating.lavada.ui.fragments.CompanionInfoFragment
+import com.uzlov.dating.lavada.ui.fragments.FilterSearchPeopleFragment
+import com.uzlov.dating.lavada.ui.fragments.profile.UploadVideoFragment
 import com.uzlov.dating.lavada.viemodels.MessageChatViewModel
 import com.uzlov.dating.lavada.viemodels.UsersViewModel
 import javax.inject.Inject
-
-import android.view.View.OnTouchListener
-import com.uzlov.dating.lavada.storage.URIPathHelper
-import com.uzlov.dating.lavada.ui.fragments.profile.UploadVideoFragment
 
 
 class SingleChatActivity : AppCompatActivity() {
@@ -46,10 +45,12 @@ class SingleChatActivity : AppCompatActivity() {
     private lateinit var messagesAdapter: ChatMessageAdapter
 
     // data
-    private lateinit var selfUid : String
-    private lateinit var companionId : String
-    private lateinit var chatOpen: Chat
+    private  var selfUid : String = ""
+    private lateinit var companionId: String
+    private lateinit var companionUID: String
     private lateinit var chatId: String
+    private lateinit var listMessage: List<ChatMessage>
+    private lateinit var companion : User
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,8 +59,8 @@ class SingleChatActivity : AppCompatActivity() {
         setContentView(viewBinding.root)
 
         // restore intent
-        chatId = intent?.getStringExtra(CHAT_ID) ?: ""
         companionId = intent?.getStringExtra(COMPANION_ID) ?: ""
+        companionUID = intent?.getStringExtra(COMPANION_UID) ?: ""
 
         // dagger init
         appComponent.inject(this)
@@ -67,42 +68,108 @@ class SingleChatActivity : AppCompatActivity() {
         userViewModel = viewModelFactory.create(UsersViewModel::class.java)
         messageChatViewModel = viewModelFactory.create(MessageChatViewModel::class.java)
 
-        selfUid = firebaseEmailAuthService.getUserUid() ?: ""
-        messagesAdapter = ChatMessageAdapter(self = selfUid)
+        firebaseEmailAuthService.getUser()?.getIdToken(true)?.addOnSuccessListener {
+            userViewModel.getUser(it.token.toString())
+        }
 
+
+
+        messageChatViewModel.chatCreatedData.observe(this) { result ->
+            if (result.status == "ok") {
+                Log.e("Чат успешно создан, id чата: ", result.data?.chat_id.toString())
+                chatId = result.data?.chat_id.toString()
+                hideLoading()
+            }
+        }
+
+        messageChatViewModel.status.observe(this) {
+            if (it != null) {
+                Toast.makeText(this, it.toString(), Toast.LENGTH_SHORT).show()
+                hideLoading()
+            }
+
+        }
+        messageChatViewModel.listMessageData.observe(this) {
+            if (it.isNotEmpty()) {
+                messagesAdapter.setMessages(it)
+                viewBinding.lvMessages.scrollToPosition((viewBinding.lvMessages.adapter as ChatMessageAdapter).itemCount - 1)
+                listMessage = it
+                hideLoading()
+            }
+        }
+        messageChatViewModel.messageSendData.observe(this) { result ->
+            if (result.status == "ok") {
+                firebaseEmailAuthService.getUser()?.getIdToken(true)
+                    ?.addOnSuccessListener { tokenFb ->
+                        messageChatViewModel.getListMessages(
+                            tokenFb.token.toString(),
+                            chatId
+                        )
+                        hideLoading()
+                    }
+            }
+        }
+        userViewModel.userByLavadaIdData.observe(this, {
+            it?.let { it1 -> updateUiCompanion(it1) }
+            companion = it
+
+        })
+        viewBinding.btnInfo.setOnClickListener {
+          openCompanionInfo(companion)
+
+        }
         initView()
         initChat()
         initCompanion()
-        setFullscreen()
 
     }
 
+    private fun openCompanionInfo(user: User) {
+        val fragment = CompanionInfoFragment.newInstance(user)
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.container, fragment)
+            .addToBackStack(null)
+            .commit()
+    }
+
     private fun initCompanion() {
-//            userViewModel.getUser(companionId).observe(this, {
-//                it?.let { it1 -> updateUiCompanion(it1) }
-//            })
+        firebaseEmailAuthService.getUser()?.getIdToken(true)
+            ?.addOnSuccessListener { tokenFb ->
+                userViewModel.getUserByLavadaId(tokenFb.token.toString(), companionId)
+            }
     }
 
     private fun initChat() {
         showLoading()
-//        messageChatViewModel.createChat(selfUid, companionId)
-//            .observe(this, {
-//                chatId = it
-//                loadMessagesHistory()
-//
-//            })
+        firebaseEmailAuthService.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
+            messageChatViewModel.checkChat(tokenFb.token.toString(), companionUID)
+            messageChatViewModel.checkChatData.observe(this) { result ->
+                if (result.data?.chat_id == null ) {
+                   companionId.let {
+                        messageChatViewModel.createRemoteChat(tokenFb.token.toString(),
+                            it
+                        )
+                    }
+                } else {
+                    chatId = result.data.chat_id.toString()
+                    messageChatViewModel.getListMessages(tokenFb.token.toString(), chatId)
+                    hideLoading()
+                }
+            }
+        }
     }
 
     private fun showLoading() {
-        with(viewBinding){
+        with(viewBinding) {
             viewBinding.pgContentLoading.visibility = View.VISIBLE
             viewBinding.lvMessages.visibility = View.GONE
             btnSend.isEnabled = false
             textInputLayout.isEnabled = true
         }
     }
+
     private fun hideLoading() {
-        with(viewBinding){
+        with(viewBinding) {
             viewBinding.pgContentLoading.visibility = View.GONE
             viewBinding.lvMessages.visibility = View.VISIBLE
             btnSend.isEnabled = true
@@ -113,8 +180,13 @@ class SingleChatActivity : AppCompatActivity() {
     @SuppressLint("ClickableViewAccessibility")
     private fun initView() {
 
-        with(viewBinding){
-            lvMessages.adapter = messagesAdapter
+        with(viewBinding) {
+
+            userViewModel.selfUserData.observe(this@SingleChatActivity){ it ->
+                selfUid = it.userId.toString()
+                messagesAdapter = ChatMessageAdapter(self = selfUid)
+                lvMessages.adapter = messagesAdapter
+            }
             tbBackAction.setOnClickListener {
                 finish()
             }
@@ -122,20 +194,30 @@ class SingleChatActivity : AppCompatActivity() {
             btnSend.setOnClickListener {
                 if (!chatId.isNullOrEmpty() && viewBinding.textInputLayout.text?.length ?: 0 > 0) {
 
-                    chatOpen.let {
-                        it.messages.add(
-                            ChatMessage(
-                                message = viewBinding.textInputLayout.text.toString(),
-                                sender = selfUid,
-                                viewed = false,
-                                mediaUrl = ""
-                            )
-                        )
+                    val mes = viewBinding.textInputLayout.text.toString()
+//                    chatOpen.let {
+//                        it.messages.add(
+//                            ChatMessage(
+//                                message = viewBinding.textInputLayout.text.toString(),
+//                                sender = selfUid,
+//                                viewed = false,
+//                                mediaUrl = ""
+//                            )
+//                        )
 //                        messageChatViewModel.sendMessage(
 //                            uidChat = chatId,
 //                            chat = it
 //                        )
-                    }
+                    firebaseEmailAuthService.getUser()?.getIdToken(true)
+                        ?.addOnSuccessListener { tokenFb ->
+                            messageChatViewModel.sendRemoteMessage(
+                                tokenFb.token.toString(),
+                                chatId,
+                                mes
+                            )
+
+//                        }
+                        }
                     viewBinding.textInputLayout.setText("")
                 }
             }
@@ -164,13 +246,14 @@ class SingleChatActivity : AppCompatActivity() {
                 false
             })
 
-            textInputLayout.addTextChangedListener(object : TextWatcher{
+            textInputLayout.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(
                     s: CharSequence?,
                     start: Int,
                     count: Int,
                     after: Int,
-                ) {}
+                ) {
+                }
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 
@@ -182,8 +265,8 @@ class SingleChatActivity : AppCompatActivity() {
 
     }
 
-    private fun setStateSend(isGiftState: Boolean){
-        if (isGiftState){
+    private fun setStateSend(isGiftState: Boolean) {
+        if (isGiftState) {
             viewBinding.btnSend.visibility = View.GONE
             viewBinding.btnGift.visibility = View.VISIBLE
         } else {
@@ -192,7 +275,7 @@ class SingleChatActivity : AppCompatActivity() {
         }
     }
 
-//    private fun loadMessagesHistory() {
+    private fun loadMessagesHistory() {
 //        messageChatViewModel.retrieveMessages(chatId).observe(this, {
 //            if (it != null) {
 //                chatOpen = it.copy()
@@ -203,10 +286,10 @@ class SingleChatActivity : AppCompatActivity() {
 //            }
 //            hideLoading()
 //        })
-//    }
+    }
 
-    private fun updateUiCompanion(user: User){
-        with(viewBinding){
+    private fun updateUiCompanion(user: User) {
+        with(viewBinding) {
             tvProfileName.text = user.name
             tvSubMessageName.text = user.location
             Glide.with(this@SingleChatActivity)
@@ -221,8 +304,10 @@ class SingleChatActivity : AppCompatActivity() {
             type = "image/*"
             action = Intent.ACTION_PICK
         }
-        startActivityForResult(Intent.createChooser(intent, "Select image"),
-            UploadVideoFragment.REQUEST_CODE)
+        startActivityForResult(
+            Intent.createChooser(intent, "Select image"),
+            UploadVideoFragment.REQUEST_CODE
+        )
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -236,32 +321,10 @@ class SingleChatActivity : AppCompatActivity() {
         }
     }
 
-    private fun setFullscreen() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            window.attributes.layoutInDisplayCutoutMode =
-                WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
-        }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            window.setDecorFitsSystemWindows(false)
-            window.insetsController?.apply {
-                hide(WindowInsets.Type.statusBars() or WindowInsets.Type.navigationBars())
-                systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-            }
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            @Suppress("DEPRECATION")
-            window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_FULLSCREEN
-                    or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                    or View.SYSTEM_UI_FLAG_IMMERSIVE
-                    or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION)
-        }
-    }
-
     companion object {
         const val CHAT_ID = "chat_id"
         const val COMPANION_ID = "companion_id"
+        const val COMPANION_UID = "companion_uid"
     }
 
 }

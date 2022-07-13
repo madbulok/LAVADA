@@ -45,16 +45,13 @@ class MainVideosFragment :
 
     private lateinit var model: UsersViewModel
 
-    private val messageChatViewModel: MessageChatViewModel by lazy {
-        factoryViewModel.create(MessageChatViewModel::class.java)
-    }
-
     private val subsViewModel: SubscriptionsViewModel by lazy {
         factoryViewModel.create(SubscriptionsViewModel::class.java)
     }
 
     private var self = User()
     private var userFilter = UserFilter()
+    private var userMes = User()
 
     private val scrollListener: RecyclerViewScrollListener by lazy {
         object : RecyclerViewScrollListener() {
@@ -123,6 +120,9 @@ class MainVideosFragment :
 
     private fun initObservers(){
         //лайки
+        model.selfUserData.observe(viewLifecycleOwner){ result ->
+            self = result
+        }
         model.likes.observe(viewLifecycleOwner) {
             Log.e("javaClass.simpleName", "likes recieve")
             it.let { user ->
@@ -133,8 +133,6 @@ class MainVideosFragment :
                         Toast.LENGTH_SHORT
                     ).show()
                 } else if (user.matches.getValue(user.uid)) {
-
-                    Log.e("ОТПРАВЛЯЕМ ЛАЙК СЮДА", it.uid)
                     self.matches[it.uid] = false
                     val heartFragment = FragmentMatch.newInstance(it)
                     heartFragment.show(
@@ -157,11 +155,6 @@ class MainVideosFragment :
             mAdapter.updateList(
                 users, self
             )
-
-//                            messageChatViewModel.getListMessages(tokenBack, "1")
-//                                .observe(viewLifecycleOwner) {
-//                                    Log.e("GET_LIST_MESSAGE", it.toString())
-//                                }
         }
         //статус доступа к api
         model.status.observe(viewLifecycleOwner) { result ->
@@ -169,10 +162,26 @@ class MainVideosFragment :
                 Toast.makeText(context, result.toString(), Toast.LENGTH_SHORT).show()
                 model.status.value = null
             }
+        }
+        model.checkedLikeData.observe(viewLifecycleOwner){ result ->
+            if (result.data?._mutual_like == "1"){
+                Log.e("ВЗАИМНО, МОЖНО ОТКРЫВАТЬ ЧАТ", result.data._mutual_like.toString())
+                PlayerViewAdapter.pauseAllPlayers()
+                userMes.userId?.let { openChatActivity(it, userMes.uid) }
+            } else {
+                showCustomAlertOnlyPremium()
+            }
 
         }
     }
 
+    private fun openChatActivity(companionId: String, companionUid: String) {
+        val intent = Intent(requireContext(), SingleChatActivity::class.java).apply {
+            putExtra(SingleChatActivity.COMPANION_ID, companionId)
+            putExtra(SingleChatActivity.COMPANION_UID, companionUid)
+        }
+        startActivity(intent)
+    }
 
     private fun showCustomAlertToComplain() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_custom_layout, null)
@@ -294,6 +303,7 @@ class MainVideosFragment :
             }
 
             override fun sendMessage(user: User) {
+                userMes = user
                 //check likes?
                 /**
                  * тут будет так
@@ -302,13 +312,15 @@ class MainVideosFragment :
                  * - если нет, проверяем премиум
                  * - если премиум, то открываем сообщения, если нет, открываем алерт с прежложением купить премиум*/
                 if (self.premium) {
-                    authService.getUserUid()?.let {
-                        self.chats[user.uid] = self.uid
-                        PlayerViewAdapter.pauseCurrentPlayingVideo()
-                        openChatActivity(user.uid)
+//                    self.chats[user.uid] = self.uid
+                    PlayerViewAdapter.pauseCurrentPlayingVideo()
+                    user.userId?.let { it1 -> openChatActivity(it1, user.uid)
                     }
                 } else {
-                    showCustomAlertOnlyPremium()
+                    authService.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
+                        model.checkLike(tokenFb.token ?: "", user.uid)
+                        Log.e("javaClass.simpleName", "checkLike: ")
+                    }
                 }
 
             }
@@ -319,12 +331,7 @@ class MainVideosFragment :
         })
     }
 
-    private fun openChatActivity(companionId: String) {
-        val intent = Intent(requireContext(), SingleChatActivity::class.java).apply {
-            putExtra(SingleChatActivity.COMPANION_ID, companionId)
-        }
-        startActivity(intent)
-    }
+
 
     private fun openFilterSearch(user: User) {
         val fragment = FilterSearchPeopleFragment.newInstance(user)

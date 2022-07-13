@@ -30,7 +30,8 @@ data class User(
     var black_list: MutableList<String> = mutableListOf(), //хранит UID для блэклиста
     var ready: Boolean = false,
     var premium: Boolean = false,
-    var balance: Int = 0
+    var balance: Int = 0,
+    var userId: String? = ""
 ) : Parcelable
 
 fun User.getNAmeLabel() = if (name.isNullOrBlank() && age == null) {

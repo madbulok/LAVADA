@@ -1,5 +1,6 @@
 package com.uzlov.dating.lavada.data
 
+import android.os.Message
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
@@ -13,4 +14,5 @@ data class ErrorUtils (
 @Parcelize
 data class Err(
     val user_status: String? = null,
+    val message: String? = null
 ): Parcelable

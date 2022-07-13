@@ -3,15 +3,13 @@ package com.uzlov.dating.lavada.ui.fragments
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.app.appComponent
-import com.uzlov.dating.lavada.app.getCompanionUid
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
 import com.uzlov.dating.lavada.databinding.FragmentSingleChatBinding
 import com.uzlov.dating.lavada.domain.models.Chat
@@ -37,9 +35,9 @@ class FragmentOpenChat :
 
     private lateinit var chatId: String
     private var chatOpen: Chat? = null
-    private val selfUid by lazy {
-        firebaseEmailAuthService.getUserUid() ?: ""
-    }
+    private val selfUid = ""
+    private lateinit var companion : User
+    private lateinit var listMessage: List<ChatMessage>
 
     private lateinit var messagesAdapter: ChatMessageAdapter
 
@@ -48,44 +46,103 @@ class FragmentOpenChat :
         requireContext().appComponent.inject(this)
         userViewModel = viewModelFactory.create(UsersViewModel::class.java)
         messageChatViewModel = viewModelFactory.create(MessageChatViewModel::class.java)
-        messagesAdapter = ChatMessageAdapter(self = firebaseEmailAuthService.getUserUid() ?: "")
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setOnClickListeners()
+
+        messagesAdapter = ChatMessageAdapter(self = firebaseEmailAuthService.getUserUid() ?: "")
         viewBinding.lvMessages.adapter = messagesAdapter
         arguments?.let {
             chatId = it.getString(CHAT_ID) ?: ""
             viewBinding.tvProfileName.text = it.getString(CHAT_ID) ?: "Error chat!"
         }
 
-      //  loadMessagesHistory()
+        initChat()
+        userViewModel.userByLavadaIdData.observe(this, {
+            it?.let { it1 -> updateUiCompanion(it1) }
+            companion = it
+
+        })
+        messageChatViewModel.listMessageData.observe(this) {
+            if (it.isNotEmpty()) {
+                messagesAdapter.setMessages(it)
+                viewBinding.lvMessages.scrollToPosition((viewBinding.lvMessages.adapter as ChatMessageAdapter).itemCount - 1)
+                listMessage = it
+                hideLoading()
+            }
+        }
+        messageChatViewModel.messageSendData.observe(this) { result ->
+            if (result.status == "ok") {
+                firebaseEmailAuthService.getUser()?.getIdToken(true)
+                    ?.addOnSuccessListener { tokenFb ->
+                        messageChatViewModel.getListMessages(
+                            tokenFb.token.toString(),
+                            chatId
+                        )
+                        hideLoading()
+                    }
+            } else {
+                Log.e("Все пошло не по плану", result.status.toString())
+                hideLoading()
+            }
+        }
+        messageChatViewModel.companionData.observe(this, { companion ->
+            initCompanion(companion)
+
+        })
+        userViewModel.userByLavadaIdData.observe(this, {
+            it?.let { it1 -> updateUiCompanion(it1) }
+        })
+
+    }
+
+    private fun initChat() {
+        showLoading()
+        firebaseEmailAuthService.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
+            messageChatViewModel.getChatById(tokenFb.token.toString(), chatId)
+            messageChatViewModel.getListMessages(tokenFb.token.toString(), chatId)
+        }
+    }
+
+    private fun initCompanion(companionId: String) {
+        firebaseEmailAuthService.getUser()?.getIdToken(true)
+            ?.addOnSuccessListener { tokenFb ->
+                userViewModel.getUserByLavadaId(tokenFb.token.toString(), companionId)
+            }
     }
 
 
-//    private fun loadMessagesHistory() {
-//        messageChatViewModel.retrieveMessages(chatId).observe(viewLifecycleOwner, {
-//            if (it != null) {
-//                chatOpen = it.copy()
-//                messagesAdapter.setMessages(it.messages)
-//                val companionUid = it.getCompanionUid(selfUid)
-//                lifecycleScope.launchWhenResumed {
-//                    userViewModel.getUser(companionUid).observe(viewLifecycleOwner) { user ->
-//                       updateUiCompanion(user!!)
-//                    }
-//                }
-//
-//            } else {
-//                Toast.makeText(requireContext(), "response is null", Toast.LENGTH_SHORT).show()
-//            }
-//        })
-//    }
+    private fun showLoading() {
+        with(viewBinding) {
+            viewBinding.pgContentLoading.visibility = View.VISIBLE
+            viewBinding.lvMessages.visibility = View.GONE
+            btnSend.isEnabled = false
+            textInputLayout.isEnabled = true
+        }
+    }
 
-    private fun updateUiCompanion(user: User){
-        with(viewBinding){
+    private fun hideLoading() {
+        with(viewBinding) {
+            viewBinding.pgContentLoading.visibility = View.GONE
+            viewBinding.lvMessages.visibility = View.VISIBLE
+            btnSend.isEnabled = true
+            textInputLayout.isEnabled = true
+        }
+    }
+
+
+    //это еще сделать нужно
+    private fun updateUiCompanion(user: User) {
+        with(viewBinding) {
             tvProfileName.text = user.name
-            tvSubMessageName.text = String.format(resources.getString(R.string.location_and_dist), user.location, user.dist?.roundToInt().toString())
+            tvSubMessageName.text = String.format(
+                resources.getString(R.string.location_and_dist),
+                user.location,
+                user.dist?.roundToInt().toString()
+            )
             Glide.with(requireContext())
                 .load(user.url_avatar)
                 .error(resources.getDrawable(R.drawable.test_avatar))
@@ -98,20 +155,31 @@ class FragmentOpenChat :
             btnSend.setOnClickListener {
                 if (!chatId.isNullOrEmpty() && textInputLayout.text?.length ?: 0 > 0) {
 
-                    chatOpen?.let {
-                        it.messages.add(
-                            ChatMessage(
-                                message = textInputLayout.text.toString(),
-                                sender = selfUid,
-                                viewed = false,
-                                mediaUrl = "link1"
-                            )
-                        )
-//                        messageChatViewModel.sendMessage(
-//                            uidChat = chatId,
-//                            chat = it
+//                    chatOpen?.let {
+//                        it.messages.add(
+//                            ChatMessage(
+//                                message = textInputLayout.text.toString(),
+//                                sender = selfUid,
+//                                viewed = false,
+//                                mediaUrl = "link1"
+//                            )
 //                        )
-                    }
+////                        messageChatViewModel.sendMessage(
+////                            uidChat = chatId,
+////                            chat = it
+////                        )
+//                    }
+                    val mes = viewBinding.textInputLayout.text.toString()
+                    firebaseEmailAuthService.getUser()?.getIdToken(true)
+                        ?.addOnSuccessListener { tokenFb ->
+                            messageChatViewModel.sendRemoteMessage(
+                                tokenFb.token.toString(),
+                                chatId,
+                                mes
+                            )
+
+//                        }
+                        }
                     textInputLayout.setText("")
                 }
             }
@@ -131,7 +199,8 @@ class FragmentOpenChat :
                     start: Int,
                     count: Int,
                     after: Int,
-                ) {}
+                ) {
+                }
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 
@@ -139,17 +208,29 @@ class FragmentOpenChat :
                     setStateSend(s?.isEmpty() ?: true)
                 }
             })
+            btnInfo.setOnClickListener {
+                openCompanionInfo(companion)
+
+            }
         }
     }
 
-    private fun setStateSend(isGiftState: Boolean){
-        if (isGiftState){
+    private fun setStateSend(isGiftState: Boolean) {
+        if (isGiftState) {
             viewBinding.btnSend.visibility = View.GONE
             viewBinding.btnGift.visibility = View.VISIBLE
         } else {
             viewBinding.btnSend.visibility = View.VISIBLE
             viewBinding.btnGift.visibility = View.GONE
         }
+    }
+
+    private fun openCompanionInfo(user: User) {
+        val fragment = CompanionInfoFragment.newInstance(user)
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.container, fragment)
+            .addToBackStack(null)
+            .commit()
     }
 
     companion object {

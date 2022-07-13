@@ -94,8 +94,6 @@ class LogInFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
                                     model.getUser(tokenFb.token.toString())
                                     model.selfUserData.observe(viewLifecycleOwner) { result ->
                                             self = result?.copy()!!
-                                           val savedSelf = preferenceRepository.readUser()
-                                            self.ready = savedSelf?.isReady ?: false
                                             val user = User(
                                                 uid = authService.auth.currentUser?.uid ?: "",
                                                 email = authService.auth.currentUser?.email

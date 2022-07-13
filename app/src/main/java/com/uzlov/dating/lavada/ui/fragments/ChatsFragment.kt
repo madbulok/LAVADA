@@ -22,6 +22,7 @@ import com.uzlov.dating.lavada.ui.adapters.UsersChatsAdapter
 import com.uzlov.dating.lavada.ui.adapters.UsersProfileStoriesAdapter
 import com.uzlov.dating.lavada.ui.swipes.SwipeHelper
 import com.uzlov.dating.lavada.viemodels.MessageChatViewModel
+import com.uzlov.dating.lavada.viemodels.UsersViewModel
 import javax.inject.Inject
 
 
@@ -32,6 +33,7 @@ class ChatsFragment :
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var messageChatViewModel: MessageChatViewModel
+    private lateinit var userViewModel: UsersViewModel
 
     @Inject
     lateinit var auth: FirebaseEmailAuthService
@@ -85,6 +87,7 @@ class ChatsFragment :
         super.onCreate(savedInstanceState)
         requireContext().appComponent.inject(this)
         messageChatViewModel = viewModelFactory.create(MessageChatViewModel::class.java)
+        userViewModel = viewModelFactory.create(UsersViewModel::class.java)
         requireArguments().let {
             companionId = it.getString(COMPANION_KEY, "") ?: ""
             chatId = it.getString(CHAT_ID, "") ?: ""
@@ -104,9 +107,9 @@ class ChatsFragment :
         loadAllChats()
 
         // если передали ID собеседника то загружаем с ним чат
-        if (!companionId.isNullOrEmpty()){
-            loadChat(companionId!!)
-        }
+//        if (!companionId.isNullOrEmpty()){
+//            loadChat(companionId!!)
+//        }
 
         // если передали ID чата то загружаем этот чат
         if (!chatId.isNullOrEmpty()){
@@ -114,21 +117,24 @@ class ChatsFragment :
         }
     }
 
-    private fun loadChat(companionId: String) {
-//        auth.getUserUid()?.let {
-//            messageChatViewModel.createChat(selfId = it, companionId = companionId)
+//    private fun loadChat(companionId: String) {
+//        auth.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
+////            messageChatViewModel.createRemoteChat(tokenFb.token.toString(), companionId)
 //
 //        }
-    }
+//
+//
+//    }
 
     private fun loadAllChats() {
-//        auth.getUserUid()?.let {
-//            messageChatViewModel.getChats(it, auth.getUserUid() ?: "")
-//                .observe(viewLifecycleOwner, { result ->
-//                    renderUi(result)
-//                    Log.e("TAG", "loadAllChats: $result")
-//                })
-//        }
+            auth.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
+                messageChatViewModel.getRemoteChats(tokenFb.token.toString())
+                messageChatViewModel.chatListData.observe(viewLifecycleOwner){ chatList ->
+                    renderUi(chatList)
+     Log.e("ЧАТЫ:", chatList.toString())
+
+                }
+            }
     }
 
 //   mapper [chat1(userTom, self), chat2(userArtem, self)]    --->    [ userTom(chat1), userArtem(chat2).....user_K(chat_N) ]

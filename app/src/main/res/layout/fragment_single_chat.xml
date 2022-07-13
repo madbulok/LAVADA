@@ -4,7 +4,8 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@drawable/background_opened_chat_recent">
+    android:background="@drawable/background_opened_chat_recent"
+    android:id="@+id/container">
 
     <ProgressBar
         android:id="@+id/pgContentLoading"

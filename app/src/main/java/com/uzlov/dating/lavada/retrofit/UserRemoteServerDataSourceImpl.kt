@@ -1,10 +1,9 @@
 package com.uzlov.dating.lavada.retrofit
 
 import com.uzlov.dating.lavada.di.modules.ServerCommunication
-import com.uzlov.dating.lavada.domain.models.RemoteUser
-import com.uzlov.dating.lavada.domain.models.RemoteUserList
-import com.uzlov.dating.lavada.domain.models.User
+import com.uzlov.dating.lavada.domain.models.*
 import okhttp3.MultipartBody
+import okhttp3.ResponseBody
 import retrofit2.Response
 import javax.inject.Inject
 
@@ -54,8 +53,8 @@ class UserRemoteServerDataSourceImpl @Inject constructor(
         return serverCommunication.apiServiceWithToken?.postBalanceAsync(balance)
     }
 
-    override suspend fun getUsers(token: String): Response<RemoteUserList> {
-        return serverCommunication.apiServiceWithToken?.getUsersAsync()!!
+    override suspend fun getUsers(token: String, limit: String): Response<RemoteUserList> {
+        return serverCommunication.apiServiceWithToken?.getUsersAsync(limit)!!
     }
 
     override suspend fun getBalance(token: String): Response<RemoteUser>? {
@@ -70,32 +69,32 @@ class UserRemoteServerDataSourceImpl @Inject constructor(
     }
 
     /**чаты*/
-    override suspend fun createMessage(token: String, map: Map<String, String>): Any {
-        return serverCommunication.apiServiceWithToken?.createMessageAsync(map)!!.await()
+    override suspend fun createMessage(token: String, map: Map<String, String>): Response<ReChat>? {
+        return serverCommunication.apiServiceWithToken?.createMessageAsync(map)
     }
 
-    override suspend fun getMessage(token: String, chatId: String): Any {
-        return serverCommunication.apiServiceWithToken?.getMessagesAsync(chatId)!!.await()
+    override suspend fun getMessage(token: String, chatId: String): Response<ReMessage>? {
+        return serverCommunication.apiServiceWithToken?.getMessagesAsync(chatId)
     }
 
-    override suspend fun updateStatus(token: String, map: Map<String, String>): Any {
-        return serverCommunication.apiServiceWithToken?.updateStatusAsync(map)!!.await()
+    override suspend fun updateStatus(token: String, map: Map<String, String>): Response<ResponseBody>? {
+        return serverCommunication.apiServiceWithToken?.updateStatusAsync(map)
     }
 
-    override suspend fun getListChats(token: String, offset: String, limit: String): Any {
-        return serverCommunication.apiServiceWithToken?.getListChatsAsync(offset, limit)!!.await()
+    override suspend fun getListChats(token: String, offset: String, limit: String): Response<RemoteChatList>? {
+        return serverCommunication.apiServiceWithToken?.getListChatsAsync(offset, limit)
     }
 
-    override suspend fun createChat(token: String, map: Map<String, String>): Any {
-        return serverCommunication.apiServiceWithToken?.createChatAsync(map)!!.await()
+    override suspend fun createChat(token: String, map: Map<String, String>): Response<ReChat>? {
+        return serverCommunication.apiServiceWithToken?.createChatAsync(map)
     }
 
-    override suspend fun getChatById(token: String, chatId: String): Any {
-        return serverCommunication.apiServiceWithToken?.getChatByIdAsync(chatId)!!.await()
+    override suspend fun getChatById(token: String, chatId: String): Response<ReChat>? {
+        return serverCommunication.apiServiceWithToken?.getChatByIdAsync(chatId)
     }
 
-    override suspend fun checkChat(token: String, firebaseUid: String): Any {
-        return serverCommunication.apiServiceWithToken?.checkChatAsync(firebaseUid)!!.await()
+    override suspend fun checkChat(token: String, firebaseUid: String): Response<ReChat>? {
+        return serverCommunication.apiServiceWithToken?.checkChatAsync(firebaseUid)
     }
 
     /**подарки*/
