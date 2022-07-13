@@ -177,4 +177,20 @@ interface ApiService {
     suspend fun checkLikeAsync(
         @Query("firebase_uid") firebase_uid: String
     ): Response<RemoteUser>
+
+    /**
+     * черный список
+     * */
+
+    //получить черный список
+    @GET("api/v1/blacklist")
+    suspend fun getBlackList() : Response<RemoteUserList>
+
+    // добавить/удалить из черного списка
+    @PUT("api/v1/blacklist")
+    suspend fun setBlackList(
+        @Query("firebase_uid") uid: String,
+        @Query("bl_state") bl: String
+    ): Response<RemoteUser>
+
 }

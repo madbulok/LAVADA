@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.os.bundleOf
+import androidx.core.view.get
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -40,6 +41,7 @@ class ChatsFragment :
 
     private var companionId: String? = null
     private var chatId: String? = null
+    private var companion: String? = null
 
     companion object {
         const val COMPANION_KEY = "companionId"
@@ -59,9 +61,14 @@ class ChatsFragment :
         object : UsersChatsAdapter.OnChatClickListener {
             override fun onClick(chat: Chat) {
                 openChatFragment(chat.uuid)
+                auth.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFB ->
+                    chatId?.let { messageChatViewModel.getChatById(tokenFB.token.toString(), it) }
+                }
             }
         }
     }
+
+
 
     val fragment = FragmentOpenChat()
     private fun openChatFragment(uuid: String) {
@@ -105,35 +112,23 @@ class ChatsFragment :
 
         // загружаем все чаты
         loadAllChats()
+        messageChatViewModel.chatListData.observe(viewLifecycleOwner){ chatList ->
+            renderUi(chatList)
+            Log.e("ЧАТЫ:", chatList.toString())
 
-        // если передали ID собеседника то загружаем с ним чат
-//        if (!companionId.isNullOrEmpty()){
-//            loadChat(companionId!!)
-//        }
-
-        // если передали ID чата то загружаем этот чат
-        if (!chatId.isNullOrEmpty()){
-            openChatFragment(chatId!!)
         }
+        messageChatViewModel.companionData.observe(viewLifecycleOwner){ comp ->
+            companion = comp
+        }
+
     }
 
-//    private fun loadChat(companionId: String) {
-//        auth.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
-////            messageChatViewModel.createRemoteChat(tokenFb.token.toString(), companionId)
-//
-//        }
-//
-//
-//    }
+
 
     private fun loadAllChats() {
             auth.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
                 messageChatViewModel.getRemoteChats(tokenFb.token.toString())
-                messageChatViewModel.chatListData.observe(viewLifecycleOwner){ chatList ->
-                    renderUi(chatList)
-     Log.e("ЧАТЫ:", chatList.toString())
 
-                }
             }
     }
 
@@ -193,6 +188,11 @@ class ChatsFragment :
                         object : UnderlayButtonClickListener {
                             override fun onClick(pos: Int) {
                                 Log.e("TAG", "onClick: ")
+                                auth.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
+                                    val blockUser = chatAdapter.getList()[pos].companion.uid
+                                 userViewModel.setBlackList(tokenFb.token.toString(), blockUser, "1")
+
+                                }
                             }
                         }
                     ))
@@ -203,6 +203,7 @@ class ChatsFragment :
                         object : UnderlayButtonClickListener {
                             override fun onClick(pos: Int) {
                                 Log.e("TAG", "onClick: ")
+                                Toast.makeText(context, "Чат будет удален", Toast.LENGTH_SHORT).show()
                             }
                         }
                     ))
