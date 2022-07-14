@@ -1,18 +1,21 @@
 package com.uzlov.dating.lavada.viemodels
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.uzlov.dating.lavada.data.*
 import com.uzlov.dating.lavada.data.use_cases.UserUseCases
 import com.uzlov.dating.lavada.di.modules.ServerCommunication
-import com.uzlov.dating.lavada.domain.models.*
+import com.uzlov.dating.lavada.domain.models.ChatMessage
+import com.uzlov.dating.lavada.domain.models.MappedChat
+import com.uzlov.dating.lavada.domain.models.ReChat
 import com.uzlov.dating.lavada.service.NewMessageService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import okhttp3.MultipartBody
+
 
 class MessageChatViewModel @Inject constructor(
     private val userUseCases: UserUseCases,
@@ -28,6 +31,7 @@ class MessageChatViewModel @Inject constructor(
     private val checkChat = MutableLiveData<ReChat>()
     private val reChatById = MutableLiveData<ReChat>()
     private val companion = MutableLiveData<String>()
+    private val uploadFile = MutableLiveData<ReChat>()
 
     val status = MutableLiveData<String?>()
     val chatListData get(): MutableLiveData<List<MappedChat>> = reChatList
@@ -38,6 +42,7 @@ class MessageChatViewModel @Inject constructor(
     val listMessageData get(): MutableLiveData<List<ChatMessage>> = reMessages
     val reChatByIdData get(): MutableLiveData<ReChat> = reChatById
     val companionData get(): MutableLiveData<String> = companion
+    val uploadFileData get(): MutableLiveData<ReChat> = uploadFile
 
     /**
      * получить список чатов пользователя
@@ -65,31 +70,46 @@ class MessageChatViewModel @Inject constructor(
                                     val user1 = _chat.members[0]
                                     val user2 = _chat.members[1]
 
-                                    serverCommunication.apiServiceWithToken?.getUserAsync().let { response ->
-                                        if (reUser!!.isSuccessful) {
-                                            if (response!!.body()?.data?.user_id == user1){
-                                                serverCommunication.apiServiceWithToken?.getUserByLavadaIdAsync(user2).let {
-                                                    if (it != null) {
-                                                      val companion = it.body()
-                                                            ?.let { it1 -> convertDtoToModel(it1) }!!
-                                                        mappedChat.add(convertChatToMappedChat(_chat, companion))
+                                    serverCommunication.apiServiceWithToken?.getUserAsync()
+                                        .let { response ->
+                                            if (reUser!!.isSuccessful) {
+                                                if (response!!.body()?.data?.user_id == user1) {
+                                                    serverCommunication.apiServiceWithToken?.getUserByLavadaIdAsync(
+                                                        user2
+                                                    ).let {
+                                                        if (it != null) {
+                                                            val companion = it.body()
+                                                                ?.let { it1 -> convertDtoToModel(it1) }!!
+                                                            mappedChat.add(
+                                                                convertChatToMappedChat(
+                                                                    _chat,
+                                                                    companion
+                                                                )
+                                                            )
+                                                        }
+                                                    }
+                                                } else {
+                                                    serverCommunication.apiServiceWithToken?.getUserByLavadaIdAsync(
+                                                        user1
+                                                    ).let {
+                                                        if (it != null) {
+                                                            val companion = it.body()
+                                                                ?.let { it1 -> convertDtoToModel(it1) }!!
+                                                            mappedChat.add(
+                                                                convertChatToMappedChat(
+                                                                    _chat,
+                                                                    companion
+                                                                )
+                                                            )
+                                                        }
                                                     }
                                                 }
-                                            } else{
-                                                serverCommunication.apiServiceWithToken?.getUserByLavadaIdAsync(user1).let {
-                                                    if (it != null) {
-                                                       val companion = it.body()
-                                                            ?.let { it1 -> convertDtoToModel(it1) }!!
-                                                        mappedChat.add(convertChatToMappedChat(_chat, companion))
-                                                    }
-                                                }
+
+
+                                            } else {
+                                                status.postValue(displayApiResponseErrorBody(reUser))
                                             }
-
-
-                                        } else {
-                                            status.postValue(displayApiResponseErrorBody(reUser))
                                         }
-                                    }
                                 }
                             }
 
@@ -153,6 +173,38 @@ class MessageChatViewModel @Inject constructor(
                         ?.let { reUser ->
                             if (reUser.isSuccessful) {
                                 messageSend.postValue(
+                                    reUser.body()
+                                )
+                            } else {
+                                status.postValue(displayApiResponseErrorBody(reUser))
+                            }
+                        }
+                }
+            }
+        }
+    }
+
+    fun sendRemoteFileMessage(token: String, uidChat: String, field: MultipartBody.Part) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val body = mutableMapOf<String?, Any>()
+            body["chat_id"] = uidChat
+            body["text"] = "file"
+            val requestBody = MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("chat_id", uidChat)
+                .addFormDataPart("text", "file")
+                .addPart(field)
+                .build()
+
+            userUseCases.authRemoteUser(hashMapOf("token" to token)).let {
+                val result =
+                    serverCommunication.apiServiceWithToken?.authUserAsync(hashMapOf("token" to token))
+                result?.body()?.data?.token?.let { tokenToo ->
+                    serverCommunication.updateToken(tokenToo)
+                    serverCommunication.apiServiceWithToken?.createMessageFileAsync(requestBody)
+                        ?.let { reUser ->
+                            if (reUser.isSuccessful) {
+                                uploadFile.postValue(
                                     reUser.body()
                                 )
                             } else {
@@ -276,14 +328,14 @@ class MessageChatViewModel @Inject constructor(
                     reChat.let { response ->
                         if (response!!.isSuccessful) {
                             val resChat = response.body()
-                          val self = serverCommunication.apiServiceWithToken?.getUserAsync()
+                            val self = serverCommunication.apiServiceWithToken?.getUserAsync()
                             if (self != null) {
-                                if (response.body()?.data?.chat_to_user_id != self.body()?.data?.user_id){
+                                if (response.body()?.data?.chat_to_user_id != self.body()?.data?.user_id) {
                                     companion.postValue(response.body()!!.data?.chat_to_user_id!!)
-                                } else{
+                                } else {
                                     companion.postValue(response.body()!!.data?.chat_user_id!!)
                                 }
-                                    reChatById.postValue(resChat!!)
+                                reChatById.postValue(resChat!!)
                             }
                         } else {
                             status.postValue(displayApiResponseErrorBody(response))

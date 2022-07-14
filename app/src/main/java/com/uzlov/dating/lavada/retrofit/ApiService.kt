@@ -3,6 +3,7 @@ package com.uzlov.dating.lavada.retrofit
 import com.uzlov.dating.lavada.domain.models.*
 import kotlinx.coroutines.Deferred
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.*
@@ -86,10 +87,16 @@ interface ApiService {
     @POST("api/v1/chat/message")
     suspend fun createMessageAsync(
         @FieldMap map: Map<String, String>
-    ): Response<ReChat>
+    ):  Response<ReChat>
+
+    //создать сообщение +
+    @POST("api/v1/chat/message")
+    suspend fun createMessageFileAsync(
+        @Body body : RequestBody
+    ):  Response<ReChat>
 
 
-    // получить список сообщений +
+    // отправить картинку + (уходит, но выдает какой-то странный адрес, нужно у бэка уточнить)
     @GET("api/v1/chat/message/list")
     suspend fun getMessagesAsync(
         @Query("chat_id") id: String

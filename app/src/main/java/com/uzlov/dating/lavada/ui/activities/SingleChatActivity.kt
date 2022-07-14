@@ -1,8 +1,14 @@
 package com.uzlov.dating.lavada.ui.activities
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -10,7 +16,9 @@ import android.util.Log
 import android.view.*
 import android.view.View.OnTouchListener
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.uzlov.dating.lavada.R
@@ -23,9 +31,14 @@ import com.uzlov.dating.lavada.storage.URIPathHelper
 import com.uzlov.dating.lavada.ui.adapters.ChatMessageAdapter
 import com.uzlov.dating.lavada.ui.fragments.CompanionInfoFragment
 import com.uzlov.dating.lavada.ui.fragments.FilterSearchPeopleFragment
+import com.uzlov.dating.lavada.ui.fragments.profile.PersonalInfoFragment
 import com.uzlov.dating.lavada.ui.fragments.profile.UploadVideoFragment
 import com.uzlov.dating.lavada.viemodels.MessageChatViewModel
 import com.uzlov.dating.lavada.viemodels.UsersViewModel
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
 
@@ -51,6 +64,8 @@ class SingleChatActivity : AppCompatActivity() {
     private lateinit var chatId: String
     private lateinit var listMessage: List<ChatMessage>
     private lateinit var companion : User
+
+    private var urlImage: Bitmap? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -215,7 +230,7 @@ class SingleChatActivity : AppCompatActivity() {
                                 chatId,
                                 mes
                             )
-
+                            Log.e("CHAT_ID_TRUE", chatId)
 //                        }
                         }
                     viewBinding.textInputLayout.setText("")
@@ -227,7 +242,11 @@ class SingleChatActivity : AppCompatActivity() {
             }
 
             btnAttachFile.setOnClickListener {
-                openGalleryForVideo()
+              //  openGalleryForVideo()
+
+                if (checkPermission()) {
+                    selectImageInAlbum()
+                }
             }
 
             viewBinding.textInputLayout.setOnTouchListener(OnTouchListener { v, event ->
@@ -299,32 +318,93 @@ class SingleChatActivity : AppCompatActivity() {
         }
     }
 
-    private fun openGalleryForVideo() {
+//    private fun openGalleryForVideo() {
+//        val intent = Intent().apply {
+//            type = "image/*"
+//            action = Intent.ACTION_PICK
+//        }
+//        startActivityForResult(
+//            Intent.createChooser(intent, "Select image"),
+//            UploadVideoFragment.REQUEST_CODE
+//        )
+//    }
+
+    private fun selectImageInAlbum() {
         val intent = Intent().apply {
             type = "image/*"
             action = Intent.ACTION_PICK
         }
         startActivityForResult(
-            Intent.createChooser(intent, "Select image"),
-            UploadVideoFragment.REQUEST_CODE
+            Intent.createChooser(intent, "Select Photo"),
+            REQUEST_SELECT_IMAGE_IN_ALBUM
         )
     }
 
+    private fun sendFileRequest(image: Bitmap){
+        val stream = ByteArrayOutputStream()
+        image.compress(Bitmap.CompressFormat.JPEG, 80, stream)
+        val byteArray = stream.toByteArray()
+        val bodyToo = MultipartBody.Part.createFormData(
+            "file",
+            "file",
+            byteArray.toRequestBody("image/jpg".toMediaTypeOrNull(), 0, byteArray.size)
+        )
+        firebaseEmailAuthService.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
+            messageChatViewModel.sendRemoteFileMessage(tokenFb.token.toString(), chatId, bodyToo)
+            Log.e("CHAT_ID", chatId)
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.P)
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode == UploadVideoFragment.REQUEST_CODE) {
-            if (data?.data != null) {
-                val uriPathHelper = URIPathHelper()
-                val filePath = data.data?.let { uriPathHelper.getPath(this, it) }
 
+            data?.data.let { uri ->
+
+                val imageUri: Uri? = uri
+                val source =
+                    ImageDecoder.createSource(this.contentResolver, imageUri!!)
+                val bitmap = source.let { ImageDecoder.decodeBitmap(it) }
+                if (bitmap != null) {
+                    urlImage = bitmap
+                    if (urlImage != null){
+                        sendFileRequest(urlImage!!)
+                    }
+                   // uri?.let { loadImageFromUri(it, viewBinding.ivProfile) }
+
+
+                }
             }
         }
     }
+
+    private fun checkPermission(): Boolean {
+        val permission = ActivityCompat.checkSelfPermission(
+            this,
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        )
+        return if (permission != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+               this,
+                PERMISSIONS_STORAGE,
+                REQUEST_EXTERNAL_STORAGE
+            )
+            false
+        } else true
+    }
+
 
     companion object {
         const val CHAT_ID = "chat_id"
         const val COMPANION_ID = "companion_id"
         const val COMPANION_UID = "companion_uid"
+        private const val REQUEST_SELECT_IMAGE_IN_ALBUM = 1
+        const val REQUEST_EXTERNAL_STORAGE = 1
+        private val PERMISSIONS_STORAGE = arrayOf(
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        )
     }
 
 }

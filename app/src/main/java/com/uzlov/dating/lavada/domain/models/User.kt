@@ -2,6 +2,9 @@ package com.uzlov.dating.lavada.domain.models
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import kotlinx.parcelize.RawValue
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import java.util.*
 
 enum class MALE {
