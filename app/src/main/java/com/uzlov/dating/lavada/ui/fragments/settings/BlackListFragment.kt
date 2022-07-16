@@ -2,6 +2,7 @@ package com.uzlov.dating.lavada.ui.fragments.settings
 
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import androidx.lifecycle.ViewModelProvider
@@ -29,15 +30,18 @@ class BlackListFragment :
     private var self = User()
 
     private val blackListAdapter by lazy {
-        BlackListAdapter(openChatCallback)
+        BlackListAdapter(blackListCallback)
     }
 
-    private val openChatCallback by lazy {
+    private val blackListCallback by lazy {
         object : BlackListAdapter.OnBlackListClickListener {
             override fun onClick(blackList: User) {
                 val removeUID = blackList.uid
-                self.black_list.remove(removeUID)
+//                self.black_list.remove(removeUID)
 //                model.updateUser(self.uid, "black_list", self.black_list)
+                auth.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
+                    model.setBlackList(tokenFb.token.toString(), removeUID, "0")
+                }
                 loadBlockedUsers()
             }
         }
@@ -57,26 +61,18 @@ class BlackListFragment :
         loadImage(resources.getDrawable(R.drawable.black_list_empty), viewBinding.ivBlackListEmpty)
         viewBinding.blackListRecyclerView.adapter = blackListAdapter
         loadBlockedUsers()
+        model.blackListData.observe(viewLifecycleOwner, {
+            if (it != null) {
+                renderUi(it)
+            }
+        })
     }
 
     private fun loadBlockedUsers() {
-//        model.getUsers().observe(viewLifecycleOwner, { users ->
-//            auth.getUserUid()?.let { it ->
-//                model.getUser(it).observe(viewLifecycleOwner) { result ->
-//                    result.let {
-//                        if (it != null) {
-//                            self = it
-//                        }
-////                        renderUi(
-////                            model.blockedUsers(
-////                                users, self.black_list
-////                            )
-////                        )
-//                    }
-//                }
-//
-//            }
-//        })
+        auth.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
+            model.getBlackList(tokenFb.token.toString())
+        }
+
     }
 
     private fun loadImage(image: Drawable, container: ImageView) {

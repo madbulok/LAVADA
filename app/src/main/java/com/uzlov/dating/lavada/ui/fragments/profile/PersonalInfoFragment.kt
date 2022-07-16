@@ -32,6 +32,7 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.ByteArrayOutputStream
+import java.nio.charset.StandardCharsets
 import javax.inject.Inject
 
 
@@ -43,7 +44,6 @@ class PersonalInfoFragment :
     private var userThis: User = User()
     private var urlImage: Bitmap? = null
     private var fileSended: Boolean? = null
-    // var blackList: MutableList<String> = mutableListOf("WJfUC7k7EVZDtJdJYXDFn8DfAoD3", "67r4Wd1H9JblvgKhScAX3Y42aFX2", "NelQeaw9g4dBWT8oPuCiNrRdK0m2")
 
     @Inject
     lateinit var firebaseEmailAuthService: FirebaseEmailAuthService

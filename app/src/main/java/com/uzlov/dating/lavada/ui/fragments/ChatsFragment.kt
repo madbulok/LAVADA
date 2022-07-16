@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.os.bundleOf
+import androidx.core.view.get
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -22,6 +23,7 @@ import com.uzlov.dating.lavada.ui.adapters.UsersChatsAdapter
 import com.uzlov.dating.lavada.ui.adapters.UsersProfileStoriesAdapter
 import com.uzlov.dating.lavada.ui.swipes.SwipeHelper
 import com.uzlov.dating.lavada.viemodels.MessageChatViewModel
+import com.uzlov.dating.lavada.viemodels.UsersViewModel
 import javax.inject.Inject
 
 
@@ -32,12 +34,14 @@ class ChatsFragment :
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var messageChatViewModel: MessageChatViewModel
+    private lateinit var userViewModel: UsersViewModel
 
     @Inject
     lateinit var auth: FirebaseEmailAuthService
 
     private var companionId: String? = null
     private var chatId: String? = null
+    private var companion: String? = null
 
     companion object {
         const val COMPANION_KEY = "companionId"
@@ -57,9 +61,14 @@ class ChatsFragment :
         object : UsersChatsAdapter.OnChatClickListener {
             override fun onClick(chat: Chat) {
                 openChatFragment(chat.uuid)
+                auth.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFB ->
+                    chatId?.let { messageChatViewModel.getChatById(tokenFB.token.toString(), it) }
+                }
             }
         }
     }
+
+
 
     val fragment = FragmentOpenChat()
     private fun openChatFragment(uuid: String) {
@@ -85,6 +94,7 @@ class ChatsFragment :
         super.onCreate(savedInstanceState)
         requireContext().appComponent.inject(this)
         messageChatViewModel = viewModelFactory.create(MessageChatViewModel::class.java)
+        userViewModel = viewModelFactory.create(UsersViewModel::class.java)
         requireArguments().let {
             companionId = it.getString(COMPANION_KEY, "") ?: ""
             chatId = it.getString(CHAT_ID, "") ?: ""
@@ -102,33 +112,24 @@ class ChatsFragment :
 
         // загружаем все чаты
         loadAllChats()
+        messageChatViewModel.chatListData.observe(viewLifecycleOwner){ chatList ->
+            renderUi(chatList)
+            Log.e("ЧАТЫ:", chatList.toString())
 
-        // если передали ID собеседника то загружаем с ним чат
-        if (!companionId.isNullOrEmpty()){
-            loadChat(companionId!!)
+        }
+        messageChatViewModel.companionData.observe(viewLifecycleOwner){ comp ->
+            companion = comp
         }
 
-        // если передали ID чата то загружаем этот чат
-        if (!chatId.isNullOrEmpty()){
-            openChatFragment(chatId!!)
-        }
     }
 
-    private fun loadChat(companionId: String) {
-//        auth.getUserUid()?.let {
-//            messageChatViewModel.createChat(selfId = it, companionId = companionId)
-//
-//        }
-    }
+
 
     private fun loadAllChats() {
-//        auth.getUserUid()?.let {
-//            messageChatViewModel.getChats(it, auth.getUserUid() ?: "")
-//                .observe(viewLifecycleOwner, { result ->
-//                    renderUi(result)
-//                    Log.e("TAG", "loadAllChats: $result")
-//                })
-//        }
+            auth.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
+                messageChatViewModel.getRemoteChats(tokenFb.token.toString())
+
+            }
     }
 
 //   mapper [chat1(userTom, self), chat2(userArtem, self)]    --->    [ userTom(chat1), userArtem(chat2).....user_K(chat_N) ]
@@ -187,6 +188,11 @@ class ChatsFragment :
                         object : UnderlayButtonClickListener {
                             override fun onClick(pos: Int) {
                                 Log.e("TAG", "onClick: ")
+                                auth.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
+                                    val blockUser = chatAdapter.getList()[pos].companion.uid
+                                 userViewModel.setBlackList(tokenFb.token.toString(), blockUser, "1")
+
+                                }
                             }
                         }
                     ))
@@ -197,6 +203,7 @@ class ChatsFragment :
                         object : UnderlayButtonClickListener {
                             override fun onClick(pos: Int) {
                                 Log.e("TAG", "onClick: ")
+                                Toast.makeText(context, "Чат будет удален", Toast.LENGTH_SHORT).show()
                             }
                         }
                     ))

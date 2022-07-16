@@ -5,21 +5,21 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.gson.GsonBuilder
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
-import com.uzlov.dating.lavada.data.ErrorUtils
 import com.uzlov.dating.lavada.data.convertDtoToModel
 import com.uzlov.dating.lavada.data.convertListDtoToModel
 import com.uzlov.dating.lavada.data.convertToLike
+import com.uzlov.dating.lavada.data.displayApiResponseErrorBody
 import com.uzlov.dating.lavada.data.use_cases.UserUseCases
 import com.uzlov.dating.lavada.di.modules.ServerCommunication
 import com.uzlov.dating.lavada.domain.logic.distance
+import com.uzlov.dating.lavada.domain.models.ReUser
 import com.uzlov.dating.lavada.domain.models.RemoteUser
+import com.uzlov.dating.lavada.domain.models.RemoteUserList
 import com.uzlov.dating.lavada.domain.models.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
-import retrofit2.Response
 import java.util.*
 import javax.inject.Inject
 import kotlin.collections.set
@@ -33,6 +33,7 @@ class UsersViewModel @Inject constructor(
 
     private val selfUser = MutableLiveData<User>()
     private val userById = MutableLiveData<User>()
+    private val userByLavadaId = MutableLiveData<User>()
     private var tokenResult = MutableLiveData<String>()
     private var listUsers = MutableLiveData<List<User>>()
     private var response = MutableLiveData<RemoteUser>()
@@ -41,6 +42,9 @@ class UsersViewModel @Inject constructor(
     private var updatedBalance = MutableLiveData<User>()
     private var updatedLike = MutableLiveData<User>()
     private var checkedLike = MutableLiveData<RemoteUser>()
+    private var userBI = MutableLiveData<List<User>>()
+    private var blackList = MutableLiveData<List<User>>()
+    private var setBlackList = MutableLiveData<RemoteUser>()
     val likes get() : LiveData<User> = updatedLike
     val listUsersData get() : LiveData<List<User>> = listUsers
     val selfUserData get() : MutableLiveData<User> = selfUser
@@ -52,6 +56,10 @@ class UsersViewModel @Inject constructor(
     val checkedLikeData get() : MutableLiveData<RemoteUser> = checkedLike
     val userByIdData get() : MutableLiveData<User> = userById
     val tokenResultData get(): MutableLiveData<String> = tokenResult
+    val userBIData get(): MutableLiveData<List<User>> = userBI
+    val userByLavadaIdData get(): MutableLiveData<User> = userByLavadaId
+    val blackListData get(): MutableLiveData<List<User>> = blackList
+    val setBlackListData get(): MutableLiveData<RemoteUser> = setBlackList
 
 
     /**
@@ -70,7 +78,7 @@ class UsersViewModel @Inject constructor(
                             selfUser.postValue(
                                 reUser.body()?.let { it1 -> convertDtoToModel(it1) })
                         } else {
-                            displayApiResponseErrorBody(reUser)
+                            status.postValue(displayApiResponseErrorBody(reUser))
                         }
                     }
                 }
@@ -94,7 +102,26 @@ class UsersViewModel @Inject constructor(
                     if (reUser!!.isSuccessful && reUser.body() != null) {
                         userById.postValue(convertDtoToModel(reUser.body()!!))
                     } else {
-                        displayApiResponseErrorBody(reUser)
+                        status.postValue(displayApiResponseErrorBody(reUser))
+                    }
+                }
+            }
+        }
+    }
+
+    fun getUserByLavadaId(token: String, uid: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            usersUseCases.authRemoteUser(hashMapOf("token" to token)).let {
+                val result =
+                    serverCommunication.apiServiceWithToken?.authUserAsync(hashMapOf("token" to token))
+                result?.body()?.data?.token?.let { tokenToo ->
+                    serverCommunication.updateToken(tokenToo)
+                    val reUser =
+                        serverCommunication.apiServiceWithToken?.getUserByLavadaIdAsync(uid)
+                    if (reUser!!.isSuccessful && reUser.body() != null) {
+                        userByLavadaId.postValue(convertDtoToModel(reUser.body()!!))
+                    } else {
+                        status.postValue(displayApiResponseErrorBody(reUser))
                     }
                 }
             }
@@ -179,7 +206,7 @@ class UsersViewModel @Inject constructor(
                 result?.body()?.data?.token?.let { tokenToo ->
                     // прописываем его в запросы
                     serverCommunication.updateToken(tokenToo)
-                    serverCommunication.apiServiceWithToken?.getUsersAsync()?.let { result ->
+                    serverCommunication.apiServiceWithToken?.getUsersAsync("200")?.let { result ->
                         Log.e("GET_USERS", result.body().toString())
                         val listUser = mutableListOf<User>()
                         if (result.isSuccessful) {
@@ -293,7 +320,7 @@ class UsersViewModel @Inject constructor(
         token: String,
         subscribe: String,
         amount: String
-    ){
+    ) {
         viewModelScope.launch(Dispatchers.IO) {
             usersUseCases.authRemoteUser(hashMapOf("token" to token)).let {
                 val result =
@@ -352,6 +379,8 @@ class UsersViewModel @Inject constructor(
                             user.matches = matches
                             updatedLike.postValue(user)
                         }
+                    } else {
+                        status.postValue(displayApiResponseErrorBody(response))
                     }
                 }
             }
@@ -376,6 +405,66 @@ class UsersViewModel @Inject constructor(
                         checkedLike.postValue(reUser.body())
                     } else {
                         status.postValue(displayApiResponseErrorBody(reUser))
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * получить черный список пользователя
+     * @param token токен пользователя с fb
+     * */
+    fun getBlackList(token: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            usersUseCases.authRemoteUser(hashMapOf("token" to token)).let {
+                val result =
+                    serverCommunication.apiServiceWithToken?.authUserAsync(hashMapOf("token" to token))
+                result?.body()?.data?.token?.let { tokenToo ->
+                    serverCommunication.updateToken(tokenToo)
+                    val reBL =
+                        serverCommunication.apiServiceWithToken?.getBlackList()
+                    if (reBL!!.isSuccessful) {
+                        val listUser = mutableListOf<User>()
+                        if (reBL.isSuccessful) {
+                            val list = reBL.body()?.data?.rows
+                            if (list != null) {
+                                for (reUser in list) {
+                                    listUser.add(convertListDtoToModel(reUser!!))
+                                }
+
+                                blackList.postValue(listUser)
+                                Log.e("BLACK_LIST", reBL.body().toString())
+                            } else {
+                                status.postValue(displayApiResponseErrorBody(reBL))
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * добавить/удалить пользователя в черном списке
+     * @param token токен пользователя с fb
+     * @param uid fb uid пользователя , которого нужно добавить в чс
+     * @param state 1-добавить в чс, 0 - удалить из чс
+     * */
+    fun setBlackList(token: String, uid: String, state: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            usersUseCases.authRemoteUser(hashMapOf("token" to token)).let {
+                val result =
+                    serverCommunication.apiServiceWithToken?.authUserAsync(hashMapOf("token" to token))
+                result?.body()?.data?.token?.let { tokenToo ->
+                    serverCommunication.updateToken(tokenToo)
+                    val setReBL =
+                        serverCommunication.apiServiceWithToken?.setBlackList(uid, state)
+                    if (setReBL!!.isSuccessful) {
+                        setBlackList.postValue(setReBL.body())
+                        Log.e("SET_BLACK_LIST", setReBL.body().toString())
+                    } else {
+                        status.postValue(displayApiResponseErrorBody(setReBL))
                     }
                 }
             }
@@ -417,35 +506,10 @@ class UsersViewModel @Inject constructor(
         return myData.sortedBy { it.dist }
     }
 
-    fun blockedUsers(
-        data: List<User>,
-        blockedUID: List<String>
-    ): List<User> {
-        val myBlackList = mutableListOf<User>()
-        val myData = data.toMutableList()
-        val iterator = myData.iterator()
-        while (iterator.hasNext()) {
-            val item = iterator.next()
-            if (blockedUID.contains(item.uid)) {
-                myBlackList.add(item)
-            }
-        }
-        return myBlackList
-    }
-
     override fun onCleared() {
         super.onCleared()
         serverCommunication.destroy() // освобождаем память
     }
 
-    private fun displayApiResponseErrorBody(response: Response<*>): String {
-        val finish: String?
-        val gson = GsonBuilder().create()
-        val mError = gson.fromJson(
-            response.errorBody()!!.string(),
-            ErrorUtils::class.java
-        )
-        finish = mError.error?.user_status
-        return finish ?: "Неизвестная ошибка"
-    }
+
 }

@@ -2,6 +2,9 @@ package com.uzlov.dating.lavada.domain.models
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import kotlinx.parcelize.RawValue
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import java.util.*
 
 enum class MALE {
@@ -30,7 +33,8 @@ data class User(
     var black_list: MutableList<String> = mutableListOf(), //хранит UID для блэклиста
     var ready: Boolean = false,
     var premium: Boolean = false,
-    var balance: Int = 0
+    var balance: Int = 0,
+    var userId: String? = ""
 ) : Parcelable
 
 fun User.getNAmeLabel() = if (name.isNullOrBlank() && age == null) {

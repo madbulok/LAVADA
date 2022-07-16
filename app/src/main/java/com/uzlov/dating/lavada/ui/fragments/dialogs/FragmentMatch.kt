@@ -1,6 +1,8 @@
 package com.uzlov.dating.lavada.ui.fragments.dialogs
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +12,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.databinding.FragmentMatchBottomLayoutBinding
 import com.uzlov.dating.lavada.domain.models.User
+import com.uzlov.dating.lavada.ui.activities.SingleChatActivity
 import kotlin.math.roundToInt
 
 
@@ -46,7 +49,10 @@ class FragmentMatch : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         viewBinding?.btnSendMessageTo?.setOnClickListener {
+
+                    openChatActivity(user?.userId!!, user?.uid!!)
 
         }
         viewBinding?.ivClose?.setOnClickListener {
@@ -61,6 +67,14 @@ class FragmentMatch : BottomSheetDialogFragment() {
                 .into(it.ivRandomProfile)
         }
 
+    }
+
+    private fun openChatActivity(companionId: String, companionUid: String) {
+        val intent = Intent(requireContext(), SingleChatActivity::class.java).apply {
+            putExtra(SingleChatActivity.COMPANION_ID, companionId)
+            putExtra(SingleChatActivity.COMPANION_UID, companionUid)
+        }
+        startActivity(intent)
     }
 
     override fun onDestroyView() {

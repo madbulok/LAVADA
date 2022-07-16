@@ -8,7 +8,7 @@ interface IServerDataSource<T> {
     suspend fun getUser(token: String): T?
     suspend fun getUserById(token: String, id: String): T?
     suspend fun authUser(selfToken: HashMap<String, String?>): T?
-    suspend fun getUsers(token: String): T?
+    suspend fun getUsers(token: String, limit: String): T?
     suspend fun getBalance(token: String): T?
     suspend fun updateUser(token: String, field: Map<String, String>): T?
     suspend fun updateData(token: String, field: MultipartBody.Part): T?
@@ -18,13 +18,13 @@ interface IServerDataSource<T> {
     suspend fun postSubscribe(token: String, subscribe: Map<String, String>): T?
 
     /**чаты*/
-    suspend fun createMessage(token: String, map: Map<String, String>): T
-    suspend fun getMessage(token: String, chatId: String): T
-    suspend fun updateStatus(token: String, map: Map<String, String>): T
-    suspend fun getListChats(token: String, offset: String, limit: String): T
-    suspend fun createChat(token: String, map: Map<String, String>): T
-    suspend fun getChatById(token: String, chatId: String): T
-    suspend fun checkChat(token: String, firebaseUid: String): T
+    suspend fun createMessage(token: String, map: Map<String, String>): T?
+    suspend fun getMessage(token: String, chatId: String): T?
+    suspend fun updateStatus(token: String, map: Map<String, String>): T?
+    suspend fun getListChats(token: String, offset: String, limit: String): T?
+    suspend fun createChat(token: String, map: Map<String, String>): T?
+    suspend fun getChatById(token: String, chatId: String): T?
+    suspend fun checkChat(token: String, firebaseUid: String): T?
 
     /**подарки*/
     suspend fun sendGift(token: String, map: Map<String, String>): T

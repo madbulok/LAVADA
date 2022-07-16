@@ -13,8 +13,8 @@ class FragmentBuyPremium (private var listener: OnSelectListener? = null) : Bott
         private var viewBinding: FragmentBuyPremiumBinding?= null
 
         companion object {
-            fun newInstance(): FragmentSelectSourceVideo {
-                return FragmentSelectSourceVideo()
+            fun newInstance(): FragmentBuyPremium {
+                return FragmentBuyPremium()
             }
         }
 

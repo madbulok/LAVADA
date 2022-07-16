@@ -36,6 +36,10 @@ class UsersChatsAdapter(private var chatClickListener: OnChatClickListener? = nu
         notifyDataSetChanged()
     }
 
+    fun getList(): List<MappedChat> {
+        return stories
+    }
+
     inner class ChatViewHolder(private val binding: ItemMessageLayoutBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
