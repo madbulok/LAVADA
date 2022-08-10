@@ -86,6 +86,8 @@
     <string name="super_coins_box">Super coins box</string>
     <string name="can_only_be_purch_once">*can only be purchased once</string>
     <string name="shop">Shop</string>
+    <string name="ficha_is_coming_soon">Ficha is coming soon...</string>
+    <string name="i_ll_be_waiting">Ок, i’ll be waiting</string>
 
     <string name="facebook_app_id">672136000645610</string>
     <string name="fb_login_protocol_scheme">fb672136000645610</string>
@@ -226,5 +228,6 @@
     <string name="location_and_dist">%1$s, %2$s km to you"</string>
     <string name="name_and_age">%1$s, %2$s"</string>
     <string name="your_message_will_be_here">Your message will be here</string>
+
 
 </resources>
