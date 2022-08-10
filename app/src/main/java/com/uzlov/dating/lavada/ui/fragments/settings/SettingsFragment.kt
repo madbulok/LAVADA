@@ -55,13 +55,17 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(FragmentSettingsB
                 showCustomAlertToDelAcc()
             }
             swTheme.setOnCheckedChangeListener { _, isChecked ->
+//                if (isChecked) {
+//                    preferenceRepository.setTheme(isChecked)
+//                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+//                } else {
+//                    preferenceRepository.setTheme(isChecked)
+//                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+//
+//                }
                 if (isChecked) {
-                    preferenceRepository.setTheme(isChecked)
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                } else {
-                    preferenceRepository.setTheme(isChecked)
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-
+                    showCustomAlertComingSoon()
+                    swTheme.isChecked = false
                 }
 
             }
@@ -83,6 +87,22 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(FragmentSettingsB
             btnHelp.setOnClickListener {
                 updateUI(HelpFragment.newInstance())
             }
+        }
+    }
+
+    private fun showCustomAlertComingSoon() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_custom_coming_soon, null)
+        val customDialog =
+            MaterialAlertDialogBuilder(requireContext(), R.style.MaterialAlertDialog_rounded)
+                .setView(dialogView)
+                .show()
+
+        dialogView.findViewById<TextView>(R.id.header).text =
+            getString(R.string.ficha_is_coming_soon)
+        val btSendPass = dialogView.findViewById<Button>(R.id.btnSendPasswordCustomDialog)
+        btSendPass.text = getString(R.string.i_ll_be_waiting)
+        btSendPass.setOnClickListener {
+            customDialog?.dismiss()
         }
     }
 

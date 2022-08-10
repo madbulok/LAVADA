@@ -6,9 +6,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.TextView
 import androidx.core.os.bundleOf
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.databinding.FragmentMatchBottomLayoutBinding
 import com.uzlov.dating.lavada.domain.models.User
@@ -69,12 +72,29 @@ class FragmentMatch : BottomSheetDialogFragment() {
 
     }
 
-    private fun openChatActivity(companionId: String, companionUid: String) {
-        val intent = Intent(requireContext(), SingleChatActivity::class.java).apply {
-            putExtra(SingleChatActivity.COMPANION_ID, companionId)
-            putExtra(SingleChatActivity.COMPANION_UID, companionUid)
+    private fun showCustomAlertComingSoon() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_custom_coming_soon, null)
+        val customDialog =
+            MaterialAlertDialogBuilder(requireContext(), R.style.MaterialAlertDialog_rounded)
+                .setView(dialogView)
+                .show()
+
+        dialogView.findViewById<TextView>(R.id.header).text =
+            getString(R.string.ficha_is_coming_soon)
+        val btSendPass = dialogView.findViewById<Button>(R.id.btnSendPasswordCustomDialog)
+        btSendPass.text = getString(R.string.i_ll_be_waiting)
+        btSendPass.setOnClickListener {
+            customDialog?.dismiss()
         }
-        startActivity(intent)
+    }
+
+    private fun openChatActivity(companionId: String, companionUid: String) {
+//        val intent = Intent(requireContext(), SingleChatActivity::class.java).apply {
+//            putExtra(SingleChatActivity.COMPANION_ID, companionId)
+//            putExtra(SingleChatActivity.COMPANION_UID, companionUid)
+//        }
+//        startActivity(intent)
+        showCustomAlertComingSoon()
     }
 
     override fun onDestroyView() {

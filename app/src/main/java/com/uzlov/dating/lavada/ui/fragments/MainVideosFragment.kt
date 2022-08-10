@@ -1,5 +1,6 @@
 package com.uzlov.dating.lavada.ui.fragments
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -17,6 +18,7 @@ import com.uzlov.dating.lavada.data.repository.PreferenceRepository
 import com.uzlov.dating.lavada.databinding.MainVideosFragmentBinding
 import com.uzlov.dating.lavada.domain.models.*
 import com.uzlov.dating.lavada.ui.SingleSnap
+import com.uzlov.dating.lavada.ui.activities.HostActivity
 import com.uzlov.dating.lavada.ui.activities.SingleChatActivity
 import com.uzlov.dating.lavada.ui.adapters.PlayerViewAdapter
 import com.uzlov.dating.lavada.ui.adapters.ProfileRecyclerAdapter
@@ -234,6 +236,7 @@ class MainVideosFragment :
         }
     }
 
+
     private fun updateData() {
         authService.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
             Log.e("TOKEN_FB", tokenFb.token.toString())
@@ -251,8 +254,9 @@ class MainVideosFragment :
     private fun setOnClickListener() {
         with(viewBinding) {
             ivMyMessage.setOnClickListener {
-                openChatFragment(null)
-                PlayerViewAdapter.pauseCurrentPlayingVideo()
+//                openChatFragment(null)
+//                PlayerViewAdapter.pauseCurrentPlayingVideo()
+                showCustomAlertComingSoon()
             }
             ivProfile.setOnClickListener {
                 parentFragmentManager.beginTransaction()
@@ -282,8 +286,9 @@ class MainVideosFragment :
 
         mAdapter.setOnActionClickListener(object : ProfileRecyclerAdapter.OnActionListener {
             override fun sendGift(user: User) {
-                val giftFragment = GiftsBottomSheetDialogFragment()
-                giftFragment.show(childFragmentManager, giftFragment.javaClass.simpleName)
+//                val giftFragment = GiftsBottomSheetDialogFragment()
+//                giftFragment.show(childFragmentManager, giftFragment.javaClass.simpleName)
+                showCustomAlertComingSoon()
 
             }
 
@@ -303,25 +308,26 @@ class MainVideosFragment :
             }
 
             override fun sendMessage(user: User) {
-                userMes = user
-                //check likes?
-                /**
-                 * тут будет так
-                 * - проверяем лайк,
-                 * - если взаимен, открываем сообщения
-                 * - если нет, проверяем премиум
-                 * - если премиум, то открываем сообщения, если нет, открываем алерт с прежложением купить премиум*/
-                if (self.premium) {
-//                    self.chats[user.uid] = self.uid
-                    PlayerViewAdapter.pauseCurrentPlayingVideo()
-                    user.userId?.let { it1 -> openChatActivity(it1, user.uid)
-                    }
-                } else {
-                    authService.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
-                        model.checkLike(tokenFb.token ?: "", user.uid)
-                        Log.e("javaClass.simpleName", "checkLike: ")
-                    }
-                }
+//                userMes = user
+//                //check likes?
+//                /**
+//                 * тут будет так
+//                 * - проверяем лайк,
+//                 * - если взаимен, открываем сообщения
+//                 * - если нет, проверяем премиум
+//                 * - если премиум, то открываем сообщения, если нет, открываем алерт с прежложением купить премиум*/
+//                if (self.premium) {
+////                    self.chats[user.uid] = self.uid
+//                    PlayerViewAdapter.pauseCurrentPlayingVideo()
+//                    user.userId?.let { it1 -> openChatActivity(it1, user.uid)
+//                    }
+//                } else {
+//                    authService.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
+//                        model.checkLike(tokenFb.token ?: "", user.uid)
+//                        Log.e("javaClass.simpleName", "checkLike: ")
+//                    }
+//                }
+                showCustomAlertComingSoon()
 
             }
 
@@ -378,6 +384,22 @@ class MainVideosFragment :
     override fun onDestroyView() {
         super.onDestroyView()
         PlayerViewAdapter.releaseAllPlayers()
+    }
+
+    private fun showCustomAlertComingSoon() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_custom_coming_soon, null)
+        val customDialog =
+            MaterialAlertDialogBuilder(requireContext(), R.style.MaterialAlertDialog_rounded)
+                .setView(dialogView)
+                .show()
+
+        dialogView.findViewById<TextView>(R.id.header).text =
+            getString(R.string.ficha_is_coming_soon)
+        val btSendPass = dialogView.findViewById<Button>(R.id.btnSendPasswordCustomDialog)
+        btSendPass.text = getString(R.string.i_ll_be_waiting)
+        btSendPass.setOnClickListener {
+            customDialog?.dismiss()
+        }
     }
 
     companion object {
