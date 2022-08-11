@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.android.exoplayer2.Player
 import com.uzlov.dating.lavada.R
+import com.uzlov.dating.lavada.data.repository.PreferenceRepository
 import com.uzlov.dating.lavada.databinding.TiktokTimelineItemRecyclerBinding
 import com.uzlov.dating.lavada.domain.models.User
 import com.uzlov.dating.lavada.domain.models.getNAmeLabel
@@ -18,6 +19,7 @@ import kotlin.math.roundToInt
 class ProfileRecyclerAdapter(
     private var modelList: List<User>,
     private var self: User,
+    private var preferenceRepository: PreferenceRepository
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(),
     PlayerStateCallback {
     private var mItemClickListener: OnItemClickListener? = null
@@ -111,7 +113,7 @@ class ProfileRecyclerAdapter(
         fun onBind(model: User) {
 
             with(binding) {
-                binding.root.setOnClickListener(object : DoubleClickListener() {
+                root.setOnClickListener(object : DoubleClickListener() {
                     override fun onDoubleClick(v: View) {
                         mItemClickListener?.onItemClick(
                             adapterPosition,
@@ -119,7 +121,7 @@ class ProfileRecyclerAdapter(
                         )
                     }
                 })
-                binding.root.let {
+                root.let {
                     Glide
                         .with(it.context)
                         .load(model.url_avatar)
@@ -128,7 +130,7 @@ class ProfileRecyclerAdapter(
                 }
 
                 //было бы неплохо уточнить, какие именно цифры показываем
-                binding.tvNameProfile.text = model.getNAmeLabel()
+                tvNameProfile.text = model.getNAmeLabel()
                 val loc = model.location?.split(",")
                 tvLocationProfile.text =
                     (loc?.get(0) ?: "unknown") + ", " + model.dist?.roundToInt()
@@ -163,6 +165,10 @@ class ProfileRecyclerAdapter(
                 }
                 ivInstagramProfile.setOnClickListener {
                     actionListener?.instagram(model)
+                }
+
+                if (preferenceRepository.readLike(model.uid)){
+                    ivHeartTo.setImageResource(R.drawable.heart_filled)
                 }
 
                 binding.apply {

@@ -71,7 +71,7 @@ class MainVideosFragment :
     private var testData = listOf<User>()
 
     private val mAdapter: ProfileRecyclerAdapter by lazy {
-        ProfileRecyclerAdapter(testData, self)
+        ProfileRecyclerAdapter(testData, self, preferenceRepository)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -103,6 +103,7 @@ class MainVideosFragment :
                     if (user != null) {
                         authService.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
                             model.setLike(tokenFb.token ?: "", user.uid, "1")
+                            preferenceRepository.setLike(user.uid, true)
                             Log.e("javaClass.simpleName", "sendHeart: ")
                         }
                     }
@@ -297,6 +298,7 @@ class MainVideosFragment :
                  * - если нет - тост "вы отправили симпатию"*/
                 authService.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
                     model.setLike(tokenFb.token ?: "", user.uid, "1")
+                    preferenceRepository.setLike(user.uid, true)
                     Log.e("javaClass.simpleName", "sendHeart: ")
                 }
 
