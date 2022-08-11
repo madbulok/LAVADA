@@ -45,10 +45,12 @@ class ProfileRecyclerAdapter(
         viewType: Int,
     ): VideoPlayerViewHolder {
         val binding: TiktokTimelineItemRecyclerBinding =
-            DataBindingUtil.inflate(LayoutInflater.from(viewGroup.context),
+            DataBindingUtil.inflate(
+                LayoutInflater.from(viewGroup.context),
                 R.layout.tiktok_timeline_item_recycler,
                 viewGroup,
-                false)
+                false
+            )
         return VideoPlayerViewHolder(binding)
     }
 
@@ -108,7 +110,7 @@ class ProfileRecyclerAdapter(
         RecyclerView.ViewHolder(binding.root) {
         fun onBind(model: User) {
 
-            with(binding){
+            with(binding) {
                 binding.root.setOnClickListener(object : DoubleClickListener() {
                     override fun onDoubleClick(v: View) {
                         mItemClickListener?.onItemClick(
@@ -126,15 +128,17 @@ class ProfileRecyclerAdapter(
                 }
 
                 //было бы неплохо уточнить, какие именно цифры показываем
-                binding.tvNameProfile. text = model.getNAmeLabel()
-
-                tvLocationProfile.text = "В " + model.dist?.roundToInt().toString() + " км от вас"
+                binding.tvNameProfile.text = model.getNAmeLabel()
+                val loc = model.location?.split(",")
+                tvLocationProfile.text =
+                    (loc?.get(0) ?: "unknown") + ", " + model.dist?.roundToInt()
+                        .toString() + " km from you"
                 tvDescriptionProfile.text = model.about
                 ivTikTokProfile.visibility = View.VISIBLE
                 ivInstagramProfile.visibility = View.VISIBLE
                 ivFacebookProfile.visibility = View.VISIBLE
                 viewForTap.setOnClickListener {
-                    if (tvDescriptionProfile.maxLines == 1){
+                    if (tvDescriptionProfile.maxLines == 1) {
                         tvDescriptionProfile.maxLines = Int.MAX_VALUE
                     } else tvDescriptionProfile.maxLines = 1
 
