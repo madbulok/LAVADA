@@ -1,6 +1,5 @@
 package com.uzlov.dating.lavada.ui.fragments
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -18,15 +17,12 @@ import com.uzlov.dating.lavada.data.repository.PreferenceRepository
 import com.uzlov.dating.lavada.databinding.MainVideosFragmentBinding
 import com.uzlov.dating.lavada.domain.models.*
 import com.uzlov.dating.lavada.ui.SingleSnap
-import com.uzlov.dating.lavada.ui.activities.HostActivity
 import com.uzlov.dating.lavada.ui.activities.SingleChatActivity
 import com.uzlov.dating.lavada.ui.adapters.PlayerViewAdapter
 import com.uzlov.dating.lavada.ui.adapters.ProfileRecyclerAdapter
 import com.uzlov.dating.lavada.ui.adapters.RecyclerViewScrollListener
 import com.uzlov.dating.lavada.ui.fragments.dialogs.FragmentMatch
-import com.uzlov.dating.lavada.ui.fragments.dialogs.GiftsBottomSheetDialogFragment
 import com.uzlov.dating.lavada.ui.fragments.profile.ProfileFragment
-import com.uzlov.dating.lavada.viemodels.MessageChatViewModel
 import com.uzlov.dating.lavada.viemodels.SubscriptionsViewModel
 import com.uzlov.dating.lavada.viemodels.UsersViewModel
 import com.uzlov.dating.lavada.viemodels.ViewModelFactory
@@ -333,6 +329,18 @@ class MainVideosFragment :
 
             override fun complain(user: User) {
                 showCustomAlertToComplain()
+            }
+
+            override fun tiktok(user: User) {
+                showCustomAlertComingSoon()
+            }
+
+            override fun instagram(user: User) {
+                showCustomAlertComingSoon()
+            }
+
+            override fun facebook(user: User) {
+                showCustomAlertComingSoon()
             }
         })
     }

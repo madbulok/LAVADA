@@ -28,6 +28,9 @@ class ProfileRecyclerAdapter(
         fun sendHeart(user: User)
         fun sendMessage(user: User)
         fun complain(user: User)
+        fun tiktok(user: User)
+        fun instagram(user: User)
+        fun facebook(user: User)
     }
 
     fun updateList(modelList: List<User>, self: User) {
@@ -105,57 +108,67 @@ class ProfileRecyclerAdapter(
         RecyclerView.ViewHolder(binding.root) {
         fun onBind(model: User) {
 
-            binding.root.setOnClickListener(object : DoubleClickListener() {
-                override fun onDoubleClick(v: View) {
-                    mItemClickListener?.onItemClick(
-                        adapterPosition,
-                        model
-                    )
+            with(binding){
+                binding.root.setOnClickListener(object : DoubleClickListener() {
+                    override fun onDoubleClick(v: View) {
+                        mItemClickListener?.onItemClick(
+                            adapterPosition,
+                            model
+                        )
+                    }
+                })
+                binding.root.let {
+                    Glide
+                        .with(it.context)
+                        .load(model.url_avatar)
+                        .error(R.drawable.ic_default_user)
+                        .into(binding.ivRandomProfile)
                 }
-            })
-            binding.root.let {
-                Glide
-                    .with(it.context)
-                    .load(model.url_avatar)
-                    .error(R.drawable.ic_default_user)
-                    .into(binding.ivRandomProfile)
+
+                //было бы неплохо уточнить, какие именно цифры показываем
+                binding.tvNameProfile. text = model.getNAmeLabel()
+
+                tvLocationProfile.text = "В " + model.dist?.roundToInt().toString() + " км от вас"
+                tvDescriptionProfile.text = model.about
+                ivTikTokProfile.visibility = View.VISIBLE
+                ivInstagramProfile.visibility = View.VISIBLE
+                ivFacebookProfile.visibility = View.VISIBLE
+                viewForTap.setOnClickListener {
+                    if (tvDescriptionProfile.maxLines == 1){
+                        tvDescriptionProfile.maxLines = Int.MAX_VALUE
+                    } else tvDescriptionProfile.maxLines = 1
+
+                }
+                ivHeartTo.setOnClickListener {
+                    actionListener?.sendHeart(model)
+                }
+                ivGiftTo.setOnClickListener {
+                    actionListener?.sendGift(model)
+                }
+                ivMessageTo.setOnClickListener {
+                    actionListener?.sendMessage(model)
+                }
+                ivComplain.setOnClickListener {
+                    actionListener?.complain(model)
+                }
+                ivTikTokProfile.setOnClickListener {
+                    actionListener?.tiktok(model)
+                }
+                ivFacebookProfile.setOnClickListener {
+                    actionListener?.facebook(model)
+                }
+                ivInstagramProfile.setOnClickListener {
+                    actionListener?.instagram(model)
+                }
+
+                binding.apply {
+                    dataModel = model
+                    callback = this@ProfileRecyclerAdapter
+                    index = adapterPosition
+                    executePendingBindings()
+                }
             }
 
-            //было бы неплохо уточнить, какие именно цифры показываем
-            binding.tvNameProfile. text = model.getNAmeLabel()
-
-            binding.tvLocationProfile.text = "В " + model.dist?.roundToInt().toString() + " км от вас"
-            binding.tvDescriptionProfile.text = model.about
-            if (self.premium){
-                binding.ivTikTokProfile.visibility = View.VISIBLE
-                binding.ivInstagramProfile.visibility = View.VISIBLE
-                binding.ivFacebookProfile.visibility = View.VISIBLE
-            }
-            binding.viewForTap.setOnClickListener {
-                if (binding.tvDescriptionProfile.maxLines == 1){
-                    binding.tvDescriptionProfile.maxLines = Int.MAX_VALUE
-                } else binding.tvDescriptionProfile.maxLines = 1
-
-            }
-            binding.ivHeartTo.setOnClickListener {
-                actionListener?.sendHeart(model)
-            }
-            binding.ivGiftTo.setOnClickListener {
-                actionListener?.sendGift(model)
-            }
-            binding.ivMessageTo.setOnClickListener {
-                actionListener?.sendMessage(model)
-            }
-            binding.ivComplain.setOnClickListener {
-                actionListener?.complain(model)
-            }
-
-            binding.apply {
-                dataModel = model
-                callback = this@ProfileRecyclerAdapter
-                index = adapterPosition
-                executePendingBindings()
-            }
         }
     }
 
