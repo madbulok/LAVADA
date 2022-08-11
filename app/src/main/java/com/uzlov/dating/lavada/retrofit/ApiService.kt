@@ -16,9 +16,9 @@ interface ApiService {
     @GET("api/v1/users")
     suspend fun getUsersAsync(
                @Query("limit") limit: String,
-        //       @Query("offset") offset: String,
-        //       @Query("order_by_location") order_by_location: String,
-        //       @Query("only_premium") only_premium: String,
+               @Query("order_by[0]") order_by_location: String,
+               @Query("filters[user_gender]") user_gender: String,
+               @Query("filters[user_age]") user_age: String,
     ): Response<RemoteUserList>
 
     //получить пользователя +

@@ -240,7 +240,7 @@ class MainVideosFragment :
     private fun updateData() {
         authService.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
             Log.e("TOKEN_FB", tokenFb.token.toString())
-            model.getUsers(tokenFb.token.toString())
+            model.getUsers(tokenFb.token.toString(), preferenceRepository.readFilter().sex, preferenceRepository.readFilter().ageStart.toString(), preferenceRepository.readFilter().ageEnd.toString())
             model.getUser(tokenFb.token.toString())
         }
 
@@ -275,7 +275,7 @@ class MainVideosFragment :
                 //здесь нужно занулить плееры
                 PlayerViewAdapter.releaseAllPlayers()
                 authService.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
-                    model.getUsers(tokenFb.token.toString())
+                    model.getUsers(tokenFb.token.toString(), preferenceRepository.readFilter().sex, preferenceRepository.readFilter().ageStart.toString(), preferenceRepository.readFilter().ageEnd.toString())
                     Log.e("javaClass.simpleName", "listUsers: ")
                 }
                 // а тут - запустить их заново
