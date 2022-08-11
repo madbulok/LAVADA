@@ -351,7 +351,6 @@ class MainVideosFragment :
         val fragment = FilterSearchPeopleFragment.newInstance(user)
         parentFragmentManager.beginTransaction()
             .replace(R.id.container, fragment)
-            .addToBackStack(null)
             .commit()
     }
 
