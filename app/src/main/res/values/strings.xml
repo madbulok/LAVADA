@@ -229,6 +229,7 @@
     <string name="name_and_age">%1$s, %2$s"</string>
     <string name="your_message_will_be_here">Your message will be here</string>
     <string name="tiktok">Tiktok</string>
+    <string name="no_one_was_found_for_your_query_try_changing_the_filters">No one was found for your query, try changing the filters.</string>
 
 
 </resources>

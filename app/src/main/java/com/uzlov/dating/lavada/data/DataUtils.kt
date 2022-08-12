@@ -5,6 +5,7 @@ import androidx.annotation.RequiresApi
 import com.google.gson.GsonBuilder
 import com.uzlov.dating.lavada.domain.models.*
 import retrofit2.Response
+import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.OffsetDateTime
@@ -101,18 +102,24 @@ fun convertToReady(reUser: ReUser?): Boolean {
 fun displayApiResponseErrorBody(response: Response<*>): String {
     var finish: String? = null
     val gson = GsonBuilder().create()
-    val mError = gson.fromJson(
-        response.errorBody()!!.string(),
-        ErrorUtils::class.java
-    )
-    if (mError.error?.user_status != null) {
-        finish = mError.error.user_status
-    }
-    if (mError.error?.message != null) {
-        finish = mError.error.message
+    try {
+        val mError = gson.fromJson(
+            response.errorBody()!!.string(),
+            ErrorUtils::class.java)
+        if (mError.error?.user_status != null) {
+            finish = mError.error.user_status
+        }
+        if (mError.error?.message != null) {
+            finish = mError.error.message
+        }
+
+        return finish ?: "Неизвестная ошибка"
+    } catch (e: Exception){
+        return finish ?: "Неизвестная ошибка"
     }
 
-    return finish ?: "Неизвестная ошибка"
+
+
 }
 
 fun convertListReMessageToChatMessage(remoteMessage: RemoteMessage): ChatMessage {
