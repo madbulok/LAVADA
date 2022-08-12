@@ -200,7 +200,7 @@ class MainVideosFragment :
         val btSendPass = dialogView.findViewById<Button>(R.id.btnSendPasswordCustomDialog)
         btSendPass.text = getString(R.string.yes)
         btSendPass.setOnClickListener {
-            Toast.makeText(requireContext(), "Жалуемся", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "the complaint has been sent", Toast.LENGTH_SHORT).show()
             customDialog?.dismiss()
         }
     }
