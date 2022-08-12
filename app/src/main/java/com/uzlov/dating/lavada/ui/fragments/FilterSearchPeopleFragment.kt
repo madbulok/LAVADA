@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import com.google.android.material.slider.RangeSlider
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
@@ -96,11 +97,26 @@ class FilterSearchPeopleFragment :
             tbBackAction.setOnClickListener {
                 (requireActivity() as HostActivity).rollbackFragment()
             }
+            slAge.addOnSliderTouchListener(object : RangeSlider.OnSliderTouchListener{
+                override fun onStartTrackingTouch(slider: RangeSlider) {
+                    val values = slAge.values
+                    //Those are the satrt and end values of sldier when user start dragging
+                    Log.i("SliderPreviousValue From", values[0].toString())
+                    Log.i("SliderPreviousValue To", values[1].toString())
+                }
+
+                override fun onStopTrackingTouch(slider: RangeSlider) {
+                    ageStart = slider.values[0].toInt()
+                    ageEnd = slider.values[1].toInt()
+                    saveLocalFilter()
+                }
+            })
+
             slAge.addOnChangeListener { rangeSlider, _, _ ->
                 ageStart = rangeSlider.values[0].toInt()
                 ageEnd = rangeSlider.values[1].toInt()
                 tvAgeValue.text = ageStart.toString() + " - " + ageEnd.toString()
-                saveLocalFilter()
+          //      saveLocalFilter()
             }
         }
     }
