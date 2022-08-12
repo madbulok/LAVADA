@@ -26,6 +26,7 @@ import com.uzlov.dating.lavada.ui.fragments.profile.ProfileFragment
 import com.uzlov.dating.lavada.viemodels.SubscriptionsViewModel
 import com.uzlov.dating.lavada.viemodels.UsersViewModel
 import com.uzlov.dating.lavada.viemodels.ViewModelFactory
+import java.util.*
 import javax.inject.Inject
 
 
@@ -66,7 +67,7 @@ class MainVideosFragment :
         override fun onPrevious() {
         }
     }
-
+    private val startTime = System.currentTimeMillis()
     private val snapHelper: SingleSnap = SingleSnap(callback)
     private var testData = listOf<User>()
 
@@ -76,14 +77,18 @@ class MainVideosFragment :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        Log.e("onCreate Time", startTime.toString())
         requireContext().appComponent.inject(this)
         userFilter = preferenceRepository.readFilter()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.e("onViewCreated", System.currentTimeMillis().toString())
         model = factoryViewModel.create(UsersViewModel::class.java)
         initObservers()
+        Log.e("BeforeUpdateData", System.currentTimeMillis().toString())
         updateData()
         with(viewBinding) {
             rvVideosUsers.adapter = mAdapter
@@ -154,6 +159,7 @@ class MainVideosFragment :
             mAdapter.updateList(
                 users, self
             )
+            Log.e("AfterUpdateData", System.currentTimeMillis().toString())
         }
         //статус доступа к api
         model.status.observe(viewLifecycleOwner) { result ->
@@ -235,10 +241,12 @@ class MainVideosFragment :
 
 
     private fun updateData() {
+        Log.e("BeforeUpdateData1", (System.currentTimeMillis()-startTime).toString() )
         authService.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
             Log.e("TOKEN_FB", tokenFb.token.toString())
             model.getUsers(tokenFb.token.toString(), preferenceRepository.readFilter().sex, preferenceRepository.readFilter().ageStart.toString(), preferenceRepository.readFilter().ageEnd.toString())
             model.getUser(tokenFb.token.toString())
+            Log.e("AfterUpdateData", (System.currentTimeMillis()-startTime).toString())
         }
 
     }
