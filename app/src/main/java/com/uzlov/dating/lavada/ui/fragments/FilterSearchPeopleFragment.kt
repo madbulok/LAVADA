@@ -97,7 +97,7 @@ class FilterSearchPeopleFragment :
                 (requireActivity() as HostActivity).openFragment()
             }
             tbBackAction.setOnClickListener {
-                (requireActivity() as HostActivity).rollbackFragment()
+                (requireActivity() as HostActivity).openFragment()
             }
             slAge.addOnSliderTouchListener(object : RangeSlider.OnSliderTouchListener{
                 override fun onStartTrackingTouch(slider: RangeSlider) {
@@ -110,7 +110,14 @@ class FilterSearchPeopleFragment :
                 override fun onStopTrackingTouch(slider: RangeSlider) {
                     ageStart = slider.values[0].toInt()
                     ageEnd = slider.values[1].toInt()
-                    saveLocalFilter()
+                    val sex = when (viewBinding.radioGroup.checkedRadioButtonId) {
+                        R.id.rbMan -> 0
+                        R.id.rvWoman -> 1
+                        else -> 0
+                    }
+                    firebaseEmailAuthService.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
+                        model.getUsers(tokenFb.token.toString(), sex, ageStart.toString(), ageEnd.toString())
+                    }
                 }
             })
 
