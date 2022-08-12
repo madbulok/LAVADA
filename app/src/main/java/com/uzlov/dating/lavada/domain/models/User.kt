@@ -84,7 +84,8 @@ data class ReUser(
     val token: String? = null,
     val user_balance: String? = null,
     val user_description: String? = null,
-    val _mutual_like: String? = null
+    val _mutual_like: String? = null,
+    val user_distance: String? = null
 ) : Parcelable
 
 @Parcelize

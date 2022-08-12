@@ -40,7 +40,8 @@ fun convertDtoToModel(remoteUser: RemoteUser): User {
         location = fact.user_address,
         premium = fact._has_premium,
         ready = ready,
-        userId = fact.user_id
+        userId = fact.user_id,
+        dist = fact.user_distance?.toDouble()
     )
 }
 
@@ -72,7 +73,8 @@ fun convertListDtoToModel(reUser: ReUser?): User {
         location = fact.user_address,
         premium = fact._has_premium,
         ready = ready,
-        userId = fact.user_id
+        userId = fact.user_id,
+        dist = fact.user_distance?.toDouble()
     )
 }
 
