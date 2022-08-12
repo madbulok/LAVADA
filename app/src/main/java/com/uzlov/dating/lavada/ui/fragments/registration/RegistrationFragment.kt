@@ -151,8 +151,8 @@ class RegistrationFragment :
 
     private fun hideLogin(){
         with(viewBinding){
-            btnBack.visibility = View.GONE
-            btnLogin.visibility = View.GONE
+            btnBack.visibility = View.INVISIBLE
+            btnLogin.visibility = View.INVISIBLE
             progressBar.visibility = View.VISIBLE
         }
     }
