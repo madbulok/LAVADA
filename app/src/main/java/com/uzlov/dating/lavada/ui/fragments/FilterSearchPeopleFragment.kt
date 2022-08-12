@@ -3,7 +3,10 @@ package com.uzlov.dating.lavada.ui.fragments
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.slider.RangeSlider
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.app.appComponent
@@ -75,7 +78,6 @@ class FilterSearchPeopleFragment :
            if (users.isEmpty()){
                viewBinding.tvErrorSearch.visibility = View.VISIBLE
                viewBinding.btnNext.isEnabled = false
-           //    Toast.makeText(context, "Никого не нашлось(", Toast.LENGTH_SHORT).show()
            } else{
                viewBinding.tvErrorSearch.visibility = View.GONE
                viewBinding.btnNext.isEnabled = true
@@ -116,8 +118,30 @@ class FilterSearchPeopleFragment :
                 ageStart = rangeSlider.values[0].toInt()
                 ageEnd = rangeSlider.values[1].toInt()
                 tvAgeValue.text = ageStart.toString() + " - " + ageEnd.toString()
-          //      saveLocalFilter()
             }
+            swPremium.setOnCheckedChangeListener { _, isChecked ->
+                if (isChecked) {
+                    showCustomAlertComingSoon()
+                    swPremium.isChecked = false
+                }
+
+            }
+        }
+    }
+
+    private fun showCustomAlertComingSoon() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_custom_coming_soon, null)
+        val customDialog =
+            MaterialAlertDialogBuilder(requireContext(), R.style.MaterialAlertDialog_rounded)
+                .setView(dialogView)
+                .show()
+
+        dialogView.findViewById<TextView>(R.id.header).text =
+            getString(R.string.ficha_is_coming_soon)
+        val btSendPass = dialogView.findViewById<Button>(R.id.btnSendPasswordCustomDialog)
+        btSendPass.text = getString(R.string.i_ll_be_waiting)
+        btSendPass.setOnClickListener {
+            customDialog?.dismiss()
         }
     }
 
