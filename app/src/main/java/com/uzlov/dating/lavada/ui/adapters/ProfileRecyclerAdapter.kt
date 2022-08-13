@@ -119,6 +119,7 @@ class ProfileRecyclerAdapter(
                             adapterPosition,
                             model
                         )
+                        ivHeartTo.setImageResource(R.drawable.heart_pressed)
                     }
                 })
                 root.let {
@@ -147,6 +148,7 @@ class ProfileRecyclerAdapter(
                 }
                 ivHeartTo.setOnClickListener {
                     actionListener?.sendHeart(model)
+                    ivHeartTo.setImageResource(R.drawable.heart_pressed)
                 }
                 ivGiftTo.setOnClickListener {
                     actionListener?.sendGift(model)
@@ -168,7 +170,7 @@ class ProfileRecyclerAdapter(
                 }
 
                 if (preferenceRepository.readLike(model.uid)){
-                    ivHeartTo.setImageResource(R.drawable.heart_filled)
+                    ivHeartTo.setImageResource(R.drawable.heart_pressed)
                 }
 
                 binding.apply {
