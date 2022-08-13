@@ -4,6 +4,7 @@ plugins {
     id 'kotlin-kapt'
     id 'com.google.gms.google-services'
     id 'kotlin-parcelize'
+    id 'com.google.firebase.crashlytics'
 }
 
 def systemVariableVersionCode = 'VERSION_CODE'
@@ -131,7 +132,7 @@ dependencies {
     implementation 'com.github.SimformSolutionsPvtLtd:SSffmpegVideoOperation:1.0.8'
     implementation 'com.arthenica:mobile-ffmpeg-full:4.4'
 
-    def camerax_version = "1.1.0-beta01"
+    def camerax_version = "1.2.0-alpha04"
     implementation "androidx.camera:camera-core:${camerax_version}"
     implementation "androidx.camera:camera-camera2:${camerax_version}"
     implementation "androidx.camera:camera-lifecycle:${camerax_version}"
@@ -145,4 +146,6 @@ dependencies {
 
     def lottieVersion = "3.7.2"
     implementation "com.airbnb.android:lottie:$lottieVersion"
+    implementation 'com.google.firebase:firebase-crashlytics-ktx'
+    implementation 'com.google.firebase:firebase-analytics-ktx'
 }
