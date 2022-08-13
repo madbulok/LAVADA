@@ -3,9 +3,11 @@ package com.uzlov.dating.lavada.ui.activities
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.app.appComponent
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
@@ -59,6 +61,14 @@ class SplashActivity : AppCompatActivity() {
                 finish()
             }
         }
+    }
+
+    private fun loadImage(container: ImageView) {
+        Glide
+            .with(this)
+            .load(R.drawable.bubble_background)
+            .error(R.drawable.ic_default_user)
+            .into(container)
     }
 
     override fun onStop() {

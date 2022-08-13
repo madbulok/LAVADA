@@ -86,7 +86,7 @@
             app:layout_constraintEnd_toEndOf="@+id/ivMessageTo"
             app:layout_constraintTop_toTopOf="@+id/center_vertical"
             app:srcCompat="@drawable/heart_selector"
-            app:tint="@color/Surface" />
+            />
 
         <ImageView
             android:id="@+id/ivGiftTo"

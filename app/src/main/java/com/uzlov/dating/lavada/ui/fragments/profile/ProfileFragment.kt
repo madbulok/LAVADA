@@ -482,6 +482,16 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
         startForResultOpenVideo.launch(intent)
     }
 
+    override fun onPause() {
+        super.onPause()
+        player.pause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        player.play()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         player.stop()

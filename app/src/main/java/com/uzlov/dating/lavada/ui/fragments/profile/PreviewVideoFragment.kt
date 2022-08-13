@@ -121,6 +121,7 @@ class PreviewVideoFragment :
                         try {
                             val map = mutableMapOf<String, String>()
                             map["user_firstname"] = user.name.toString()
+                            map["user_nickname"] = user.name.toString()
                             Log.e("POL", user.male.toString())
                             map["user_gender"] = when (user.male) {
                                 MALE.MAN -> MAN

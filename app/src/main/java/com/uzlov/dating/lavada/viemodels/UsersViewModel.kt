@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.auth.FirebaseEmailAuthService
 import com.uzlov.dating.lavada.data.convertDtoToModel
 import com.uzlov.dating.lavada.data.convertListDtoToModel
@@ -196,7 +197,14 @@ class UsersViewModel @Inject constructor(
      * Получаем список пользователей с сервера
      * @param token fb
      */
-    fun getUsers(token: String) {
+    fun getUsers(token: String, userGender: Int, userAgeStart: String, userAgeEnd: String) {
+        val sex = when (userGender) {
+            0 -> "male"
+            1 -> "female"
+            else -> "male"
+        }
+        val gender = "in|$sex"
+        val age = "bt|$userAgeStart,$userAgeEnd"
         viewModelScope.launch(Dispatchers.IO) {
             // запускаем наш токен
             usersUseCases.authRemoteUser(hashMapOf("token" to token)).let {
@@ -206,7 +214,7 @@ class UsersViewModel @Inject constructor(
                 result?.body()?.data?.token?.let { tokenToo ->
                     // прописываем его в запросы
                     serverCommunication.updateToken(tokenToo)
-                    serverCommunication.apiServiceWithToken?.getUsersAsync("200")?.let { result ->
+                    serverCommunication.apiServiceWithToken?.getUsersAsync("200", "user_distance|asc", gender, age)?.let { result ->
                         Log.e("GET_USERS", result.body().toString())
                         val listUser = mutableListOf<User>()
                         if (result.isSuccessful) {
@@ -233,6 +241,7 @@ class UsersViewModel @Inject constructor(
             }
         }
     }
+
 
 
     /**

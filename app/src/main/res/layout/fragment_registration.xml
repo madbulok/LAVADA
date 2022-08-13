@@ -128,10 +128,10 @@
         android:id="@+id/tv_policy"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/default_margin_16"
+        android:layout_marginBottom="91dp"
         android:text="and Privacy Policy."
         android:textColor="@color/Link_text"
-        app:layout_constraintBottom_toTopOf="@+id/progressBar"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/tv_before" />
 
     <ProgressBar

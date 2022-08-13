@@ -7,19 +7,17 @@
     tools:viewBindingIgnore="false"
     android:background="#F9F1FF">
 
-    <com.airbnb.lottie.LottieAnimationView
+    <ImageView
         android:id="@+id/imageView2"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:lottie_autoPlay="true"
-        app:lottie_imageAssetsFolder="images/"
-        app:lottie_loop="true"
-        app:lottie_rawRes="@raw/lott_2340_1080" />
+        android:scaleType="centerCrop"
+        android:src="@drawable/bubble_background"
+        />
 
     <TextView
         android:id="@+id/tvLabelApp"

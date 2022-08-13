@@ -6,6 +6,30 @@
     android:layout_height="match_parent"
     tools:context=".ui.activities.HostActivity">
 
+    <TextView
+        android:id="@+id/ivMy"
+        style="@style/Title2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/default_margin_32"
+        android:layout_marginEnd="@dimen/default_margin_32"
+        android:gravity="center"
+        android:text="@string/we_select_the_best_videos_for_you"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/progressBar"
+        app:layout_constraintEnd_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/default_margin_16"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ivMy" />
     <!--    top profile bar-->
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/refreshDataLayout"
@@ -36,34 +60,33 @@
         android:id="@+id/ivProfile"
         android:layout_width="@dimen/size_image_profile"
         android:layout_height="@dimen/size_image_profile"
-        android:layout_marginTop="22dp"
         android:layout_marginStart="@dimen/default_margin_16"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="22dp"
         app:layout_constraintStart_toStartOf="parent"
-        tools:background="@tools:sample/avatars"/>
+        app:layout_constraintTop_toTopOf="parent"
+        tools:background="@tools:sample/avatars" />
 
     <ImageView
         android:id="@+id/ivFilter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/filter"
         android:layout_marginEnd="@dimen/default_margin_16"
-        app:tint="@color/Inverse_text"
+        app:layout_constraintBottom_toBottomOf="@+id/ivProfile"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/ivProfile"
-        app:layout_constraintBottom_toBottomOf="@+id/ivProfile"/>
+        app:srcCompat="@drawable/filter"
+        app:tint="@color/Inverse_text" />
 
     <ImageView
         android:id="@+id/ivMyMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/message_circle"
         android:layout_marginEnd="@dimen/default_margin_16"
-        app:tint="@color/Inverse_text"
+        app:layout_constraintBottom_toBottomOf="@+id/ivProfile"
         app:layout_constraintEnd_toStartOf="@+id/ivFilter"
         app:layout_constraintTop_toTopOf="@+id/ivProfile"
-        app:layout_constraintBottom_toBottomOf="@+id/ivProfile"/>
-
+        app:srcCompat="@drawable/message_circle"
+        app:tint="@color/Inverse_text" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

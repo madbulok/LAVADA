@@ -22,12 +22,11 @@ import com.uzlov.dating.lavada.ui.adapters.PlayerViewAdapter
 import com.uzlov.dating.lavada.ui.adapters.ProfileRecyclerAdapter
 import com.uzlov.dating.lavada.ui.adapters.RecyclerViewScrollListener
 import com.uzlov.dating.lavada.ui.fragments.dialogs.FragmentMatch
-import com.uzlov.dating.lavada.ui.fragments.dialogs.GiftsBottomSheetDialogFragment
 import com.uzlov.dating.lavada.ui.fragments.profile.ProfileFragment
-import com.uzlov.dating.lavada.viemodels.MessageChatViewModel
 import com.uzlov.dating.lavada.viemodels.SubscriptionsViewModel
 import com.uzlov.dating.lavada.viemodels.UsersViewModel
 import com.uzlov.dating.lavada.viemodels.ViewModelFactory
+import java.util.*
 import javax.inject.Inject
 
 
@@ -68,24 +67,28 @@ class MainVideosFragment :
         override fun onPrevious() {
         }
     }
-
+    private val startTime = System.currentTimeMillis()
     private val snapHelper: SingleSnap = SingleSnap(callback)
     private var testData = listOf<User>()
 
     private val mAdapter: ProfileRecyclerAdapter by lazy {
-        ProfileRecyclerAdapter(testData, self)
+        ProfileRecyclerAdapter(testData, self, preferenceRepository)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        Log.e("onCreate Time", startTime.toString())
         requireContext().appComponent.inject(this)
         userFilter = preferenceRepository.readFilter()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.e("onViewCreated", System.currentTimeMillis().toString())
         model = factoryViewModel.create(UsersViewModel::class.java)
         initObservers()
+        Log.e("BeforeUpdateData", System.currentTimeMillis().toString())
         updateData()
         with(viewBinding) {
             rvVideosUsers.adapter = mAdapter
@@ -105,6 +108,7 @@ class MainVideosFragment :
                     if (user != null) {
                         authService.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
                             model.setLike(tokenFb.token ?: "", user.uid, "1")
+                            preferenceRepository.setLike(user.uid, true)
                             Log.e("javaClass.simpleName", "sendHeart: ")
                         }
                     }
@@ -155,6 +159,7 @@ class MainVideosFragment :
             mAdapter.updateList(
                 users, self
             )
+            Log.e("AfterUpdateData", System.currentTimeMillis().toString())
         }
         //статус доступа к api
         model.status.observe(viewLifecycleOwner) { result ->
@@ -201,7 +206,7 @@ class MainVideosFragment :
         val btSendPass = dialogView.findViewById<Button>(R.id.btnSendPasswordCustomDialog)
         btSendPass.text = getString(R.string.yes)
         btSendPass.setOnClickListener {
-            Toast.makeText(requireContext(), "Жалуемся", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "the complaint has been sent", Toast.LENGTH_SHORT).show()
             customDialog?.dismiss()
         }
     }
@@ -234,11 +239,14 @@ class MainVideosFragment :
         }
     }
 
+
     private fun updateData() {
+        Log.e("BeforeUpdateData1", (System.currentTimeMillis()-startTime).toString() )
         authService.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
             Log.e("TOKEN_FB", tokenFb.token.toString())
-            model.getUsers(tokenFb.token.toString())
+            model.getUsers(tokenFb.token.toString(), preferenceRepository.readFilter().sex, preferenceRepository.readFilter().ageStart.toString(), preferenceRepository.readFilter().ageEnd.toString())
             model.getUser(tokenFb.token.toString())
+            Log.e("AfterUpdateData", (System.currentTimeMillis()-startTime).toString())
         }
 
     }
@@ -251,8 +259,9 @@ class MainVideosFragment :
     private fun setOnClickListener() {
         with(viewBinding) {
             ivMyMessage.setOnClickListener {
-                openChatFragment(null)
-                PlayerViewAdapter.pauseCurrentPlayingVideo()
+//                openChatFragment(null)
+//                PlayerViewAdapter.pauseCurrentPlayingVideo()
+                showCustomAlertComingSoon()
             }
             ivProfile.setOnClickListener {
                 parentFragmentManager.beginTransaction()
@@ -271,7 +280,7 @@ class MainVideosFragment :
                 //здесь нужно занулить плееры
                 PlayerViewAdapter.releaseAllPlayers()
                 authService.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
-                    model.getUsers(tokenFb.token.toString())
+                    model.getUsers(tokenFb.token.toString(), preferenceRepository.readFilter().sex, preferenceRepository.readFilter().ageStart.toString(), preferenceRepository.readFilter().ageEnd.toString())
                     Log.e("javaClass.simpleName", "listUsers: ")
                 }
                 // а тут - запустить их заново
@@ -282,8 +291,9 @@ class MainVideosFragment :
 
         mAdapter.setOnActionClickListener(object : ProfileRecyclerAdapter.OnActionListener {
             override fun sendGift(user: User) {
-                val giftFragment = GiftsBottomSheetDialogFragment()
-                giftFragment.show(childFragmentManager, giftFragment.javaClass.simpleName)
+//                val giftFragment = GiftsBottomSheetDialogFragment()
+//                giftFragment.show(childFragmentManager, giftFragment.javaClass.simpleName)
+                showCustomAlertComingSoon()
 
             }
 
@@ -296,6 +306,7 @@ class MainVideosFragment :
                  * - если нет - тост "вы отправили симпатию"*/
                 authService.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
                     model.setLike(tokenFb.token ?: "", user.uid, "1")
+                    preferenceRepository.setLike(user.uid, true)
                     Log.e("javaClass.simpleName", "sendHeart: ")
                 }
 
@@ -303,30 +314,43 @@ class MainVideosFragment :
             }
 
             override fun sendMessage(user: User) {
-                userMes = user
-                //check likes?
-                /**
-                 * тут будет так
-                 * - проверяем лайк,
-                 * - если взаимен, открываем сообщения
-                 * - если нет, проверяем премиум
-                 * - если премиум, то открываем сообщения, если нет, открываем алерт с прежложением купить премиум*/
-                if (self.premium) {
-//                    self.chats[user.uid] = self.uid
-                    PlayerViewAdapter.pauseCurrentPlayingVideo()
-                    user.userId?.let { it1 -> openChatActivity(it1, user.uid)
-                    }
-                } else {
-                    authService.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
-                        model.checkLike(tokenFb.token ?: "", user.uid)
-                        Log.e("javaClass.simpleName", "checkLike: ")
-                    }
-                }
+//                userMes = user
+//                //check likes?
+//                /**
+//                 * тут будет так
+//                 * - проверяем лайк,
+//                 * - если взаимен, открываем сообщения
+//                 * - если нет, проверяем премиум
+//                 * - если премиум, то открываем сообщения, если нет, открываем алерт с прежложением купить премиум*/
+//                if (self.premium) {
+////                    self.chats[user.uid] = self.uid
+//                    PlayerViewAdapter.pauseCurrentPlayingVideo()
+//                    user.userId?.let { it1 -> openChatActivity(it1, user.uid)
+//                    }
+//                } else {
+//                    authService.getUser()?.getIdToken(true)?.addOnSuccessListener { tokenFb ->
+//                        model.checkLike(tokenFb.token ?: "", user.uid)
+//                        Log.e("javaClass.simpleName", "checkLike: ")
+//                    }
+//                }
+                showCustomAlertComingSoon()
 
             }
 
             override fun complain(user: User) {
                 showCustomAlertToComplain()
+            }
+
+            override fun tiktok(user: User) {
+                showCustomAlertComingSoon()
+            }
+
+            override fun instagram(user: User) {
+                showCustomAlertComingSoon()
+            }
+
+            override fun facebook(user: User) {
+                showCustomAlertComingSoon()
             }
         })
     }
@@ -337,7 +361,6 @@ class MainVideosFragment :
         val fragment = FilterSearchPeopleFragment.newInstance(user)
         parentFragmentManager.beginTransaction()
             .replace(R.id.container, fragment)
-            .addToBackStack(null)
             .commit()
     }
 
@@ -378,6 +401,22 @@ class MainVideosFragment :
     override fun onDestroyView() {
         super.onDestroyView()
         PlayerViewAdapter.releaseAllPlayers()
+    }
+
+    private fun showCustomAlertComingSoon() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_custom_coming_soon, null)
+        val customDialog =
+            MaterialAlertDialogBuilder(requireContext(), R.style.MaterialAlertDialog_rounded)
+                .setView(dialogView)
+                .show()
+
+        dialogView.findViewById<TextView>(R.id.header).text =
+            getString(R.string.ficha_is_coming_soon)
+        val btSendPass = dialogView.findViewById<Button>(R.id.btnSendPasswordCustomDialog)
+        btSendPass.text = getString(R.string.i_ll_be_waiting)
+        btSendPass.setOnClickListener {
+            customDialog?.dismiss()
+        }
     }
 
     companion object {

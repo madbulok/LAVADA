@@ -8,7 +8,7 @@ import javax.inject.Inject
 class UserUseCases @Inject constructor(
     private var userRemoteDataSource: IServerDataSource<Any>
 ) {
-    suspend fun getUsers(token: String, limit: String) = userRemoteDataSource.getUsers(token, limit)
+    suspend fun getUsers(token: String, limit: String, orderBy: String, gender: String, age: String) = userRemoteDataSource.getUsers(token, limit, orderBy, gender, age)
     suspend fun getUser(id: String) = userRemoteDataSource.getUser(id)
     suspend fun updateUser(token: String, field: Map<String, String>) = userRemoteDataSource.updateUser(token, field)
     suspend fun saveUser(token: String, user: User) = userRemoteDataSource.saveUser(token, user)

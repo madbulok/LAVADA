@@ -8,7 +8,7 @@ interface IServerDataSource<T> {
     suspend fun getUser(token: String): T?
     suspend fun getUserById(token: String, id: String): T?
     suspend fun authUser(selfToken: HashMap<String, String?>): T?
-    suspend fun getUsers(token: String, limit: String): T?
+    suspend fun getUsers(token: String, limit: String, orderBy: String, gender: String, age: String): T?
     suspend fun getBalance(token: String): T?
     suspend fun updateUser(token: String, field: Map<String, String>): T?
     suspend fun updateData(token: String, field: MultipartBody.Part): T?

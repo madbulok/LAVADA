@@ -9,7 +9,7 @@
     tools:context=".ui.activities.LoginActivity">
 
 
-    <com.airbnb.lottie.LottieAnimationView
+    <ImageView
         android:id="@+id/imageView2"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -17,13 +17,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:lottie_imageAssetsFolder="images/"
         android:scaleType="centerCrop"
-        app:lottie_autoPlay="true"
-        app:lottie_loop="true"
-        app:lottie_cacheComposition="true"
-        app:lottie_renderMode="hardware"
-        app:lottie_rawRes="@raw/lott_2340_1080" />
+        />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/subContent"

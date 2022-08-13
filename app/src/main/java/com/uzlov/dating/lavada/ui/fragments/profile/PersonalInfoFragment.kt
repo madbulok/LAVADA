@@ -199,6 +199,7 @@ class PersonalInfoFragment :
                         body["user_age"] = tvAgeValue.text.toString()
                         body["user_gender"] = userThis.password.toString()
                         body["user_firstname"] = tiEtName.text.toString()
+                        body["user_nickname"] = tiEtName.text.toString()
                         body["user_description"] = tiEtAboutMyself.text.toString()
                         model.updateUser(tokenFb.token.toString(), body)
                         if (urlImage != null){

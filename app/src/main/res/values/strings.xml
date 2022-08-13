@@ -1,97 +1,96 @@
 <resources>
-<!--    screen enter to app -->
+    <!--    screen enter to app -->
     <string name="app_name">LAVADA</string>
-    <string name="short_video_dating">короткие видео-знакомства</string>
-    <string name="take_photo">Сделать фото</string>
-    <string name="start_capture">Запись видео</string>
-    <string name="stop_capture">Стоп запись</string>
+    <string name="short_video_dating">short video dating</string>
+    <string name="take_photo">Take Photo</string>
+    <string name="start_capture">Start Capture</string>
+    <string name="stop_capture">Stop Capture</string>
     <string name="create_brilliant_learning_always">Create brilliant learning pathways</string>
-    <string name="login_to_account">Войдите в Ваш аккаунт</string>
-    <string name="have_an_acc_login">Есть аккаунт? Войти</string>
-    <string name="create_account">Создать аккаунт</string>
-    <string name="welcome">Добро пожаловвать</string>
-    <string name="sign_up">Присоединиться</string>
+    <string name="login_to_account">Log in to your account</string>
+    <string name="have_an_acc_login">Have an account? Log in</string>
+    <string name="create_account">Create account</string>
+    <string name="welcome">Welcome</string>
+    <string name="sign_up">Sign up </string>
     <string name="email_hint">e-mail</string>
-    <string name="password_hint">Пароль</string>
-    <string name="confirm_term_of_service_pp">Продолжая, вы соглашаетесь с нашими Условиями предоставления услуг и Политикой конфиденциальности.</string>
-    <string name="about_myself">О себе</string>
+    <string name="password_hint">password</string>
+    <string name="confirm_term_of_service_pp">By continuing, you agree to our Terms of Service and Privacy Policy.</string>
+    <string name="about_myself">About myself</string>
     <string name="we_will_recommend_diets">We will recommend diets and exercises  that suit you</string>
-    <string name="name_hint">имя</string>
-    <string name="sex_hint">пол</string>
-    <string name="age_hint">возраст</string>
-    <string name="location_hint">Местоположение</string>
-    <string name="my_location">Мое местоположение</string>
-    <string name="next">Дальше</string>
-    <string name="back">Назад</string>
-    <string name="looking_for">Я ищу</string>
-    <string name="add_video">Добавить видео</string>
-    <string name="record">Запись</string>
-    <string name="download">Галлерея</string>
-    <string name="cancel">Отмена</string>
-    <string name="complete">Завершить</string>
-    <string name="forgot_assword">Забыли пароль?</string>
-    <string name="or_sign_with_another">Войти другим способом</string>
-    <string name="we_will_send_new_pass">Мы вышлем новый пароль вам на почту</string>
-    <string name="send_password">Отправить пароль</string>
-    <string name="password_recovery">Восстановление пароля</string>
-    <string name="least_character_pass_rule_hint">Не менее 8 символов, включая прописные буквы и  цифры</string>
-    <string name="only_premium">Только премиум</string>
-    <string name="reset">Сбросить</string>
-    <string name="filter">Фильтр</string>
-    <string name="this_video_contain_inappropariate_content_quest">Видео содержит неприемлемый контент?</string>
-    <string name="no">Нет</string>
-    <string name="yes">Да</string>
-    <string name="your_video_is_locked">Ваше видео заблокировано</string>
-    <string name="this_video_contain_inappropariate_content">Видео содержит неприемлемый контент</string>
-    <string name="edit_video">Редактирование видео</string>
-    <string name="premium">Премиум</string>
-    <string name="buy_premium">купить премиум</string>
+    <string name="name_hint">name</string>
+    <string name="sex_hint">sex</string>
+    <string name="age_hint">age</string>
+    <string name="location_hint">location</string>
+    <string name="my_location">My location</string>
+    <string name="next">Next</string>
+    <string name="back">Back</string>
+    <string name="looking_for">I\'m looking for</string>
+    <string name="add_video">Add video</string>
+    <string name="record">Record</string>
+    <string name="download">Download</string>
+    <string name="cancel">Cancel</string>
+    <string name="complete">Complete</string>
+    <string name="forgot_assword">Forgot password?</string>
+    <string name="or_sign_with_another">Or sign in with another email</string>
+    <string name="we_will_send_new_pass">We will send a new password to your email</string>
+    <string name="send_password">Send password</string>
+    <string name="password_recovery">Password recovery</string>
+    <string name="least_character_pass_rule_hint">At least 8 characters, including uppercase and  numbers</string>
+    <string name="only_premium">Only premium</string>
+    <string name="reset">Reset</string>
+    <string name="filter">Filter</string>
+    <string name="this_video_contain_inappropariate_content_quest">This video contains inappropriate content?</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
+    <string name="your_video_is_locked">Your video is locked</string>
+    <string name="this_video_contain_inappropariate_content">Video contains inappropriate content</string>
+    <string name="edit_video">Edit video</string>
+    <string name="premium">Premium</string>
+    <string name="buy_premium">Buy premium</string>
     <string name="anket_upper_other">Анкета выше других в ленте</string>
     <string name="daily_coins">Ежедневное начисление коинов</string>
     <string name="watch_who_like_your">Просмотр тех, кто тебя лайкнул</string>
     <string name="can_chat_first">Писать можно первым</string>
     <string name="gold_border_avatar">Золотая рамка аватарки</string>
     <string name="watch_social_users">Просмотр соц сетей людей</string>
-    <string name="match">Взаимно</string>
-    <string name="send_message">Отправить сообщение</string>
-    <string name="your_messages_will_be_here">Ваши сообщения  могли быть здесь</string>
-    <string name="chats">Чаты</string>
-    <string name="like">Лайк</string>
-    <string name="block">Блок</string>
-    <string name="delete">Удалить</string>
-    <string name="your_likes_will_be_here">Ваши лайки могли быть здесь</string>
-    <string name="type_your_message">Напиши сообщение</string>
-    <string name="gifts">Подарки</string>
-    <string name="new_label">новый</string>
-    <string name="top_up">Купить</string>
-    <string name="top_up_your_account_buy_gift">Пополните свой аккаунт, чтобы купить подарок</string>
-    <string name="profile">Профиль</string>
-    <string name="coins">Монеты</string>
-    <string name="view_preview_profile">Просмотреть профиль</string>
-    <string name="add_new_video">Добавить новое видео</string>
-    <string name="like_list">Лайки</string>
-    <string name="gift_list">Подарки</string>
-    <string name="edit_profile">Редактировать профиль</string>
-    <string name="add_photo">Добавить фото</string>
-    <string name="aboute_myself">О себе</string>
-    <string name="social_networks">Соцсети</string>
-    <string name="only_seen_by_premium">Видят только премиум-пользователи</string>
+    <string name="match">Match</string>
+    <string name="send_message">Send message</string>
+    <string name="your_messages_will_be_here">Your messages  will be here</string>
+    <string name="chats">Chats</string>
+    <string name="like">Like</string>
+    <string name="block">Block</string>
+    <string name="delete">Delete</string>
+    <string name="your_likes_will_be_here">Your likes will be here</string>
+    <string name="type_your_message">Type your message</string>
+    <string name="gifts">Gifts</string>
+    <string name="new_label">new</string>
+    <string name="top_up">top up</string>
+    <string name="top_up_your_account_buy_gift">Top up your account to buy a gift</string>
+    <string name="profile">Profile</string>
+    <string name="coins">Coins </string>
+    <string name="view_preview_profile">View preview profile</string>
+    <string name="add_new_video">Add new video</string>
+    <string name="like_list">Like list</string>
+    <string name="gift_list">Gift list</string>
+    <string name="edit_profile">Edit profile</string>
+    <string name="add_photo">add photo</string>
+    <string name="aboute_myself">about myself</string>
+    <string name="social_networks">Social network</string>
+    <string name="only_seen_by_premium">Оnly seen by premium users</string>
     <string name="instagram">Instagram</string>
     <string name="facebook">Facebook</string>
     <string name="twitter">Twitter</string>
-    <string name="add">Добавить</string>
-    <string name="save">Сохранить</string>
-    <string name="coins_balance">Баланс монет</string>
+    <string name="add">add</string>
+    <string name="save">Save</string>
+    <string name="coins_balance">Coins balance</string>
     <string name="about">About</string>
     <string name="super_coins_box">Super coins box</string>
-    <string name="can_only_be_purch_once">*можно приобрести только один раз</string>
-    <string name="shop">Магазин</string>
+    <string name="can_only_be_purch_once">*can only be purchased once</string>
+    <string name="shop">Shop</string>
+    <string name="ficha_is_coming_soon">Ficha is coming soon...</string>
+    <string name="i_ll_be_waiting">Ок, i’ll be waiting</string>
 
     <string name="facebook_app_id">672136000645610</string>
     <string name="fb_login_protocol_scheme">fb672136000645610</string>
-    <string name="man">Man</string>
-    <string name="woman">Woman</string>
-    <string name="another">Another</string>
 
     <string name="privacy_text">
         <h2>Мы собираем и используем следующую информацию о вас:</h2><br />
@@ -168,7 +167,6 @@
         Время от времени мы вносим изменения в Пользовательское соглашение, например, когда мы обновляем функционал наших Услуг или объединяем несколько приложений или услуг, управляемых нами или нашими аффилированными лицами в один комбинированный сервис или приложение, или когда происходят изменения в законодательстве. Мы будем прилагать коммерчески разумные усилия, чтобы уведомить всех пользователей о любых существенных изменениях в настоящем пользовательском соглашении, например, посредством уведомлений на нашей Платформе. Однако вы должны регулярно просматривать Пользовательское соглашение для проверки таких изменений. Мы также обновим дату “Последнего обновления” в верхней части настоящего пользовательского соглашения, которая отражает дату вступления в силу соответствующих изменений в Пользовательское соглашение. Продолжение доступа или использования услуг после даты новой версии Пользовательского соглашения означает ваше согласие с ним. Если вы не согласны с новой редакцией пользовательского соглашения, вы должны прекратить доступ к нашим услугам или их использование.
     </string>
 
-
     <!--    DON'T USE IT, WILL BE REMOVED-->
     <!--    DON'T USE IT, WILL BE REMOVED-->
     <!--    DON'T USE IT, WILL BE REMOVED-->
@@ -215,7 +213,9 @@
     <string name="nly_seen_by_premium_users">Оnly seen by premium users</string>
     <string name="social_network">Social network</string>
     <string name="age">age</string>
-
+    <string name="man">Man</string>
+    <string name="woman">Woman</string>
+    <string name="another">Another</string>
     <string name="sex">sex</string>
 
     <string name="recommend">We will recommend diets and exercises that suit you</string>
@@ -225,9 +225,12 @@
     <string name="only_available_to_premium_accounts">Only available to premium accounts</string>
     <string name="go_to_the_store_to_buy_premium">Go to the store to buy premium</string>
     <string name="go_to_shop">Go to shop</string>
-    <string name="location_and_dist">%1$s, %2$s км от вас"</string>
+    <string name="location_and_dist">%1$s, %2$s km to you"</string>
     <string name="name_and_age">%1$s, %2$s"</string>
     <string name="your_message_will_be_here">Your message will be here</string>
-    <string name="tiktok" translatable="false">Tiktok</string>
+    <string name="tiktok">Tiktok</string>
+    <string name="no_one_was_found_for_your_query_try_changing_the_filters">No one was found for your query, try changing the filters.</string>
+    <string name="we_select_the_best_videos_for_you">We select the best videos for you...</string>
+
 
 </resources>

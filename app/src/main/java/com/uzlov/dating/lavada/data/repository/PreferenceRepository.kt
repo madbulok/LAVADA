@@ -104,4 +104,16 @@ class PreferenceRepository @Inject constructor(private var preferences: SharedPr
     fun readPremiumVisible(): Boolean{
         return preferences.getBoolean(LOCAL_PREF_PREMIUM_VISIBLE, false)
     }
+
+    fun setLike(likeId: String, like: Boolean){
+        preferences.edit().apply {
+            putBoolean(likeId, like)
+        }.apply()
+    }
+
+    fun readLike(likeId: String): Boolean {
+        return preferences.getBoolean(likeId, false)
+    }
+
+
 }

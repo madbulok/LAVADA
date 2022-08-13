@@ -5,10 +5,13 @@ import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.video.OutputResults
 import androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable
+import com.bumptech.glide.Glide
 import com.uzlov.dating.lavada.R
 import com.uzlov.dating.lavada.databinding.LoginActivityBinding
 import com.uzlov.dating.lavada.domain.models.User
@@ -48,7 +51,7 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         _viewBinding = LoginActivityBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
-
+        loadImage(viewBinding.imageView2)
         initFragments()
         showBenefits()
     }
@@ -193,6 +196,14 @@ class LoginActivity : AppCompatActivity() {
             .replace(R.id.fullScreen_container, VideoCaptureFragment(videoCaptureCallback))
             .addToBackStack(("uploadVideo"))
             .commit()
+    }
+
+    private fun loadImage(container: ImageView) {
+            Glide
+                .with(this)
+                .load(R.drawable.bubble_background)
+                .error(R.drawable.ic_default_user)
+                .into(container)
     }
 
     fun getRealPathFromURI(context: android.content.Context, contentUri: Uri?): String? {

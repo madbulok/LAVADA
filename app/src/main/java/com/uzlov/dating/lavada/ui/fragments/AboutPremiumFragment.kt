@@ -39,7 +39,8 @@ class AboutPremiumFragment :
                 }
             }
             else -> {
-                Toast.makeText(requireContext(), result.debugMessage, Toast.LENGTH_SHORT).show()
+          //      Toast.makeText(requireContext(), result.debugMessage, Toast.LENGTH_SHORT).show()
+                Log.e(result.responseCode.toString(), result.debugMessage)
             }
         }
     }

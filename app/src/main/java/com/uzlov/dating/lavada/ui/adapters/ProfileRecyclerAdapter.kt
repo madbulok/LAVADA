@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.android.exoplayer2.Player
 import com.uzlov.dating.lavada.R
+import com.uzlov.dating.lavada.data.repository.PreferenceRepository
 import com.uzlov.dating.lavada.databinding.TiktokTimelineItemRecyclerBinding
 import com.uzlov.dating.lavada.domain.models.User
 import com.uzlov.dating.lavada.domain.models.getNAmeLabel
@@ -18,6 +19,7 @@ import kotlin.math.roundToInt
 class ProfileRecyclerAdapter(
     private var modelList: List<User>,
     private var self: User,
+    private var preferenceRepository: PreferenceRepository
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(),
     PlayerStateCallback {
     private var mItemClickListener: OnItemClickListener? = null
@@ -28,6 +30,9 @@ class ProfileRecyclerAdapter(
         fun sendHeart(user: User)
         fun sendMessage(user: User)
         fun complain(user: User)
+        fun tiktok(user: User)
+        fun instagram(user: User)
+        fun facebook(user: User)
     }
 
     fun updateList(modelList: List<User>, self: User) {
@@ -42,10 +47,12 @@ class ProfileRecyclerAdapter(
         viewType: Int,
     ): VideoPlayerViewHolder {
         val binding: TiktokTimelineItemRecyclerBinding =
-            DataBindingUtil.inflate(LayoutInflater.from(viewGroup.context),
+            DataBindingUtil.inflate(
+                LayoutInflater.from(viewGroup.context),
                 R.layout.tiktok_timeline_item_recycler,
                 viewGroup,
-                false)
+                false
+            )
         return VideoPlayerViewHolder(binding)
     }
 
@@ -105,57 +112,75 @@ class ProfileRecyclerAdapter(
         RecyclerView.ViewHolder(binding.root) {
         fun onBind(model: User) {
 
-            binding.root.setOnClickListener(object : DoubleClickListener() {
-                override fun onDoubleClick(v: View) {
-                    mItemClickListener?.onItemClick(
-                        adapterPosition,
-                        model
-                    )
+            with(binding) {
+                root.setOnClickListener(object : DoubleClickListener() {
+                    override fun onDoubleClick(v: View) {
+                        mItemClickListener?.onItemClick(
+                            adapterPosition,
+                            model
+                        )
+                        ivHeartTo.setImageResource(R.drawable.heart_pressed)
+                    }
+                })
+                root.let {
+                    Glide
+                        .with(it.context)
+                        .load(model.url_avatar)
+                        .error(R.drawable.ic_default_user)
+                        .into(binding.ivRandomProfile)
                 }
-            })
-            binding.root.let {
-                Glide
-                    .with(it.context)
-                    .load(model.url_avatar)
-                    .error(R.drawable.ic_default_user)
-                    .into(binding.ivRandomProfile)
+
+                //было бы неплохо уточнить, какие именно цифры показываем
+                tvNameProfile.text = model.getNAmeLabel()
+                val loc = model.location?.split(",")
+                tvLocationProfile.text =
+                    (loc?.get(0) ?: "unknown") + ", " + model.dist?.roundToInt()
+                        .toString() + " km from you"
+                tvDescriptionProfile.text = model.about
+                ivTikTokProfile.visibility = View.VISIBLE
+                ivInstagramProfile.visibility = View.VISIBLE
+                ivFacebookProfile.visibility = View.VISIBLE
+                viewForTap.setOnClickListener {
+                    if (tvDescriptionProfile.maxLines == 1) {
+                        tvDescriptionProfile.maxLines = Int.MAX_VALUE
+                    } else tvDescriptionProfile.maxLines = 1
+
+                }
+                ivHeartTo.setOnClickListener {
+                    actionListener?.sendHeart(model)
+                    ivHeartTo.setImageResource(R.drawable.heart_pressed)
+                }
+                ivGiftTo.setOnClickListener {
+                    actionListener?.sendGift(model)
+                }
+                ivMessageTo.setOnClickListener {
+                    actionListener?.sendMessage(model)
+                }
+                ivComplain.setOnClickListener {
+                    actionListener?.complain(model)
+                }
+                ivTikTokProfile.setOnClickListener {
+                    actionListener?.tiktok(model)
+                }
+                ivFacebookProfile.setOnClickListener {
+                    actionListener?.facebook(model)
+                }
+                ivInstagramProfile.setOnClickListener {
+                    actionListener?.instagram(model)
+                }
+
+                if (preferenceRepository.readLike(model.uid)){
+                    ivHeartTo.setImageResource(R.drawable.heart_pressed)
+                }
+
+                binding.apply {
+                    dataModel = model
+                    callback = this@ProfileRecyclerAdapter
+                    index = adapterPosition
+                    executePendingBindings()
+                }
             }
 
-            //было бы неплохо уточнить, какие именно цифры показываем
-            binding.tvNameProfile. text = model.getNAmeLabel()
-
-            binding.tvLocationProfile.text = "В " + model.dist?.roundToInt().toString() + " км от вас"
-            binding.tvDescriptionProfile.text = model.about
-            if (self.premium){
-                binding.ivTikTokProfile.visibility = View.VISIBLE
-                binding.ivInstagramProfile.visibility = View.VISIBLE
-                binding.ivFacebookProfile.visibility = View.VISIBLE
-            }
-            binding.viewForTap.setOnClickListener {
-                if (binding.tvDescriptionProfile.maxLines == 1){
-                    binding.tvDescriptionProfile.maxLines = Int.MAX_VALUE
-                } else binding.tvDescriptionProfile.maxLines = 1
-
-            }
-            binding.ivHeartTo.setOnClickListener {
-                actionListener?.sendHeart(model)
-            }
-            binding.ivGiftTo.setOnClickListener {
-                actionListener?.sendGift(model)
-            }
-            binding.ivMessageTo.setOnClickListener {
-                actionListener?.sendMessage(model)
-            }
-            binding.ivComplain.setOnClickListener {
-                actionListener?.complain(model)
-            }
-
-            binding.apply {
-                dataModel = model
-                callback = this@ProfileRecyclerAdapter
-                index = adapterPosition
-                executePendingBindings()
-            }
         }
     }
 

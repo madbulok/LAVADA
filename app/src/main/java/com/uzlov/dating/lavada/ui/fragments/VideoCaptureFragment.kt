@@ -52,8 +52,7 @@ class VideoCaptureFragment(private var videoCaptureListener: VideoRecordingListe
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Request camera permissions
-        startCamera()
+
         if (!allPermissionsGranted()) {
             ActivityCompat.requestPermissions(
                 requireActivity(), REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS
@@ -66,7 +65,8 @@ class VideoCaptureFragment(private var videoCaptureListener: VideoRecordingListe
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         // Set up the listeners for take photo and video capture buttons
-
+        // Request camera permissions
+        startCamera()
         viewBinding.videoCaptureButton.setOnClickListener {
             if (!allPermissionsGranted()) {
                 viewBinding.videoCaptureButton.isEnabled = false
@@ -91,7 +91,6 @@ class VideoCaptureFragment(private var videoCaptureListener: VideoRecordingListe
         if (curRecording != null) {
             // Stop the current recording session.
             curRecording.stop()
-            recording = null
             return
         }
 
@@ -177,15 +176,18 @@ class VideoCaptureFragment(private var videoCaptureListener: VideoRecordingListe
                     it.setSurfaceProvider(viewBinding.viewFinder.surfaceProvider)
                 }
 
-            val recorder = Recorder.Builder()
-                .setQualitySelector(QualitySelector.from(Quality.HIGHEST))
-                .build()
+            val recorder =  try {
+                Recorder.Builder()
+                    .setQualitySelector(QualitySelector.from(Quality.HIGHEST))
+                    .build()
+            } catch (error: Exception){ // https://github.com/android/camera-samples/issues/450
+                error.printStackTrace()
+                Toast.makeText(requireContext(), "Выбрано качество по умолчанию", Toast.LENGTH_SHORT).show()
+                Recorder.Builder()
+                    .build()
+            }
             videoCapture = VideoCapture.withOutput(recorder)
 
-            // Select back camera as a default
-            /**
-             * тут нужно дать возможность выбрать камеру
-             * */
             val cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
 
             try {
@@ -194,9 +196,10 @@ class VideoCaptureFragment(private var videoCaptureListener: VideoRecordingListe
 
                 // Bind use cases to camera
                 cameraProvider
-                    .bindToLifecycle(this, cameraSelector, preview, videoCapture)
+                    .bindToLifecycle(viewLifecycleOwner, cameraSelector, preview, videoCapture)
             } catch (exc: Exception) {
                 Log.e(TAG, "Use case binding failed", exc)
+                exc.printStackTrace()
             }
 
         }, ContextCompat.getMainExecutor(requireContext()))
@@ -239,7 +242,7 @@ class VideoCaptureFragment(private var videoCaptureListener: VideoRecordingListe
         private val REQUIRED_PERMISSIONS =
             mutableListOf(
                 Manifest.permission.CAMERA,
-                Manifest.permission.RECORD_AUDIO
+                Manifest.permission.RECORD_AUDIO,
             ).apply {
                 if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
                     add(Manifest.permission.WRITE_EXTERNAL_STORAGE)

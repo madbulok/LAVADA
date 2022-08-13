@@ -53,8 +53,8 @@ class UserRemoteServerDataSourceImpl @Inject constructor(
         return serverCommunication.apiServiceWithToken?.postBalanceAsync(balance)
     }
 
-    override suspend fun getUsers(token: String, limit: String): Response<RemoteUserList> {
-        return serverCommunication.apiServiceWithToken?.getUsersAsync(limit)!!
+    override suspend fun getUsers(token: String, limit: String, orderBy: String, gender: String, age: String): Response<RemoteUserList> {
+        return serverCommunication.apiServiceWithToken?.getUsersAsync(limit, orderBy, gender, age)!!
     }
 
     override suspend fun getBalance(token: String): Response<RemoteUser>? {
